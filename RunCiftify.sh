@@ -1,0 +1,1 @@
+ciftify_recon_all --fs-subjects-dir Data/ADNI_Data/FS --ciftify-work-dir Data/ADNI_Data/HCP/ 941_S_6068_m36_20210817_r1481645_T1
