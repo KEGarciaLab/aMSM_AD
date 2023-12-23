@@ -14,6 +14,9 @@ CIFTIFY_OUTPUT_DIR=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION
 mkdir -p ${LOG_OUTPUT_DIR}
 mkdir -p ${OUTPUT_DIR}
 
+########## BEGIN LOGGING
+exec > >(tee -a "${LOG_OUTPUT}") 2>&1
+
 ########## GET DIRS
 ######### READ LINES FROM subjects.txt
 SUBJECTS_DIRS=()
