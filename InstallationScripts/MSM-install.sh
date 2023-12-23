@@ -6,8 +6,8 @@ PATH_TO_FSL="/N/project/aMSM/ADNI/ProgramFiles/FSL_Dev"
 echo "************************************************************************"
 echo "*                      BEGIN COPYING FILES                             *"
 echo "************************************************************************"
-cp -a ${PATH_TO_MSM} ${HOME}
-cp -a ${PATH_TO_FSL} ${HOME}
+cp -a -v -- ${PATH_TO_MSM} ${HOME}
+cp -a -v -- ${PATH_TO_FSL} ${HOME}
 chmod +x ${HOME}/FSL_Dev/fslconf/fsl.sh
 
 # EDIT BASH PROFILE

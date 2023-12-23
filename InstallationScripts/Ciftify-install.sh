@@ -1,3 +1,6 @@
+# VARIABLE DECLARATION
+PATH_TO_FREESURFER=/geode2/soft/hps/rhel7/freesurfer/6.0.0/freesurfer
+
 # Downlad Ciftify
 echo "************************************************************************"
 echo "*                         CLONING CIFTIFY REPO                         *"
@@ -8,8 +11,14 @@ git clone https://github.com/edickie/ciftify ciftify-master
 echo "************************************************************************"
 echo "*                   COPYING MSM FROM USER INSTALL                      *"
 echo "************************************************************************"
-cp -- ${HOME}/MSM_HOCR-master/src/MSM/msm ${HOME}/ciftify-master
+cp -v -- ${HOME}/MSM_HOCR-master/src/MSM/msm ${HOME}/ciftify-master
 chmod +x ${HOME}/ciftify-master/msm
+
+# Copy Freesurfer
+echo "************************************************************************"
+echo "*                        COPYING FREESURFER                            *"
+echo "************************************************************************"
+cp -a ${PATH_TO_FREESURFER} ${HOME}
 
 # Update .bash_profile
 echo "************************************************************************"
