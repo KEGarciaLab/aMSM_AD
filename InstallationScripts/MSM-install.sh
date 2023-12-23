@@ -24,8 +24,6 @@ ${FSLDEVDIR}/fslconf/fsl.sh
 export FSLCONFDIR=$FSLDIR/config
 export FSLMATCHTYPE=linux_64-gcc4.8
 
-module switch gcc/4.9.4
-
 export PATH=$HOME/MSM_HOCR-master/src/MSM:$PATH
 EOF
 
