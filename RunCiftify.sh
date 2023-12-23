@@ -1,13 +1,19 @@
 ########## DEFINE VARIABLES
 
-######### DO NOT CHANGE
+######### DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the log file so multiple can be run keeping data seperate
-LOG_OUTPUT=${HOME}/Scripts/MyScripts/logs/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
+LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs
+LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
 
 ######### CHANGE AS NEEDED
 DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION # Folder containing subject data
 SCRIPT_OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for generated scripts
 CIFTIFY_OUTPUT_DIR=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION/Ciftify # Output location for the generated scripts
+
+########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
+mkdir -p ${LOG_OUTPUT_DIR}
+mkdir -p ${OUTPUT_DIR}
+
 ########## GET DIRS
 ######### READ LINES FROM subjects.txt
 SUBJECTS_DIRS=()
