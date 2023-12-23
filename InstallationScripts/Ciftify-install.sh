@@ -33,7 +33,9 @@ echo "*                       UPDATING BASH PROFILE                          *"
 echo "************************************************************************"
 cat >> .bash_profile << "EOF"
 
-export PATH=$HOME/.local/bin:$HOME/ciftify-master:$PATH:$HOME/freesurfer/bin
+export PATH=$PATH:$HOME/fsl/bin
+export PATH=$PATH:$HOME/freesurfer/bin
+export PATH=$HOME/.local/bin:$HOME/ciftify-master:$PATH
 module load python
 EOF
 
