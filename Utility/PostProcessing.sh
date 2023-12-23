@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # DEFINE VARIABLES
-DATASET=/geode2/home/u080/sarigdon/Carbonate/Practice_Data/FerretPrelim_ico6 # Folder with the subject data
+DATASET=/geode2/home/u080/sarigdon/BigRed200/Practice_Data/FerretPrelim_ico6 # Folder with the subject data
 POSTPROCESSING_OUT=${DATASET}/Images
 SUBJECTS="A1_control A2_control K1_BEP7 K2_BEP7 K4_control K5_BEP7" # All subjects to be run seperated by a space
 TIMES="s1 s2 s3" # All time points to be run
 MSMCONFIG=/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL # location of config file
 LEVELS="6"
-MAXCP=/geode2/home/u080/sarigdon/Carbonate/Practice_Data/ico5sphere.ANATgrid.reg.surf.gii
-MAXANAT=/geode2/home/u080/sarigdon/Carbonate/Practice_Data/ico6sphere.ANATgrid.reg.surf.gii
+MAXCP=/geode2/home/u080/sarigdon/BigRed200/Practice_Data/ico5sphere.ANATgrid.reg.surf.gii
+MAXANAT=/geode2/home/u080/sarigdon/BigRed200/Practice_Data/ico6sphere.ANATgrid.reg.surf.gii
 
 ## SPHERICAL SURFACES DEFINED HERE AS THEY DON'T CHANGE FOR PRACTICE DATA
-SS=/geode2/home/u080/sarigdon/Carbonate/Practice_Data/ico6sphere.ANATgrid.reg.surf.gii
+SS=/geode2/home/u080/sarigdon/BigRed200/Practice_Data/ico6sphere.ANATgrid.reg.surf.gii
 
 # CREATE IMAGE OUTPUT DIR
 mkdir ${POSTPROCESSING_OUT}
