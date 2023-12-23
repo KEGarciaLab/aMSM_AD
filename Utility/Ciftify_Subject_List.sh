@@ -10,8 +10,6 @@ SUBJECTS="0072 0074 0382 0679 0680 0751 0767 0934 1052" # Subjects to extract fo
 mkdir -p ${OUTPUT_DIR}
 
 ########## ITERATE OVER EACH SUBJECT AND TIMEPOINT COMBO
-for ${SUBJECT} in ${SUBJECTS}; do
-    for TIME_POINT in TIME_POINTS; do
-        find ${DATASET} -maxdepth 1 -type d -name "*_S_${SUBJECT}_*" -exec basename {} \; >> ${OUTPUT_FILE}
-    done
+for SUBJECT in ${SUBJECTS}; do
+    find ${DATASET} -maxdepth 1 -type d -name "*_S_${SUBJECT}_*" -exec basename {} \; >> ${OUTPUT_FILE}
 done
