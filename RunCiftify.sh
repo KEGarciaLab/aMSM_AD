@@ -10,7 +10,7 @@ DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION # Folder c
 CIFTIFY_OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for script results
 SCRIPT_OUTPUT_DIR=${CIFTIFY_OUTPUT_DIR}/Scripts # Output location for the generated scripts
 SUBJECT_TXT=${HOME}/Scripts/MyScripts/Output/Ciftify_Subject_List.sh/subject_numbers_2023-12-23_05-57-25.txt #List of subjects to run, ensure you have ran Ciftify_Subject_List.sh and are pointng to the correct file
-ACCOUNT="" # Slurm allocation to use
+ACCOUNT="r00540" # Slurm allocation to use
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
