@@ -131,11 +131,24 @@ for SUBJECT in ${SUBJECTS}; do
         echo "LEFT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.func.gii"
         echo
 
+        ## REMOVE NAN FROM K1
+        echo "CONVERTING TO ASCII"
+        wb_command -gifti-convert ASCII ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.func.gii ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.ASCII.func.gii
+        echo "RIGHT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.ASCII.func.gii"
+        wb_command -gifti-convert ASCII ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.func.gii ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.ASCII.func.gii
+        echo "LEFT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.ASCII.func.gii"
+        echo "REPLACING NaN with 0"
+        sed -i 's/^\([[:space:]]*\)nan\([[:space:]]*\)$/\10\2/' ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.ASCII.func.gii > ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.CORRECTED.func.gii # RegEx matches exactly nan which only appears in compromised data, preserves whitespace
+        echo "RIGHT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.CORRECTED.func.gii"
+        sed -i 's/^\([[:space:]]*\)nan\([[:space:]]*\)$/\10\2/' ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.ASCII.func.gii > ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.CORRECTED.func.gii
+        echo "LEFT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.CORRECTED.func.gii"
+        echo
+
         ## FIND K2
         echo "CALCULATING K2"
-        wb_command -metric-math 'KG/K1' ${OUTPUT_SUB_DIR}/${OUTPUT_R}K2.func.gii -var KG ${OUTPUT_SUB_DIR}/${OUTPUT_R}gauss_curve.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.func.gii
+        wb_command -metric-math 'KG/K1' ${OUTPUT_SUB_DIR}/${OUTPUT_R}K2.func.gii -var KG ${OUTPUT_SUB_DIR}/${OUTPUT_R}gauss_curve.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.CORRECTED.func.gii
         echo "RIGHT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_R}K2.func.gii"        
-        wb_command -metric-math 'KG/K1' ${OUTPUT_SUB_DIR}/${OUTPUT_L}K2.func.gii -var KG ${OUTPUT_SUB_DIR}/${OUTPUT_L}gauss_curve.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.func.gii
+        wb_command -metric-math 'KG/K1' ${OUTPUT_SUB_DIR}/${OUTPUT_L}K2.func.gii -var KG ${OUTPUT_SUB_DIR}/${OUTPUT_L}gauss_curve.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.CORRECTED.func.gii
         echo "LEFT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_L}K2.func.gii" 
 
         ########## Split K1 sulci and gyri
