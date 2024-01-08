@@ -10,7 +10,7 @@ LOG_OUTPUT=${HOME}/Scripts/MyScripts/logs/$(basename "$0")_${CURRENT_DATETIME}.l
 ###### CAN BE CHANGED BY USER ONLY CHANGE THE PARTS THAT ARE NOT IN {} UNLESS YOU KNOW WHAT YOU ARE DOING
 DATASET=/N/project/aMSM/ADNI/Data/3T_Analysis/ciftify # Folder containing subject data
 PREFIX="Subject" # Prefix to prepend to each subject ID
-SUBJECTS="" # list of subject ID to run through (leave blank to generate the list automatically). Subject numbers should be entered with a space between seperate numbers "#### ####"
+SUBJECTS="0061" # list of subject ID to run through (leave blank to generate the list automatically). Subject numbers should be entered with a space between seperate numbers "#### ####"
 SUB_GEN_SCRIPT=${HOME}/Scripts/MyScripts/Subject_List.sh # locatoion the Subject_List.sh file, this is needed to generate the subject automatically
 SUB_GEN_DIR=${HOME}/Scripts/MyScripts/Output/Subject_List.sh # location when Subject_List.sh will output, match it to OUTPUT_DIR in Subject_List.sh
 SUB_GEN_FILE="subject_numbers.txt" # name of subject list file, should match OUTPUT_FILE in Subject_List.sh
