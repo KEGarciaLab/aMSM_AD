@@ -170,16 +170,16 @@ for SUBJECT in ${SUBJECTS}; do
         echo "SPLITTING K1 SULCI AND GYRI FOR ${SUBJECT}_Image_${IMAGE_NUMBER}"
         echo "***************************************************************************"
         echo "SEPERATING SUCLI"
-        wb_command -metric-math '(K1*(K1<0))' ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.sulci.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.func.gii
+        wb_command -metric-math '(K1*(K1<0))' ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.sulci.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.CORRECTED.func.gii
         echo "RIGHT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.sulci.func.gii"
-        wb_command -metric-math '(K1*(K1<0))' ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.sulci.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.func.gii
+        wb_command -metric-math '(K1*(K1<0))' ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.sulci.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.CORRECTED.func.gii
         echo "LEFT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.sulci.func.gii"
         echo
 
         echo "SEPERATING GYRI"
-        wb_command -metric-math '(K1*(K1>0))' ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.gyri.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.func.gii
+        wb_command -metric-math '(K1*(K1>0))' ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.gyri.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.CORRECTED.func.gii
         echo "RIGHT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_R}K1.gyri.func.gii"
-        wb_command -metric-math '(K1*(K1>0))' ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.gyri.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.func.gii
+        wb_command -metric-math '(K1*(K1>0))' ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.gyri.func.gii -var K1 ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.CORRECTED.func.gii
         echo "LEFT HEMISPHERE COMPLETE, SAVED AT ${OUTPUT_SUB_DIR}/${OUTPUT_L}K1.gyri.func.gii"
 
         ########## Calculate Mean Gyri
@@ -229,9 +229,9 @@ for SUBJECT in ${SUBJECTS}; do
         echo "***************************************************************************"
         echo "CALCULATING K2 VARIANCE FOR ${SUBJECT}_Image_${IMAGE_NUMBER}"
         echo "***************************************************************************"
-        R_K2_VARIANCE=$(wb_command -metric-stats ${OUTPUT_SUB_DIR}/${OUTPUT_R}K2.func.gii -reduce VARIANCE)
+        R_K2_VARIANCE=$(wb_command -metric-stats ${OUTPUT_SUB_DIR}/${OUTPUT_R}K2.CORRECTED.func.gii -reduce VARIANCE)
         echo "R_K2_VARIANCE=${R_K2_VARIANCE}"
-        L_K2_VARIANCE=$(wb_command -metric-stats ${OUTPUT_SUB_DIR}/${OUTPUT_L}K2.func.gii -reduce VARIANCE)
+        L_K2_VARIANCE=$(wb_command -metric-stats ${OUTPUT_SUB_DIR}/${OUTPUT_L}K2.CORRECTED.func.gii -reduce VARIANCE)
         echo "L_K2_VARIANCE=${L_K2_VARIANCE}"
 
         ########## Write to CSV
