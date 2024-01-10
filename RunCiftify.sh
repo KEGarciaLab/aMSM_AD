@@ -37,8 +37,8 @@ for DIR in ${SUBJECT_DIRS[@]}; do
     echo "***************************************************************************"
     echo "GENERATING SCRIPTS"
     echo "***************************************************************************"
-    SUBJECT=$(IFS=_; fields=${DIR}; echo "${fields[2]}")
-    TIME_POINT=$(IFS=_; fields=${DIR}; echo "${fields[3]}")
+    SUBJECT=$(echo "$DIR" | awk -F_ '{print $2}')
+    TIME_POINT=$(echo "$DIR" | awk -F_ '{print $3}')
     echo "BEGIN GENERATION OF SCRIPT FOR ${SUBJECT} FOR TIME POINT ${TIME_POINT}"
 
     ########## CREATE SUBJECT FOLDERS
