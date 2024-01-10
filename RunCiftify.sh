@@ -32,7 +32,7 @@ while read -r SUBJECT_DIR; do
 done < ${SUBJECT_TXT}
 
 ########## GENERATE SCRIPTS
-for DIR in SUBJECT_DIRS; do
+for DIR in ${SUBJECT_DIRS[@]}; do
     ########## EXTRACT TIME POINTS
     echo "***************************************************************************"
     echo "GENERATING SCRIPTS"
@@ -72,7 +72,3 @@ EOF
     sbatch ${SCRIPT_OUTPUT_DIR}/recon_all_Subject_${SUBJECT}_${TIME_POINT}.sh
 
 done
-    
-########## SUBMIT SCRIPTS
-
-ciftify_recon_all --fs-subjects-dir Data/ADNI_Data/FS --ciftify-work-dir Data/ADNI_Data/HCP 941_S_6068_m36_20210817_r1481645_T1
