@@ -29,6 +29,7 @@ for DIR in "${DATASET}"/*;do
         SUBJECTS+=(${SUBJECT})
     fi
 done
+echo ${SUBJECTS}
 
 
 for SUBJECT in ${SUBJECTS}; do
@@ -48,8 +49,12 @@ for SUBJECT in ${SUBJECTS}; do
 
     echo "FINDING TIMEPOINTS"
     TIME_POINTS=()
-    TIME_POINT=$(echo "${DIR}" | grep -oP "Subject_${SUBJECT}_(m\d+)")
-    echo "TIME POINT FOUND: ${TIME_POINT}"
-    TIME_POINTS+=("${TIME_POINT}")
+    for DIR in "${DATASET}"/*;do
+        if [ -d ${DIR} ]; then
+            TIME_POINT=$(echo "${DIR}" | grep -oP "Subject_${SUBJECT}_(m\d+)")
+            TIME_POINTS+=("${TIME_POINT}")
+        fi
+    done
+    
 
 done
