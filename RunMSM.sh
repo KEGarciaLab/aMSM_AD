@@ -25,8 +25,7 @@ echo "LOCATING SUBJECTS"
 echo "***************************************************************************"
 for DIR in "${DATASET}"/*;do
     if [ -d ${DIR} ]; then
-        SUBJECT=$(echo "${DIR}" | grep -oP 'Subject_(\d+)_BL')
-        echo "SUBJECT FOUND: ${SUBJECT}"
+        SUBJECT=$(echo "${DIR}" | grep -oP '(?<=Subject_)\d+(?=_BL)')
         SUBJECTS+=(${SUBJECT})
     fi
 done
