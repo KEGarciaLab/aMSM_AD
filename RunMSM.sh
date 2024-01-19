@@ -55,6 +55,6 @@ for SUBJECT in ${SUBJECTS}; do
             TIME_POINTS+=("${TIME_POINT}")
         fi
     done
-    
+    echo ${TIME_POINTS}
 
 done
