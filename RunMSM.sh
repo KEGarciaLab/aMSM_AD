@@ -10,7 +10,8 @@ SUBJECTS=() #array of subject numbers to be processed
 DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION/HCP # Folder containing subject data
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for generated scripts
 ACCOUNT="r00540" # Slurm allocation to use
-
+MAXCP=${DATASET}/ico5sphere.LR.reg.surf.gii
+MAXANAT=${DATASET}/ico6sphere.LR.reg.surf.gii
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
@@ -29,24 +30,14 @@ for DIR in "${DATASET}"/*;do
         SUBJECTS+=(${SUBJECT})
     fi
 done
-echo ${SUBJECTS[@]}
-
+echo "THE FOLLOWING SUBJECTS WILL BE PROCESSED: ${SUBJECTS[@]}"
 
 for SUBJECT in ${SUBJECTS[@]}; do
     echo "***************************************************************************"
     echo "BEGIN PROCESSING FOR SUBJECT ${SUBJECT}"
     echo "***************************************************************************"
-    
-    ########## DEFINE BASLINE FILES AS YOUNGER
-    ######## GET NAME OF DATA FOLDER 
-    DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_BL"/*)
-    DIRECTORIES=${DIRECTORIES[0]//*zz_templates/}
-    BL_DIR=${DATASET}/Subject_${SUBJECT}_BL/${DIRECTORIES[0]##*/}
-    echo ${BL_DIR}
-
 
     ########## EXTRACT TIME POINTS
-
     echo "FINDING TIMEPOINTS"
     TIME_POINTS=()
     for DIR in "${DATASET}"/*;do
@@ -55,6 +46,32 @@ for SUBJECT in ${SUBJECTS[@]}; do
             TIME_POINTS+=("${TIME_POINT}")
         fi
     done
-    echo ${TIME_POINTS[@]}
+    echo "SUBJECT ${SUBJECT} HAS THE FOLLOWING TIME POINTS: ${TIME_POINTS[@]}"
+
+    ########## DEFINE BASLINE FILES AS YOUNGER
+    ######## GET NAME OF DATA FOLDER 
+    DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_BL"/*)
+    DIRECTORIES=${DIRECTORIES[0]//*zz_templates/}
+    BL_DIR=${DATASET}/Subject_${SUBJECT}_BL/${DIRECTORIES[0]##*/}
+    BL_FULL_DATA=$(basename "${BL_DIR}")
+    echo "YOUNGER DATA LOACTED AT ${BL_DIR}"
+    echo "FULL YOUNGER DATA NAME: ${BL_FULL_DATA}"
+    # LYAS=${BL_DIR}
+    # RYAS
+    # LYSS
+    # RYSS
+
+
+    ########## BEGIN ITERATING OVER TIME POINTS
+    for OLDER_TIME in ${TIME_POINTS[@]}; do
+        echo "BEGIN REGISTRATION BETWEEN BL AND ${OLDER_TIME}"
+        DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_${OLDER_TIME}"/*)
+        DIRECTORIES=${DIRECTORIES[0]//*zz_templates/}
+        OLDER_DIR=${DATASET}/Subject_${SUBJECT}_${OLDER_TIME}/${DIRECTORIES[0]##*/}
+        OLDER_FULL_DATA=$(basename "${OLDER_DIR}")
+        echo "OLDER DATA LOACTED AT ${OLDER_DIR}"
+        echo "FULL YOUNGER DATA NAME: ${OLDER_FULL_DATA}"
+
+    done
 
 done
