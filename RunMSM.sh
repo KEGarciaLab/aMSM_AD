@@ -4,7 +4,8 @@
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the log file so multiple can be run keeping data seperate
 LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs
 LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
-SUBJECTS=() #array of subject numbers to be processed
+SUBJECTS=() # Array of subject numbers to be processed
+LEVELS=6 # Levels for MSM
 
 ######### CHANGE AS NEEDED
 DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION/HCP # Folder containing subject data
@@ -14,6 +15,8 @@ MAXCP=${DATASET}/ico5sphere.LR.reg.surf.gii # path to ico5sphere
 MAXANAT=${DATASET}/ico6sphere.LR.reg.surf.gii # path to ico6sphere
 RESOLUTION="32k" # resolution of mesh to use either '32k' or '164k'
 RESOLUTION_LOCATION="MNINonLinear/fsaverage_LR32k" # location of meshes 32k should be 'MNINonLinear/fsaverage_LR32k' 164k should be 'MNINonLinear'
+MSMCONFIG=/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL # location of config file
+MSM_OUT=${DATASET}/MSM # output for msm
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
@@ -51,7 +54,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
     echo "SUBJECT ${SUBJECT} HAS THE FOLLOWING TIME POINTS: ${TIME_POINTS[@]}"
 
     ########## DEFINE BASLINE FILES AS YOUNGER
-    ######## GET NAME OF DATA FOLDER 
+    ######## GET DATA LOCATION 
     DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_BL"/*)
     DIRECTORIES=${DIRECTORIES[0]//*zz_templates/}
     BL_DIR=${DATASET}/Subject_${SUBJECT}_BL/${DIRECTORIES[0]##*/} #Base directory withg baseline data
@@ -59,6 +62,8 @@ for SUBJECT in ${SUBJECTS[@]}; do
     BL_DIR=${BL_DIR}/${RESOLUTION_LOCATION} # Directory with meshes
     echo "YOUNGER DATA LOACTED AT ${BL_DIR}"
     echo "FULL YOUNGER DATA NAME: ${BL_FULL_DATA}"
+    
+    ######## DEFINE MESHES
     LYAS=${BL_DIR}/${BL_FULL_DATA}.L.midthickness.${RESOLUTION}_fs_LR.surf.gii # Left younger anatomical surface
     RYAS=${BL_DIR}/${BL_FULL_DATA}.R.midthickness.${RESOLUTION}_fs_LR.surf.gii # Right younger anatomical surface
     LYSS=${BL_DIR}/${BL_FULL_DATA}.L.sphere.${RESOLUTION}_fs_LR.surf.gii # Left younger spherical surface
@@ -68,9 +73,33 @@ for SUBJECT in ${SUBJECTS[@]}; do
     echo "LEFT YOUNGER SPHERICAL SURFACE: ${LYSS}"
     echo "RIGHT YOUNGER SPHERICAL SURFACE: ${RYSS}"
 
+    ########## PRE MSM-JOBS
+    echo "***************************************************************************"
+    echo "BEGIN BL PRE-MSM JOBS FOR SUBJECT ${SUBJECT}"
+    echo "***************************************************************************"
+
+    ######## THICKNESS
+    wb_command -cifti-seperate ${BL_DIR}/${BL_FULL_DATA}.tickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/${BL_FULL_DATA}_Thickness.R.func.gii
+
+    ######## CURVATURE
+    wb_command -cifti-seperate ${BL_DIR}/${BL_FULL_DATA}.curvature.${RESOLUTION}_fa_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHR ${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
+    LYC=${BL_DIR}/${BL_FULL_DATA}_Curvature.L.func.gii
+    RYC=${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
+
+
+
     ########## BEGIN ITERATING OVER TIME POINTS
     for OLDER_TIME in ${TIME_POINTS[@]}; do
+        ########## DEFINE TIMEPOINT AS OLDER
         echo "BEGIN REGISTRATION BETWEEN BL AND ${OLDER_TIME}"
+
+        ######## CREATE MSM OUTPUT DIRS
+        MSM_F_DIR=${DATASET}/${SUBJECT}_BL_to_${TIME_POINT}
+        mkdir -p ${MSM_F_DIR}
+        MSM_R_DIR=${DATASET}/${SUBJECT}_${TIME_POINT}_to_BL
+        mkdir -p ${MSM_R_DIR}
+        
+        ######## GET DATA LOCATION
         DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_${OLDER_TIME}"/*)
         DIRECTORIES=${DIRECTORIES[0]//*zz_templates/}
         OLDER_DIR=${DATASET}/Subject_${SUBJECT}_${OLDER_TIME}/${DIRECTORIES[0]##*/}
@@ -78,6 +107,8 @@ for SUBJECT in ${SUBJECTS[@]}; do
         OLDER_DIR=${OLDER_DIR}/${RESOLUTION_LOCATION}
         echo "OLDER DATA LOACTED AT ${OLDER_DIR}"
         echo "FULL OLDER DATA NAME: ${OLDER_FULL_DATA}"
+        
+        ######## DEFINE MESHES
         LOAS=${OLDER_DIR}/${OLDER_FULL_DATA}.L.midthickness.${RESOLUTION}_fs_LR.surf.gii # Left older anatomical surface
         ROAS=${OLDER_DIR}/${OLDER_FULL_DATA}.R.midthickness.${RESOLUTION}_fs_LR.surf.gii # Right older anatomical surface
         LOSS=${OLDER_DIR}/${OLDER_FULL_DATA}.L.sphere.${RESOLUTION}_fs_LR.surf.gii # Left older spherical surface
@@ -87,6 +118,137 @@ for SUBJECT in ${SUBJECTS[@]}; do
         echo "LEFT OLDER SPHERICAL SURFACE: ${LOSS}"
         echo "RIGHT OLDER SPHERICAL SURFACE: ${ROSS}"
 
-    done
+        ########## PRE MSM-JOBS
+        echo "***************************************************************************"
+        echo "BEGIN ${OLDER_TIME} PRE-MSM JOBS FOR SUBJECT ${SUBJECT}"
+        echo "***************************************************************************"
 
+        ######## THICKNESS
+        wb_command -cifti-seperate ${OLDER_DIR}/${OLDER_FULL_DATA}.thickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.R.func.gii
+        
+        ######## CURVATURE
+        wb_command -cifti-seperate ${OLDER_DIR}/${OLDER_FULL_DATA}.curvature.${RESOLUTION}_fa_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHR ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
+        LOC=${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.func.gii
+        ROC=${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
+
+        ########## GENERATE FORWARD AND REVERSE SCRIPTS
+        for HEMISPHERE in L R; do
+            ######## CREATE FILE ASSOCIATIONS AND SET STRUCTURE
+            if [ ${HEMISPHERE} = L ]; then
+                STRUCTURE="CORTEX_LEFT"
+                YAS=${LYAS}
+                YSS=${LYSS}
+                OAS=${LOAS}
+                OSS=${LOSS}
+                YC=${LYC}
+                OC=${ROC}
+            fi
+
+            if [ ${HEMISPHERE} = R ]; then
+                STRUCTURE="CORTEX_RIGHT"
+                YAS=${RYAS}
+                YSS=${RYSS}
+                OAS=${ROAS}
+                OSS=${ROSS}
+                YC=${RYC}
+                OC=${ROC}
+            fi
+
+            ######## CREATE OUTPUT NAMES
+            F_OUT=${MSM_F_DIR}/${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.
+            R_OUT=${MSM_R_DIR}/${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.
+
+            echo "***************************************************************************"
+            echo "BEGIN GENERATING MSM SCRIPTS"
+            echo "***************************************************************************"
+            ######## FORWARD
+cat ${MSM_F_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh << EOF
+#!/bin/bash
+
+#SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME2}
+#SBATCH -p general
+#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/MSM_${SUBJECT}_BL-${TIME_POINT}_%j.txt
+#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/MSM_${SUBJECT}_BL-${TIME_POINT}_%j_error.txt
+#SBATCH --mail-type=fail
+#SBATCH --mail-user=sarigdon@iu.edu
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=49:00:00
+#SBATCH --mem=16G
+#SBATCH -A ${ACCOUNT}
+
+########## RUN MSM
+msm --levels=${LEVELS} --conf=${MSMCONFIG} --inmesh=${YSS} -- refmesh=${OSS} --indata=${YC} --refdata=$OC --inanat=${YAS} --refanat=${OAS} --out=${F_OUT} --verbose
+
+########## SURFACE DISTORTION
+wb_command -surface-resample ${YAS} ${YSS} ${MAXANAT} "BARYCENTRIC" ${F_OUT}${HEMISPHERE}YAS.ANATgrid.surf.gii
+wb_command -set-structure ${F_OUT}${HEMISPHERE}YAS.ANATgrid.surf.gii ${STRUCTURE}
+wb_command -surface-resample ${YAS} ${YSS} ${MAXCP} "BARYCENTRIC" ${F_OUT}${HEMISPHERE}YAS.CPgrid.surf.gii
+wb_command -set-structure ${F_OUT}${HEMISPHERE}YAS.CPgrid.surf.gii ${STRUCTURE}
+
+########## OUTPUT CALCULATIONS
+wb_command -surface-resample ${OAS} ${OSS} ${F_OUT}sphere.reg.surf.gii "BARYCENTRIC" ${F_OUT}anat.true.reg.surf.gii
+wb_command -surface-distortion ${YAS} ${F_OUT}anat.true.reg.surf.gii ${F_OUT}surfdist.func.gii
+
+######## MAXANAT
+wb_command -surface-sphere-project-unproject ${MAXANAT} ${YSS} ${F_OUT}sphere.reg.surf.gii ${F_OUT}sphere.ANATgrid.reg.surf.gii
+wb_command -surface-resample ${OAS} ${OSS} ${F_OUT}sphere.ANATgrid.reg.surf.gii "BARYCENTRIC" ${F_OUT}anat.ANATgrid.reg.surf.gii
+wb_command -surface-distortion ${F_OUT}${HEMISPHERE}YAS.ANATgrid.surf.gii ${F_OUT}anat.ANATgrid.reg.surf.gii ${F_OUT}surfdist.ANATgrid.func.gii
+
+######## MAXCP
+wb_command -surface-sphere-project-unproject ${MAXCP} ${YSS} ${F_OUT}sphere.reg.surf.gii ${F_OUT}sphere.CPgrid.reg.surf.gii
+wb_command -surface-resample ${OAS} ${OSS} ${F_OUT}sphere.CPgrid.reg.surf.gii "BARYCENTRIC" ${F_OUT}anat.CPgrid.reg.surf.gii
+wb_command -surface-distortion ${F_OUT}${HEMISPHERE}YAS.CPgrid.surf.gii ${F_OUT}anat.CPgrid.reg.surf.gii ${F_OUT}surfdist.CPgrid.func.gii
+EOF
+
+            echo "COMPLETED Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh"
+
+            ######## REVERSE
+cat ${MSM_R_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh << EOF
+#!/bin/bash
+
+#SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME2}
+#SBATCH -p general
+#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/MSM_${SUBJECT}_${TIME_POINT}-BL_%j.txt
+#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/MSM_${SUBJECT}_${TIME_POINT}-BL_%j_error.txt
+#SBATCH --mail-type=fail
+#SBATCH --mail-user=sarigdon@iu.edu
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=49:00:00
+#SBATCH --mem=16G
+#SBATCH -A ${ACCOUNT}
+
+########## RUN MSM
+msm --levels=${LEVELS} --conf=${MSMCONFIG} --inmesh=${OSS} -- refmesh=${YSS} --indata=${OC} --refdata=$YC --inanat=${OAS} --refanat=${YAS} --out=${R_OUT} --verbose
+
+########## SURFACE DISTORTION
+wb_command -surface-resample ${OAS} ${OSS} ${MAXANAT} "BARYCENTRIC" ${R_OUT}${HEMISPHERE}OAS.ANATgrid.surf.gii
+wb_command -set-structure ${R_OUT}${HEMISPHERE}OAS.ANATgrid.surf.gii ${STRUCTURE}
+wb_command -surface-resample ${OAS} ${OSS} ${MAXCP} "BARYCENTRIC" ${R_OUT}${HEMISPHERE}OAS.CPgrid.surf.gii
+wb_command -set-structure ${R_OUT}${HEMISPHERE}OAS.CPgrid.surf.gii ${STRUCTURE}
+
+########## OUTPUT CALCULATIONS
+wb_command -surface-resample ${YAS} ${YSS} ${R_OUT}sphere.reg.surf.gii "BARYCENTRIC" ${R_OUT}anat.true.reg.surf.gii
+wb_command -surface-distortion ${OAS} ${R_OUT}anat.true.reg.surf.gii ${R_OUT}surfdist.func.gii
+
+######## MAXANAT
+wb_command -surface-sphere-project-unproject ${MAXANAT} ${OSS} ${R_OUT}sphere.reg.surf.gii ${R_OUT}sphere.ANATgrid.reg.surf.gii
+wb_command -surface-resample ${YAS} ${YSS} ${R_OUT}sphere.ANATgrid.reg.surf.gii "BARYCENTRIC" ${R_OUT}anat.ANATgrid.reg.surf.gii
+wb_command -surface-distortion ${R_OUT}${HEMISPHERE}OAS.ANATgrid.surf.gii ${R_OUT}anat.ANATgrid.reg.surf.gii ${R_OUT}surfdist.ANATgrid.func.gii
+
+######## MAXCP
+wb_command -surface-sphere-project-unproject ${MAXCP} ${OSS} ${R_OUT}sphere.reg.surf.gii ${R_OUT}sphere.CPgrid.reg.surf.gii
+wb_command -surface-resample ${YAS} ${YSS} ${R_OUT}sphere.CPgrid.reg.surf.gii "BARYCENTRIC" ${R_OUT}anat.CPgrid.reg.surf.gii
+wb_command -surface-distortion ${R_OUT}${HEMISPHERE}OAS.CPgrid.surf.gii ${R_OUT}anat.CPgrid.reg.surf.gii ${R_OUT}surfdist.CPgrid.func.gii
+EOF
+
+            echo "COMPLETED Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh"
+            echo "***************************************************************************"
+            echo "SUBMITING SCRIPTS"
+            echo "***************************************************************************"
+            sbatch ${MSM_F_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh
+            sbatch ${MSM_R_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh
+            echo
+    done
 done
