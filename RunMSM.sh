@@ -38,6 +38,9 @@ done
 echo "THE FOLLOWING SUBJECTS WILL BE PROCESSED: ${SUBJECTS[@]}"
 
 for SUBJECT in ${SUBJECTS[@]}; do
+    if [ -z ${SUBJECT} ]; then
+        continue
+    fi
     echo "***************************************************************************"
     echo "BEGIN PROCESSING FOR SUBJECT ${SUBJECT}"
     echo "***************************************************************************"
@@ -86,23 +89,24 @@ for SUBJECT in ${SUBJECTS[@]}; do
     LYC=${BL_DIR}/${BL_FULL_DATA}_Curvature.L.func.gii
     RYC=${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
 
-
-
     ########## BEGIN ITERATING OVER TIME POINTS
-    for OLDER_TIME in ${TIME_POINTS[@]}; do
+    for TIME_POINT in ${TIME_POINTS[@]}; do
+        if [ -z ${TIME_POINT} ]; then
+            continue
+        fi
         ########## DEFINE TIMEPOINT AS OLDER
-        echo "BEGIN REGISTRATION BETWEEN BL AND ${OLDER_TIME}"
+        echo "BEGIN REGISTRATION BETWEEN BL AND ${TIME_POINT}"
 
         ######## CREATE MSM OUTPUT DIRS
-        MSM_F_DIR=${DATASET}/${SUBJECT}_BL_to_${TIME_POINT}
+        MSM_F_DIR=${MSM_OUT}/${SUBJECT}_BL_to_${TIME_POINT}
         mkdir -p ${MSM_F_DIR}
-        MSM_R_DIR=${DATASET}/${SUBJECT}_${TIME_POINT}_to_BL
+        MSM_R_DIR=${MSM_OUT}/${SUBJECT}_${TIME_POINT}_to_BL
         mkdir -p ${MSM_R_DIR}
         
         ######## GET DATA LOCATION
-        DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_${OLDER_TIME}"/*)
+        DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_${TIME_POINT}"/*)
         DIRECTORIES=${DIRECTORIES[0]//*zz_templates/}
-        OLDER_DIR=${DATASET}/Subject_${SUBJECT}_${OLDER_TIME}/${DIRECTORIES[0]##*/}
+        OLDER_DIR=${DATASET}/Subject_${SUBJECT}_${TIME_POINT}/${DIRECTORIES[0]##*/}
         OLDER_FULL_DATA=$(basename "${OLDER_DIR}")
         OLDER_DIR=${OLDER_DIR}/${RESOLUTION_LOCATION}
         echo "OLDER DATA LOACTED AT ${OLDER_DIR}"
@@ -120,7 +124,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
 
         ########## PRE MSM-JOBS
         echo "***************************************************************************"
-        echo "BEGIN ${OLDER_TIME} PRE-MSM JOBS FOR SUBJECT ${SUBJECT}"
+        echo "BEGIN ${TIME_POINT} PRE-MSM JOBS FOR SUBJECT ${SUBJECT}"
         echo "***************************************************************************"
 
         ######## THICKNESS
@@ -250,5 +254,6 @@ EOF
             sbatch ${MSM_F_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh
             sbatch ${MSM_R_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh
             echo
+        done
     done
 done
