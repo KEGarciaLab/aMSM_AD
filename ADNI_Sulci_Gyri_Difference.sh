@@ -237,13 +237,13 @@ for SUBJECT in ${SUBJECTS}; do
     echo "COMPLETED, SAVED AT: ${RF_LLR_OUT}ANAT.K1.gyri.func.gii"
 
     ########## DIFFERENCE MAP
-    wb_command -metric-math '((K1_2-K1_1)*(K1_1<0))' ${LF_LR_OUT}diff.sulci.func.gii -var K1_1 ${LF_LR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 {LF_LR_OUT}ANAT.K1.CORRECTED.func.gii
+    wb_command -metric-math '((K1_2-K1_1)*(K1_1<0))' ${LF_LR_OUT}diff.sulci.func.gii -var K1_1 ${LF_LR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 ${LF_LR_OUT}ANAT.K1.CORRECTED.func.gii
     echo "COMPLETED, SAVED AT: ${LF_LR_OUT}diff.sulci.func.gii"
-    wb_command -metric-math '((K1_2-K1_1)*(K1_1>0))' ${LF_LR_OUT}diff.gyri.func.gii -var K1_1 ${LF_LR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 {LF_LR_OUT}ANAT.K1.CORRECTED.func.gii
+    wb_command -metric-math '((K1_2-K1_1)*(K1_1>0))' ${LF_LR_OUT}diff.gyri.func.gii -var K1_1 ${LF_LR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 ${LF_LR_OUT}ANAT.K1.CORRECTED.func.gii
     echo "COMPLETED, SAVED AT: ${LF_LR_OUT}diff.gyri.func.gii"
-    wb_command -metric-math '((K1_2-K1_1)*(K1_1<0))' ${LF_LLR_OUT}diff.sulci.func.gii -var K1_1 ${LF_LLR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 {LF_LLR_OUT}ANAT.K1.CORRECTED.func.gii
+    wb_command -metric-math '((K1_2-K1_1)*(K1_1<0))' ${LF_LLR_OUT}diff.sulci.func.gii -var K1_1 ${LF_LLR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 ${LF_LLR_OUT}ANAT.K1.CORRECTED.func.gii
     echo "COMPLETED, SAVED AT: ${LF_LLR_OUT}diff.sulci.func.gii"
-    wb_command -metric-math '((K1_2-K1_1)*(K1_1>0))' ${LF_LLR_OUT}diff.gyri.func.gii -var K1_1 ${LF_LLR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 {LF_LLR_OUT}ANAT.K1.CORRECTED.func.gii
+    wb_command -metric-math '((K1_2-K1_1)*(K1_1>0))' ${LF_LLR_OUT}diff.gyri.func.gii -var K1_1 ${LF_LLR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 ${LF_LLR_OUT}ANAT.K1.CORRECTED.func.gii
     echo "COMPLETED, SAVED AT: ${LF_LLR_OUT}diff.gyri.func.gii"
     wb_command -metric-math '((K1_2-K1_1)*(K1_1<0))' ${RF_LR_OUT}diff.sulci.func.gii -var K1_1 ${RF_LR_OUT}LYAS.K1.CORRECTED.func.gii -var K1_2 ${RF_LR_OUT}ANAT.K1.CORRECTED.func.gii
     echo "COMPLETED, SAVED AT: ${RF_LR_OUT}diff.sulci.func.gii"
