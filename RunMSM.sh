@@ -85,7 +85,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
     wb_command -cifti-separate ${BL_DIR}/${BL_FULL_DATA}.thickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/${BL_FULL_DATA}_Thickness.R.func.gii
 
     ######## CURVATURE
-    wb_command -cifti-separate ${BL_DIR}/${BL_FULL_DATA}.curvature.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHR ${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
+    wb_command -cifti-separate ${BL_DIR}/${BL_FULL_DATA}.curvature.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHT ${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
     LYC=${BL_DIR}/${BL_FULL_DATA}_Curvature.L.func.gii
     RYC=${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
 
@@ -131,7 +131,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
         wb_command -cifti-separate ${OLDER_DIR}/${OLDER_FULL_DATA}.thickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.R.func.gii
         
         ######## CURVATURE
-        wb_command -cifti-separate ${OLDER_DIR}/${OLDER_FULL_DATA}.curvature.${RESOLUTION}_fa_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHR ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
+        wb_command -cifti-separate ${OLDER_DIR}/${OLDER_FULL_DATA}.curvature.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
         LOC=${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.func.gii
         ROC=${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
 
