@@ -208,7 +208,7 @@ EOF
             echo "COMPLETED Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh"
 
             ######## REVERSE
-cat ${MSM_R_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh << EOF
+cat ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh << EOF
 #!/bin/bash
 
 #SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME2}
@@ -251,8 +251,8 @@ EOF
             echo "***************************************************************************"
             echo "SUBMITING SCRIPTS"
             echo "***************************************************************************"
-            sbatch ${MSM_F_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh
-            sbatch ${MSM_R_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh
+            sbatch ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh
+            sbatch ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh
             echo
         done
     done
