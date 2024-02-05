@@ -166,8 +166,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
             echo "BEGIN GENERATING MSM SCRIPTS"
             echo "***************************************************************************"
             ######## FORWARD
-            touch ${MSM_F_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh
-cat ${MSM_F_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh << EOF
+cat ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh << EOF
 #!/bin/bash
 
 #SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME2}
