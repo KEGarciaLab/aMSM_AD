@@ -35,8 +35,8 @@ for SUBJECT in ${SUBJECTS}; do
     SUBJECT_RF_LLR_YAS=${SUBJECT_RF_DIR}/${SUBJECT}_RF.RYAS.LLR.surf.gii
     SUBJECT_LF_LR_ANAT=${SUBJECT_LF_DIR}/${SUBJECT}_LF.forward.anat.LR.reg.surf.gii
     SUBJECT_LF_LLR_ANAT=${SUBJECT_LF_DIR}/${SUBJECT}_LF.forward.anat.LLR.reg.surf.gii
-    SUBJECT_RF_LR_ANAT=${SUBJECT_LF_DIR}/${SUBJECT}_RF.forward.anat.LR.reg.surf.gii
-    SUBJECT_RF_LLR_ANAT=${SUBJECT_LF_DIR}/${SUBJECT}_RF.forward.anat.LLR.reg.surf.gii
+    SUBJECT_RF_LR_ANAT=${SUBJECT_RF_DIR}/${SUBJECT}_RF.forward.anat.LR.reg.surf.gii
+    SUBJECT_RF_LLR_ANAT=${SUBJECT_RF_DIR}/${SUBJECT}_RF.forward.anat.LLR.reg.surf.gii
     LF_LR_OUT=${SUBJECT_LF_DIR}/${SUBJECT}_LF.LR.
     LF_LLR_OUT=${SUBJECT_LF_DIR}/${SUBJECT}_LF.LLR.
     RF_LR_OUT=${SUBJECT_RF_DIR}/${SUBJECT}_RF.LR.
