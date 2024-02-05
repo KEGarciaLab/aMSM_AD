@@ -1,7 +1,7 @@
 ########## DEFINE VARIABLES
 
 ######### DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING
-CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the log file so multiple can be run keeping data seperate
+CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the log file so multiple can be run keeping data separate
 LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs
 LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
 SUBJECTS=() # Array of subject numbers to be processed
@@ -82,10 +82,10 @@ for SUBJECT in ${SUBJECTS[@]}; do
     echo "***************************************************************************"
 
     ######## THICKNESS
-    wb_command -cifti-seperate ${BL_DIR}/${BL_FULL_DATA}.tickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/${BL_FULL_DATA}_Thickness.R.func.gii
+    wb_command -cifti-separate ${BL_DIR}/${BL_FULL_DATA}.tickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/${BL_FULL_DATA}_Thickness.R.func.gii
 
     ######## CURVATURE
-    wb_command -cifti-seperate ${BL_DIR}/${BL_FULL_DATA}.curvature.${RESOLUTION}_fa_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHR ${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
+    wb_command -cifti-separate ${BL_DIR}/${BL_FULL_DATA}.curvature.${RESOLUTION}_fa_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/${BL_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHR ${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
     LYC=${BL_DIR}/${BL_FULL_DATA}_Curvature.L.func.gii
     RYC=${BL_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
 
@@ -128,10 +128,10 @@ for SUBJECT in ${SUBJECTS[@]}; do
         echo "***************************************************************************"
 
         ######## THICKNESS
-        wb_command -cifti-seperate ${OLDER_DIR}/${OLDER_FULL_DATA}.thickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.R.func.gii
+        wb_command -cifti-separate ${OLDER_DIR}/${OLDER_FULL_DATA}.thickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.R.func.gii
         
         ######## CURVATURE
-        wb_command -cifti-seperate ${OLDER_DIR}/${OLDER_FULL_DATA}.curvature.${RESOLUTION}_fa_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHR ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
+        wb_command -cifti-separate ${OLDER_DIR}/${OLDER_FULL_DATA}.curvature.${RESOLUTION}_fa_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHR ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
         LOC=${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.func.gii
         ROC=${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
 
@@ -166,6 +166,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
             echo "BEGIN GENERATING MSM SCRIPTS"
             echo "***************************************************************************"
             ######## FORWARD
+            touch ${MSM_F_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh
 cat ${MSM_F_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh << EOF
 #!/bin/bash
 
