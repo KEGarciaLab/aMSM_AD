@@ -182,7 +182,7 @@ cat > ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh << EOF
 #SBATCH -A ${ACCOUNT}
 
 ########## RUN MSM
-msm --levels=${LEVELS} --conf=${MSMCONFIG} --inmesh=${YSS} -- refmesh=${OSS} --indata=${YC} --refdata=$OC --inanat=${YAS} --refanat=${OAS} --out=${F_OUT} --verbose
+msm --levels=${LEVELS} --conf=${MSMCONFIG} --inmesh=${YSS} --refmesh=${OSS} --indata=${YC} --refdata=$OC --inanat=${YAS} --refanat=${OAS} --out=${F_OUT} --verbose
 
 ########## SURFACE DISTORTION
 wb_command -surface-resample ${YAS} ${YSS} ${MAXANAT} "BARYCENTRIC" ${F_OUT}${HEMISPHERE}YAS.ANATgrid.surf.gii
@@ -224,7 +224,7 @@ cat > ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh << EOF
 #SBATCH -A ${ACCOUNT}
 
 ########## RUN MSM
-msm --levels=${LEVELS} --conf=${MSMCONFIG} --inmesh=${OSS} -- refmesh=${YSS} --indata=${OC} --refdata=$YC --inanat=${OAS} --refanat=${YAS} --out=${R_OUT} --verbose
+msm --levels=${LEVELS} --conf=${MSMCONFIG} --inmesh=${OSS} --refmesh=${YSS} --indata=${OC} --refdata=$YC --inanat=${OAS} --refanat=${YAS} --out=${R_OUT} --verbose
 
 ########## SURFACE DISTORTION
 wb_command -surface-resample ${OAS} ${OSS} ${MAXANAT} "BARYCENTRIC" ${R_OUT}${HEMISPHERE}OAS.ANATgrid.surf.gii
