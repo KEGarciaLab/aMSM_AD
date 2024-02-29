@@ -17,7 +17,7 @@ ACCOUNT="r00540" # Slurm allocation to use
 ########## BEGIN LOGGING
 #exec > >(tee -a "${LOG_OUTPUT}") 2>&1
 
-DIRECTORIES=(${DATASET}/*/)
+DIRECTORIES=($(ls ${DATASET}))
 
 for DIR in ${DIRECTORIES[@]}; do
     echo ${DIR}
