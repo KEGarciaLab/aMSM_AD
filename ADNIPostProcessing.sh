@@ -20,6 +20,10 @@ ACCOUNT="r00540" # Slurm allocation to use
 DIRECTORIES=($(ls ${DATASET}))
 
 for DIR in ${DIRECTORIES[@]}; do
-    echo ${DIR}
+    SUBJECT=$(echo ${DIR} | cut -d "_" -f 1)
+    TIME1=$(echo ${DIR} | cut -d "_" -f 2)
+    TIME2=$(echo ${DIR} | cut -d "_" -f 4)
+
+    echo "${SUBJECT}, ${TIME1}, ${TIME2}"
 done
 
