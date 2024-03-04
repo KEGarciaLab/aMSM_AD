@@ -31,10 +31,11 @@ for DIR in ${DIRECTORIES[@]}; do
 
     if [ ${TIME1} == "BL" ]; then
         echo ${SUBJECT_DIR}
-        FORWARD_DIRS+="${SUBJECT_DIR}"
+        FORWARD_DIRS+=${SUBJECT_DIR}
     fi
 done
 
 for DIR in ${FORWARD_DIRS[@]}; do
     echo ${DIR}
+    echo
 done
