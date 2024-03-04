@@ -27,12 +27,12 @@
   <p align="center">
     Processing scripts for aMSM analysis of Alzheimer's Disease data
     <br />
-    <a href="https://github.iu.edu/GarciaLab/aMSM_AD"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/KEGarciaLab/aMSM_AD"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.iu.edu/GarciaLab/aMSM_AD/issues">Report Bug</a>
+    <a href="https://github.com/KEGarciaLab/aMSM_AD/issues">Report Bug</a>
     ·
-    <a href="https://github.iu.edu/GarciaLab/aMSM_AD/issues">Request Feature</a>
+    <a href="https://github.com/KEGarciaLab/aMSM_AD/issues">Request Feature</a>
   </p>
 </div>
 
@@ -113,7 +113,7 @@ Once you have installed the verious tools as outline in the previous step, you a
 - [ ] Feature 3
     - [ ] Nested Feature
 
-See the [open issues](https://github.iu.edu/GarciaLab/aMSM_AD/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/KEGarciaLab/aMSM_AD/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -121,7 +121,7 @@ See the [open issues](https://github.iu.edu/GarciaLab/aMSM_AD/issues) for a full
 <!-- CONTACT -->
 ## Contact
 
-Project Link: [https://github.iu.edu/GarciaLab/aMSM_AD](https://github.iu.edu/GarciaLab/aMSM_AD)
+Project Link: [https://github.com/KEGarciaLab/aMSM_AD](https://github.com/KEGarciaLab/aMSM_AD)
 
 Project Lead: [Dr. Kara Garcia](mailto:karagarc@iu.edu?subject=[GitHub]aMSM_AD)
 
@@ -142,16 +142,16 @@ Script Manager: [Sammy Rigdon IV](mailto:srigdon5@iu.edu?subject=[GitHub]aMSM_AD
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/GarciaLab/aMSM_AD.svg?style=for-the-badge
-[contributors-url]: https://github.iu.edu/GarciaLab/aMSM_AD/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/GarciaLab/aMSM_AD.svg?style=for-the-badge
-[forks-url]: https://github.iu.edu/GarciaLab/aMSM_AD/network/members
-[stars-shield]: https://img.shields.io/github/stars/GarciaLab/aMSM_AD.svg?style=for-the-badge
-[stars-url]: https://github.iu.edu/GarciaLab/aMSM_AD/stargazers
-[issues-shield]: https://img.shields.io/github/issues/GarciaLab/aMSM_AD.svg?style=for-the-badge
-[issues-url]: https://github.iu.edu/GarciaLab/aMSM_AD/issues
-[license-shield]: https://img.shields.io/github/license/GarciaLab/aMSM_AD.svg?style=for-the-badge
-[license-url]: https://github.iu.edu/GarciaLab/aMSM_AD/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
+[contributors-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
+[forks-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/network/members
+[stars-shield]: https://img.shields.io/github/stars/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
+[stars-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/stargazers
+[issues-shield]: https://img.shields.io/github/issues/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
+[issues-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/issues
+[license-shield]: https://img.shields.io/github/license/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
+[license-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
