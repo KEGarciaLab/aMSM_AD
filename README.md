@@ -123,9 +123,9 @@ See the [open issues](https://github.com/KEGarciaLab/aMSM_AD/issues) for a full 
 
 Project Link: [https://github.com/KEGarciaLab/aMSM_AD](https://github.com/KEGarciaLab/aMSM_AD)
 
-Project Lead: [Dr. Kara Garcia](mailto:karagarc@iu.edu?subject=[GitHub]aMSM_AD)
+Project Lead: [Dr. Kara Garcia](mailto:karagarc@?subject=[GitHub]aMSM_AD)
 
-Script Manager: [Sammy Rigdon IV](mailto:srigdon5@iu.edu?subject=[GitHub]aMSM_AD)
+Script Manager: [Sammy Rigdon IV](mailto:srigdon5@?subject=[GitHub]aMSM_AD)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -143,15 +143,15 @@ Script Manager: [Sammy Rigdon IV](mailto:srigdon5@iu.edu?subject=[GitHub]aMSM_AD
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
-[contributors-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/graphs/contributors
+[contributors-url]: https://github.com/KEGarciaLab/aMSM_AD/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
-[forks-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/network/members
+[forks-url]: https://github.com/KEGarciaLab/aMSM_AD/network/members
 [stars-shield]: https://img.shields.io/github/stars/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
-[stars-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/stargazers
+[stars-url]: https://github.com/KEGarciaLab/aMSM_AD/stargazers
 [issues-shield]: https://img.shields.io/github/issues/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
-[issues-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/issues
+[issues-url]: https://github.com/KEGarciaLab/aMSM_AD/issues
 [license-shield]: https://img.shields.io/github/license/KEGarciaLab/aMSM_AD.svg?style=for-the-badge
-[license-url]: https://github.iu.edu/KEGarciaLab/aMSM_AD/blob/master/LICENSE.txt
+[license-url]: https://github.com/KEGarciaLab/aMSM_AD/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
