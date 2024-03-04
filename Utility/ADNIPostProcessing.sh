@@ -21,12 +21,12 @@ DIRECTORIES=($(ls ${DATASET}))
 echo "***************************************************************************"
 echo "FIND ALL SUBJECT DIRECTORIES"
 echo "***************************************************************************"
+echo "DIRECTORIES LOCATED. RELEVANT DIRECTORES:"
 for DIR in ${DIRECTORIES[@]}; do
     SUBJECT_DIR=${DATASET}/${DIR}
     SUBJECT=$(echo ${DIR} | cut -d "_" -f 1)
     TIME1=$(echo ${DIR} | cut -d "_" -f 2)
     TIME2=$(echo ${DIR} | cut -d "_" -f 4)
-    echo "DIRECTORIES LOCATED. RELEVANT DIRECTORES:"
 
     if [ ${TIME1} == "BL" ]; then
         echo ${SUBJECT_DIR}
