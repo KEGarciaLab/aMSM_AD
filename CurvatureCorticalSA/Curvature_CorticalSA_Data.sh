@@ -57,8 +57,8 @@ for SUBJECT in ${SUBJECTS}; do
         echo "Creating Output sub dir ${OUTPUT_DIR}/${PREFIX}_${SUBJECT}_Image_${IMAGE_NUMBER}"
         OUTPUT_SUB_DIR=${OUTPUT_DIR}/${PREFIX}_${SUBJECT}_Image_${IMAGE_NUMBER}
         mkdir ${OUTPUT_SUB_DIR}
-        OUTPUT_R="${PREFIX}_${SUBJECT}_Image_${IMAGE_NUMBER}.R." # prepend to the putput of right hemisphere
-        OUTPUT_L="${PREFIX}_${SUBJECT}_Image_${IMAGE_NUMBER}.L." # prepend to the putput of right hemisphere
+        OUTPUT_R="${PREFIX}_${SUBJECT}_Image_${IMAGE_NUMBER}.R." # prepend to the output of right hemisphere
+        OUTPUT_L="${PREFIX}_${SUBJECT}_Image_${IMAGE_NUMBER}.L." # prepend to the output of right hemisphere
 
         # midthickness files to be processed
         echo
