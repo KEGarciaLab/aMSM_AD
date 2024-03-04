@@ -37,8 +37,4 @@ done
 
 for DIR in ${FORWARD_DIRS[@]}; do
     echo ${DIR}
-
-
-
-
 done
