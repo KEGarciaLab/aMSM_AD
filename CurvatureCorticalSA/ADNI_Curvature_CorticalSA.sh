@@ -9,6 +9,7 @@ LOG_OUTPUT=${HOME}/Scripts/MyScripts/logs/$(basename "$0")_${CURRENT_DATETIME}.l
 
 ###### CAN BE CHANGED BY USER ONLY CHANGE THE PARTS THAT ARE NOT IN {} UNLESS YOU KNOW WHAT YOU ARE DOING
 DATASET=/N/project/aMSM_AD/ADNI/HCP/MSM # Folder containing subject data
+OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # output location for script
 OUTPUT=${OUTPUT_DIR}/AD_cortical_thinning_${CURRENT_DATETIME}.csv # name and location of csv output file
 
 ########## BEGIN LOGGING
