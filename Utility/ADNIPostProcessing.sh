@@ -18,10 +18,10 @@ exec > >(tee -a "${LOG_OUTPUT}") 2>&1
 
 DIRECTORIES=($(ls ${DATASET}))
 
+echo "***************************************************************************"
+echo "FIND ALL SUBJECT DIRECTORIES"
+echo "***************************************************************************"
 for DIR in ${DIRECTORIES[@]}; do
-    echo "***************************************************************************"
-    echo "FIND ALL SUBJECT DIRECTORIES"
-    echo "***************************************************************************"
     SUBJECT_DIR=${DATASET}/${DIR}
     SUBJECT=$(echo ${DIR} | cut -d "_" -f 1)
     TIME1=$(echo ${DIR} | cut -d "_" -f 2)
