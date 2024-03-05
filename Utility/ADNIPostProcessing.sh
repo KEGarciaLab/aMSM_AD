@@ -48,8 +48,8 @@ for DIR in ${FORWARD_DIRS[@]}; do
     echo "***************************************************************************"
     L_YOUNGER_SURFACE=${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.CPgrid.surf.gii
     R_YOUNGER_SURFACE=${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.CPgrid.surf.gii
-    L_OLDER_SURFACE=${SUBJECT}_L_${TIME1}-${TIME2}.anat.CPGrid.reg.surf.gii
-    R_OLDER_SURFACE=${SUBJECT}_R_${TIME1}-${TIME2}.anat.CPGrid.reg.surf.gii
+    L_OLDER_SURFACE=${SUBJECT}_L_${TIME1}-${TIME2}.anat.CPgrid.reg.surf.gii
+    R_OLDER_SURFACE=${SUBJECT}_R_${TIME1}-${TIME2}.anat.CPgrid.reg.surf.gii
     L_SURFACE_MAP=${SUBJECT}_L_${TIME1}-${TIME2}.surfdist.CPgrid.func.gii
     R_SURFACE_MAP=${SUBJECT}_R_${TIME1}-${TIME2}.surfdist.CPgrid.func.gii
     SPEC_FILE=${DIR}/${SUBJECT}_${TIME1}-${TIME2}.spec
