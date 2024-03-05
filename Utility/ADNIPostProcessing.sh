@@ -7,11 +7,13 @@ LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and
 
 ######### CHANGE AS NEEDED
 DATASET=/N/project/aMSM_AD/ADNI/HCP/MSM # Folder containing subject data
+IMAGE_DIR=${DATASET}/POST_PROCESSING
 BASE_SCENE=${DATASET}/base.scene # Master scene file location
 ACCOUNT="r00540" # Slurm allocation to use
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
+mkdir -p ${IMAGE_DIR}
 
 ########## BEGIN LOGGING
 exec > >(tee -a "${LOG_OUTPUT}") 2>&1
@@ -71,6 +73,7 @@ for DIR in ${FORWARD_DIRS[@]}; do
     wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${DIR}/${R_YOUNGER_SURFACE}
     wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${DIR}/${R_OLDER_SURFACE}
     wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${DIR}/${R_SURFACE_MAP}
+    echo "COMPLETE. SAVED AT: ${SPEC_FILE}"
 
     ########## EDIT SCENE FILE
     echo "***************************************************************************"
@@ -86,4 +89,10 @@ for DIR in ${FORWARD_DIRS[@]}; do
     wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png 1024 512
     echo "COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
     
+    ########## COPY IMAGE TO POSTPROCESSING FOLDER
+    echo "***************************************************************************"
+    echo "COPY IMAGE"
+    echo "***************************************************************************"
+    cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png ${IMAGE_DIR}
+    echo "COMPLETE. SAVED AT: ${IMAGE_DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
 done
