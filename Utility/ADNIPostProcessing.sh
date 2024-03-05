@@ -42,8 +42,8 @@ for DIR in ${FORWARD_DIRS[@]}; do
     TIME2=$(echo ${DIR_NAME} | cut -d "_" -f 4)
 
     ########## GET ALL FILES
-    L_YOUNGER_SURFACE=
-    R_YOUNGER_SURFACE
+    #L_YOUNGER_SURFACE=
+    #R_YOUNGER_SURFACE=
     ########## ADD TO SPEC FILE
 
     ########## EDIT SCENE FILE
