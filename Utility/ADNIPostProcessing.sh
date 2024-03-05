@@ -16,6 +16,7 @@ mkdir -p ${LOG_OUTPUT_DIR}
 ########## BEGIN LOGGING
 exec > >(tee -a "${LOG_OUTPUT}") 2>&1
 
+########## FIND SUBJECTS
 DIRECTORIES=($(ls ${DATASET}))
 FORWARD_DIRS=()
 
@@ -25,9 +26,6 @@ echo "**************************************************************************
 echo "DIRECTORIES LOCATED. RELEVANT DIRECTORES:"
 for DIR in ${DIRECTORIES[@]}; do
     SUBJECT_DIR=${DATASET}/${DIR}
-    SUBJECT=$(echo ${DIR} | cut -d "_" -f 1)
-    TIME1=$(echo ${DIR} | cut -d "_" -f 2)
-    TIME2=$(echo ${DIR} | cut -d "_" -f 4)
 
     if [ ${TIME1} == "BL" ]; then
         echo ${SUBJECT_DIR}
@@ -35,6 +33,20 @@ for DIR in ${DIRECTORIES[@]}; do
     fi
 done
 
+########## BEGIN POST PROCESSING
 for DIR in ${FORWARD_DIRS[@]}; do
-    echo ${DIR}
+    ########## SLICE OUT INFO
+    DIR_NAME=$(basename "/N/project/aMSM_AD/ADNI/HCP/MSM/0072_BL_to_m06")
+    SUBJECT=$(echo ${DIR_NAME} | cut -d "_" -f 1)
+    TIME1=$(echo ${DIR_NAME} | cut -d "_" -f 2)
+    TIME2=$(echo ${DIR_NAME} | cut -d "_" -f 4)
+
+    ########## GET ALL FILES
+    L_YOUNGER_SURFACE=
+    R_YOUNGER_SURFACE
+    ########## ADD TO SPEC FILE
+
+    ########## EDIT SCENE FILE
+
+    ########## GENERATE IMAGE
 done
