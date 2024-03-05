@@ -46,12 +46,12 @@ for DIR in ${FORWARD_DIRS[@]}; do
     echo "***************************************************************************"
     echo "FIND ALL SUBJECT DIRECTORIES"
     echo "***************************************************************************"
-    L_YOUNGER_SURFACE=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.CPgrid.surf.gii
-    R_YOUNGER_SURFACE=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.CPgrid.surf.gii
-    L_OLDER_SURFACE=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.anat.CPGrid.reg.surf.gii
-    R_OLDER_SURFACE=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.CPGrid.reg.surf.gii
-    L_SURFACE_MAP=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.surfdist.CPgrid.func.gii
-    R_SURFACE_MAP=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.surfdist.CPgrid.func.gii
+    L_YOUNGER_SURFACE=${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.CPgrid.surf.gii
+    R_YOUNGER_SURFACE=${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.CPgrid.surf.gii
+    L_OLDER_SURFACE=${SUBJECT}_L_${TIME1}-${TIME2}.anat.CPGrid.reg.surf.gii
+    R_OLDER_SURFACE=${SUBJECT}_R_${TIME1}-${TIME2}.anat.CPGrid.reg.surf.gii
+    L_SURFACE_MAP=${SUBJECT}_L_${TIME1}-${TIME2}.surfdist.CPgrid.func.gii
+    R_SURFACE_MAP=${SUBJECT}_R_${TIME1}-${TIME2}.surfdist.CPgrid.func.gii
     SPEC_FILE=${DIR}/${SUBJECT}_${TIME1}-${TIME2}.spec
     echo "FILES RETRIEVED:"
     echo ${L_YOUNGER_SURFACE}
@@ -65,12 +65,12 @@ for DIR in ${FORWARD_DIRS[@]}; do
     echo "***************************************************************************"
     echo "ADD TO SPEC FILE"
     echo "***************************************************************************"
-    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_LEFT ${L_YOUNGER_SURFACE}
-    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_LEFT ${L_OLDER_SURFACE}
-    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_LEFT ${L_SURFACE_MAP}
-    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${R_YOUNGER_SURFACE}
-    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${R_OLDER_SURFACE}
-    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${R_SURFACE_MAP}
+    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_LEFT ${DIR}/${L_YOUNGER_SURFACE}
+    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_LEFT ${DIR}/${L_OLDER_SURFACE}
+    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_LEFT ${DIR}/${L_SURFACE_MAP}
+    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${DIR}/${R_YOUNGER_SURFACE}
+    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${DIR}/${R_OLDER_SURFACE}
+    wb_command -add-to-spec-file ${SPEC_FILE} CORTEX_RIGHT ${DIR}/${R_SURFACE_MAP}
 
     ########## EDIT SCENE FILE
     echo "***************************************************************************"
