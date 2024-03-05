@@ -2,7 +2,7 @@
 
 ######### DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the log file so multiple can be run keeping data separate
-LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs
+LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs #Directory for log file
 LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
 
 ######### CHANGE AS NEEDED
