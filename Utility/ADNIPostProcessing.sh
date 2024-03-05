@@ -26,8 +26,9 @@ echo "**************************************************************************
 echo "DIRECTORIES LOCATED. RELEVANT DIRECTORES:"
 for DIR in ${DIRECTORIES[@]}; do
     SUBJECT_DIR=${DATASET}/${DIR}
+    TIME1=$(echo ${DIR} | cut -d "_" -f 2)
 
-    if [ $"{TIME1}" == "BL" ]; then
+    if [ ${TIME1} == "BL" ]; then
         echo ${SUBJECT_DIR}
         FORWARD_DIRS+=(${SUBJECT_DIR})
     fi
