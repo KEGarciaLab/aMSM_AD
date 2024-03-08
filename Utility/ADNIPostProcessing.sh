@@ -86,7 +86,8 @@ for DIR in ${FORWARD_DIRS[@]}; do
     echo "***************************************************************************"
     echo "GENERATE IMAGE"
     echo "***************************************************************************"
-    wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png 1024 1024
+    wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png 1024 512
+    wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png 1024 1024
     echo "COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
     
     ########## COPY IMAGE TO POSTPROCESSING FOLDER
@@ -94,5 +95,6 @@ for DIR in ${FORWARD_DIRS[@]}; do
     echo "COPY IMAGE"
     echo "***************************************************************************"
     cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png ${IMAGE_DIR}
+    cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png ${IMAGE_DIR}
     echo "COMPLETE. SAVED AT: ${IMAGE_DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
 done
