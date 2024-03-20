@@ -7,15 +7,14 @@ LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and
 
 ######### CHANGE AS NEEDED
 DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION # Folder containing subject data
-CIFTIFY_OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for script results
-SCRIPT_OUTPUT_DIR=${CIFTIFY_OUTPUT_DIR}/Scripts # Output location for the generated scripts
-SUBJECT_TXT=${HOME}/Scripts/MyScripts/Output/Ciftify_Subject_List.sh/subject_numbers_2024-01-10_07-29-07.txt #List of subjects to run, ensure you have ran Ciftify_Subject_List.sh and are pointng to the correct file
+CIFTIFY_OUTPUT_DIR=/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED # ouptut location for script results
+SCRIPT_OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # Output location for the generated scripts
+SUBJECT_TXT=${HOME}/Scripts/MyScripts/Output/Ciftify_Subject_List.sh/subject_numbers_2024-03-20_01-47-30.txt #List of subjects to run, ensure you have ran Ciftify_Subject_List.sh and are pointng to the correct file
 ACCOUNT="r00540" # Slurm allocation to use
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
 mkdir -p ${SCRIPT_OUTPUT_DIR}
-mkdir -p ${CIFTIFY_OUTPUT_DIR}
 
 ########## BEGIN LOGGING
 exec > >(tee -a "${LOG_OUTPUT}") 2>&1
