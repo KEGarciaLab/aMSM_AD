@@ -52,8 +52,8 @@ for DIR in ${SUBJECT_DIRS[@]}; do
 
 #SBATCH -J recon_all_Subject_${SUBJECT}_${TIME_POINT}
 #SBATCH -p general
-#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/Subject_${SUBJECT}_${TIME_POINT}_%j.txt
-#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/Subject_${SUBJECT}_${TIME_POINT}_%j_error.txt
+#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/%j_Subject_${SUBJECT}_${TIME_POINT}.txt
+#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/%j_Subject_${SUBJECT}_${TIME_POINT}_error.txt
 #SBATCH --mail-type=fail
 #SBATCH --mail-user=sarigdon@iu.edu
 #SBATCH --nodes=1
