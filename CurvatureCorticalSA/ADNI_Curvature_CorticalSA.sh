@@ -458,10 +458,41 @@ for DIR in ${DIRECTORIES[@]}; do
         echo "ANATGRID RIGHT OLDER MEAN SULCI=${ANAT_RO_MEAN_SULCI}"
 
         ########## K2 VARIANCE
+        echo
+        echo "CALCULATING K2 VARIANCE"
         ###### CPGRID YOUNGER
-        ###### CPGRID OLDER
-        ###### ANATGRID YOUNGER
-        ###### ANATGRID OLDER
-    fi
+        CP_LY_K2_VARIANCE=$(wb_command -metric-stats ${L_CP_OUT}${TIME1}.K2.func.gii -reduce VARIANCE)
+        CP_RY_K2_VARIANCE=$(wb_command -metric-stats ${R_CP_OUT}${TIME1}.K2.func.gii -reduce VARIANCE)
+        echo "CPGRID LEFT YOUNGER K2 VARIANCE=${CP_LY_K2_VARIANCE}"
+        echo "CPGRID RIGHT YOUNGER K2 VARIANCE=${CP_RY_K2_VARIANCE}"
 
+        ###### CPGRID OLDER
+        CP_LO_K2_VARIANCE=$(wb_command -metric-stats ${L_CP_OUT}${TIME2}.K2.func.gii -reduce VARIANCE)
+        CP_RO_K2_VARIANCE=$(wb_command -metric-stats ${R_CP_OUT}${TIME2}.K2.func.gii -reduce VARIANCE)
+        echo "CPGRID LEFT OLDER K2 VARIANCE=${CP_LO_K2_VARIANCE}"
+        echo "CPGRID RIGHT OLDER K2 VARIANCE=${CP_RO_K2_VARIANCE}"
+
+        ###### ANATGRID YOUNGER
+        ANAT_LY_K2_VARIANCE=$(wb_command -metric-stats ${L_ANAT_OUT}${TIME1}.K2.func.gii -reduce VARIANCE)
+        ANAT_RY_K2_VARIANCE=$(wb_command -metric-stats ${R_ANAT_OUT}${TIME1}.K2.func.gii -reduce VARIANCE)
+        echo "ANATGRID LEFT YOUNGER K2 VARIANCE=${ANAT_LY_K2_VARIANCE}"
+        echo "ANATGRID RIGHT YOUNGER K2 VARIANCE=${ANAT_RY_K2_VARIANCE}"
+
+        ###### ANATGRID OLDER
+        ANAT_LO_K2_VARIANCE=$(wb_command -metric-stats ${L_ANAT_OUT}${TIME2}.K2.func.gii -reduce VARIANCE)
+        ANAT_RO_K2_VARIANCE=$(wb_command -metric-stats ${R_ANAT_OUT}${TIME2}.K2.func.gii -reduce VARIANCE)
+        echo "ANATGRID LEFT OLDER K2 VARIANCE=${ANAT_LO_K2_VARIANCE}"
+        echo "ANATGRID RIGHT OLDER K2 VARIANCE=${ANAT_RO_K2_VARIANCE}"
+
+        ########## ADD DATA TO CSV
+        CP_YOUNGER_DATA="${SUBJECT},${TIME1},${CP_RY_CORTICAL_SA},${CP_LY_CORTICAL_SA},${CP_RY_MEAN_GYRI},${CP_LY_MEAN_GYRI},${CP_RY_MEAN_SULCI},${CP_LY_MEAN_SULCI},${CP_RY_K2_VARIANCE},${CP_LY_K2_VARIANCE}"
+        CP_OLDER_DATA="${SUBJECT},${TIME2},${CP_RO_CORTICAL_SA},${CP_LO_CORTICAL_SA},${CP_RO_MEAN_GYRI},${CP_LO_MEAN_GYRI},${CP_RO_MEAN_SULCI},${CP_LO_MEAN_SULCI},${CP_RO_K2_VARIANCE},${CP_LO_K2_VARIANCE}"
+        ANAT_YOUNGER_DATA="${SUBJECT},${TIME1},${ANAT_RY_CORTICAL_SA},${ANAT_LY_CORTICAL_SA},${ANAT_RY_MEAN_GYRI},${ANAT_LY_MEAN_GYRI},${ANAT_RY_MEAN_SULCI},${ANAT_LY_MEAN_SULCI},${ANAT_RY_K2_VARIANCE},${ANAT_LY_K2_VARIANCE}"
+        ANAT_OLDER_DATA="${SUBJECT},${TIME2},${ANAT_RO_CORTICAL_SA},${ANAT_LO_CORTICAL_SA},${ANAT_RO_MEAN_GYRI},${ANAT_LO_MEAN_GYRI},${ANAT_RO_MEAN_SULCI},${ANAT_LO_MEAN_SULCI},${ANAT_RO_K2_VARIANCE},${ANAT_LO_K2_VARIANCE}"
+
+        echo "${CP_YOUNGER_DATA}">>"${CP_OUTPUT}"
+        echo "${CP_OLDER_DATA}">>"${CP_OUTPUT}"
+        echo "${ANAT_YOUNGER_DATA}">>"${ANAT_OUTPUT}"
+        echo "${ANAT_OLDER_DATA}">>"${ANAT_OUTPUT}"
+    fi
 done
