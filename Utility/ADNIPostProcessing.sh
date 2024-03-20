@@ -91,7 +91,12 @@ for DIR in ${FORWARD_DIRS[@]}; do
     wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png 1024 512
     wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png 1024 512
     wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png 1024 1024
+    chmod 777 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png
+    chmod 777 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png
+    chmod 777 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png
     echo "COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
+    echo "COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png"
+    echo "COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png"
     
     ########## COPY IMAGE TO POSTPROCESSING FOLDER
     echo "***************************************************************************"
@@ -101,4 +106,6 @@ for DIR in ${FORWARD_DIRS[@]}; do
     ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png 1024 512 ${IMAGE_DIR}
     cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png ${IMAGE_DIR}
     echo "COMPLETE. SAVED AT: ${IMAGE_DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
+    echo "COMPLETE. SAVED AT: ${IMAGE_DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png"
+    echo "COMPLETE. SAVED AT: ${IMAGE_DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png"
 done
