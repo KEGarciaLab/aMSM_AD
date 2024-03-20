@@ -131,7 +131,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
         wb_command -cifti-separate ${OLDER_DIR}/${OLDER_FULL_DATA}.thickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/${OLDER_FULL_DATA}_Thickness.R.func.gii
         
         ######## CURVATURE
-        wb_command -cifti-separate ${OLDER_DIR}/${OLDER_FULL_DATA}.curvature.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.fun.gii -metric CORTEX_RIGHT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
+        wb_command -cifti-separate ${OLDER_DIR}/${OLDER_FULL_DATA}.curvature.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
         LOC=${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.L.func.gii
         ROC=${OLDER_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
 
@@ -169,10 +169,10 @@ for SUBJECT in ${SUBJECTS[@]}; do
 cat > ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_BL-${TIME_POINT}.sh << EOF
 #!/bin/bash
 
-#SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME2}
+#SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME_POINT}
 #SBATCH -p general
-#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/MSM_${SUBJECT}_BL-${TIME_POINT}_%j.txt
-#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/MSM_${SUBJECT}_BL-${TIME_POINT}_%j_error.txt
+#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/%j_MSM_${SUBJECT}_BL-${TIME_POINT}.txt
+#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/%j_MSM_${SUBJECT}_BL-${TIME_POINT}_error.txt
 #SBATCH --mail-type=fail
 #SBATCH --mail-user=sarigdon@iu.edu
 #SBATCH --nodes=1
@@ -211,10 +211,10 @@ EOF
 cat > ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh << EOF
 #!/bin/bash
 
-#SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME2}
+#SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME_POINT}
 #SBATCH -p general
-#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/MSM_${SUBJECT}_${TIME_POINT}-BL_%j.txt
-#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/MSM_${SUBJECT}_${TIME_POINT}-BL_%j_error.txt
+#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/%j_MSM_${SUBJECT}_${TIME_POINT}-BL.txt
+#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/%j_MSM_${SUBJECT}_${TIME_POINT}-BL_error.txt
 #SBATCH --mail-type=fail
 #SBATCH --mail-user=sarigdon@iu.edu
 #SBATCH --nodes=1

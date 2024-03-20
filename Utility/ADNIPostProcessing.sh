@@ -7,8 +7,7 @@ LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and
 
 ######### CHANGE AS NEEDED
 DATASET=/N/project/aMSM_AD/ADNI/HCP/MSM # Folder containing subject data
-IMAGE_DIR=${DATASET}/POST_PROCESSING
-BASE_SCENE=${DATASET}/base.scene # Master scene file location
+IMAGE_DIR=/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING # Location to copy all images to
 ACCOUNT="r00540" # Slurm allocation to use
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
@@ -79,8 +78,8 @@ for DIR in ${FORWARD_DIRS[@]}; do
     echo "***************************************************************************"
     echo "EDIT BASE SCENES"
     echo "***************************************************************************"
-    sed "s!SURFACE_PATH!${DIR}!g;s!L_YOUNGER_SURFACE!${L_YOUNGER_SURFACE}!g;s!L_OLDER_SURFACE!${L_OLDER_SURFACE}!g;s!L_SURFACE_MAP!${L_SURFACE_MAP}!g;s!R_YOUNGER_SURFACE!${R_YOUNGER_SURFACE}!g;s!R_OLDER_SURFACE!${R_OLDER_SURFACE}!g;s!R_SURFACE_MAP!${R_SURFACE_MAP}!g;" ${DATASET}/base.scene > ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene
-    sed "s!SURFACE_PATH!${DIR}!g;s!L_YOUNGER_SURFACE!${L_YOUNGER_SURFACE}!g;s!L_OLDER_SURFACE!${L_OLDER_SURFACE}!g;s!L_SURFACE_MAP!${L_SURFACE_MAP}!g;s!R_YOUNGER_SURFACE!${R_YOUNGER_SURFACE}!g;s!R_OLDER_SURFACE!${R_OLDER_SURFACE}!g;s!R_SURFACE_MAP!${R_SURFACE_MAP}!g;" ${DATASET}/base_no-scale.scene > ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.scene
+    sed "s!SURFACE_PATH!${DIR}!g;s!L_YOUNGER_SURFACE!${L_YOUNGER_SURFACE}!g;s!L_OLDER_SURFACE!${L_OLDER_SURFACE}!g;s!L_SURFACE_MAP!${L_SURFACE_MAP}!g;s!R_YOUNGER_SURFACE!${R_YOUNGER_SURFACE}!g;s!R_OLDER_SURFACE!${R_OLDER_SURFACE}!g;s!R_SURFACE_MAP!${R_SURFACE_MAP}!g;" ${IMAGE_DIR}/base.scene > ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene
+    sed "s!SURFACE_PATH!${DIR}!g;s!L_YOUNGER_SURFACE!${L_YOUNGER_SURFACE}!g;s!L_OLDER_SURFACE!${L_OLDER_SURFACE}!g;s!L_SURFACE_MAP!${L_SURFACE_MAP}!g;s!R_YOUNGER_SURFACE!${R_YOUNGER_SURFACE}!g;s!R_OLDER_SURFACE!${R_OLDER_SURFACE}!g;s!R_SURFACE_MAP!${R_SURFACE_MAP}!g;" ${IMAGE_DIR}/base_no-scale.scene > ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.scene
     echo "SCENE WITH SCALE COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene"
     echo "SCENE WITHOUR SCALE COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.scene"
 
