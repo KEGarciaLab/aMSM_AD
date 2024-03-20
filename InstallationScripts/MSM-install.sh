@@ -18,7 +18,7 @@ cat >> .bash_profile <<"EOF"
 
 export FSLDEVDIR=$HOME/FSL_Dev
 
-export FSLDIR=/N/soft/rhel6/fsl/5.0.10
+export FSLDIR=/N/soft/rhel7/fsl/5.0.10
 ${FSLDEVDIR}/fslconf/fsl.sh
 
 export FSLCONFDIR=$FSLDIR/config
