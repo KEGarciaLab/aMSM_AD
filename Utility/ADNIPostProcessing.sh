@@ -77,16 +77,19 @@ for DIR in ${FORWARD_DIRS[@]}; do
 
     ########## EDIT SCENE FILE
     echo "***************************************************************************"
-    echo "EDIT BASE SCENE"
+    echo "EDIT BASE SCENES"
     echo "***************************************************************************"
     sed "s!SURFACE_PATH!${DIR}!g;s!L_YOUNGER_SURFACE!${L_YOUNGER_SURFACE}!g;s!L_OLDER_SURFACE!${L_OLDER_SURFACE}!g;s!L_SURFACE_MAP!${L_SURFACE_MAP}!g;s!R_YOUNGER_SURFACE!${R_YOUNGER_SURFACE}!g;s!R_OLDER_SURFACE!${R_OLDER_SURFACE}!g;s!R_SURFACE_MAP!${R_SURFACE_MAP}!g;" ${DATASET}/base.scene > ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene
-    echo "COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene"
+    sed "s!SURFACE_PATH!${DIR}!g;s!L_YOUNGER_SURFACE!${L_YOUNGER_SURFACE}!g;s!L_OLDER_SURFACE!${L_OLDER_SURFACE}!g;s!L_SURFACE_MAP!${L_SURFACE_MAP}!g;s!R_YOUNGER_SURFACE!${R_YOUNGER_SURFACE}!g;s!R_OLDER_SURFACE!${R_OLDER_SURFACE}!g;s!R_SURFACE_MAP!${R_SURFACE_MAP}!g;" ${DATASET}/base_no-scale.scene > ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.scene
+    echo "SCENE WITH SCALE COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene"
+    echo "SCENE WITHOUR SCALE COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.scene
 
     ########## GENERATE IMAGE
     echo "***************************************************************************"
     echo "GENERATE IMAGE"
     echo "***************************************************************************"
     wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png 1024 512
+    wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png 1024 512
     wb_command -show-scene ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.scene 1 ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png 1024 1024
     echo "COMPLETE. SAVED AT: ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
     
@@ -95,6 +98,7 @@ for DIR in ${FORWARD_DIRS[@]}; do
     echo "COPY IMAGE"
     echo "***************************************************************************"
     cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png ${IMAGE_DIR}
+    ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png 1024 512 ${IMAGE_DIR}
     cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png ${IMAGE_DIR}
     echo "COMPLETE. SAVED AT: ${IMAGE_DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
 done
