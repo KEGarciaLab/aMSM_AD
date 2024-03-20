@@ -103,7 +103,7 @@ for DIR in ${FORWARD_DIRS[@]}; do
     echo "COPY IMAGE"
     echo "***************************************************************************"
     cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}.png ${IMAGE_DIR}
-    ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png 1024 512 ${IMAGE_DIR}
+    cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png 1024 512 ${IMAGE_DIR}
     cp ${DIR}/${SUBJECT}_${TIME1}-${TIME2}-tall.png ${IMAGE_DIR}
     echo "COMPLETE. SAVED AT: ${IMAGE_DIR}/${SUBJECT}_${TIME1}-${TIME2}.png"
     echo "COMPLETE. SAVED AT: ${IMAGE_DIR}/${SUBJECT}_${TIME1}-${TIME2}_NO-SCALE.png"
