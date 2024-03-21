@@ -31,7 +31,7 @@ echo
 echo "***************************************************************************"
 echo "FINDING DATA"
 echo "***************************************************************************"
-DIRECTORIES=($(ls -d ${DATASET}))
+DIRECTORIES=($(ls ${DATASET}))
 echo "DATA FOUND: "
 
 for DIR in ${DIRECTORIES[@]}; do
