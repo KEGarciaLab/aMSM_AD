@@ -24,7 +24,7 @@ if [ ! -e "${OUTPUT}" ]; then
     echo ${CSV_HEADINGS} > ${CP_OUTPUT}
     echo ${CSV_HEADINGS} > ${ANAT_OUTPUT}
 fi
-echo "OUTPUT CREATED AT ${OUTPUT}"
+echo "OUTPUTS CREATED AT ${CP_OUTPUT} and ${ANAT_OUTPUT}"
 
 ########## FIND SUBJECTS
 echo
