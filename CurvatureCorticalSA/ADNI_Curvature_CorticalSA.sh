@@ -50,29 +50,29 @@ for DIR in ${DIRECTORIES[@]}; do
         echo "***************************************************************************"
         echo "BEGIN PROCESSING FOR ${SUBJECT} ${TIME1} TO ${TIME2}"
         echo "***************************************************************************"
-        SUBJECT_LYS_CP=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.CPgrid.surf.gii
-        SUNJECT_RYS_CP=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.CPgrid.surf.gii
-        SUBJECT_LOS_CP=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.anat.CPgrid.surf.gii
-        SUNJECT_ROS_CP=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.CPgrid.surf.gii
+        SUBJECT_LYS_CP=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.CPgrid.surf.gii
+        SUNJECT_RYS_CP=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.CPgrid.surf.gii
+        SUBJECT_LOS_CP=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.anat.CPgrid.surf.gii
+        SUNJECT_ROS_CP=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.CPgrid.surf.gii
 
-        SUBJECT_LYS_ANAT=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.ANATgrid.surf.gii
-        SUNJECT_RYS_ANAT=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.ANATgrid.surf.gii
-        SUBJECT_LOS_ANAT=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.anat.ANATgrid.surf.gii
-        SUNJECT_ROS_ANAT=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.ANATgrid.surf.gii
+        SUBJECT_LYS_ANAT=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.ANATgrid.surf.gii
+        SUNJECT_RYS_ANAT=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.ANATgrid.surf.gii
+        SUBJECT_LOS_ANAT=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.anat.ANATgrid.surf.gii
+        SUNJECT_ROS_ANAT=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.ANATgrid.surf.gii
 
-        L_CP_OUT=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.CPgrid.
-        L_ANAT_OUT=${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.ANATgrid.
-        R_CP_OUT=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.CPgrid.
-        R_ANAT_OUT=${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.ANATgrid.
+        L_CP_OUT=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.CPgrid.
+        L_ANAT_OUT=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.ANATgrid.
+        R_CP_OUT=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.CPgrid.
+        R_ANAT_OUT=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.ANATgrid.
         echo "LOCATED FOLLOWING FILES"
-        echo SUBJECT_LYS_CP
-        echo SUBJECT_RYS_CP
-        echo SUBJECT_LOS_CP
-        echo SUBJECT_ROS_CP
-        echo SUBJECT_LYS_ANAT
-        echo SUBJECT_RYS_ANAT
-        echo SUBJECT_LOS_ANAT
-        echo SUBJECT_ROS_ANAT
+        echo ${SUBJECT_LYS_CP}
+        echo ${SUBJECT_RYS_CP}
+        echo ${SUBJECT_LOS_CP}
+        echo ${SUBJECT_ROS_CP}
+        echo ${SUBJECT_LYS_ANAT}
+        echo ${SUBJECT_RYS_ANAT}
+        echo ${SUBJECT_LOS_ANAT}
+        echo ${SUBJECT_ROS_ANAT}
 
         ########## CALCULATE CORTICAL SA
         echo
