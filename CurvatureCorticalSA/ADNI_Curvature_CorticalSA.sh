@@ -51,14 +51,14 @@ for DIR in ${DIRECTORIES[@]}; do
         echo "BEGIN PROCESSING FOR ${SUBJECT} ${TIME1} TO ${TIME2}"
         echo "***************************************************************************"
         SUBJECT_LYS_CP=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.CPgrid.surf.gii
-        SUNJECT_RYS_CP=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.CPgrid.surf.gii
+        SUBJECT_RYS_CP=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.CPgrid.surf.gii
         SUBJECT_LOS_CP=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.anat.CPgrid.reg.surf.gii
-        SUNJECT_ROS_CP=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.CPgrid.reg.surf.gii
+        SUBJECT_ROS_CP=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.CPgrid.reg.surf.gii
 
         SUBJECT_LYS_ANAT=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.ANATgrid.surf.gii
-        SUNJECT_RYS_ANAT=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.ANATgrid.surf.gii
+        SUBJECT_RYS_ANAT=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.ANATgrid.surf.gii
         SUBJECT_LOS_ANAT=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.anat.ANATgrid.reg.surf.gii
-        SUNJECT_ROS_ANAT=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.ANATgrid.reg.surf.gii
+        SUBJECT_ROS_ANAT=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.anat.ANATgrid.reg.surf.gii
 
         L_CP_OUT=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.CPgrid.
         L_ANAT_OUT=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.ANATgrid.
