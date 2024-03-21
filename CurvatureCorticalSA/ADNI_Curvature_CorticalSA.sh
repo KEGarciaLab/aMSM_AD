@@ -10,8 +10,8 @@ LOG_OUTPUT=${HOME}/Scripts/MyScripts/logs/$(basename "$0")_${CURRENT_DATETIME}.l
 ###### CAN BE CHANGED BY USER ONLY CHANGE THE PARTS THAT ARE NOT IN {} UNLESS YOU KNOW WHAT YOU ARE DOING
 DATASET=/N/project/aMSM_AD/ADNI/HCP/MSM # Folder containing subject data
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # output location for script
-CP_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet.csv # name and location of csv output file at MaxCP
-ANAT_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet.csv # name and location of csv output file at MaxANAT
+CP_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet-CP.csv # name and location of csv output file at MaxCP
+ANAT_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet-ANAT.csv # name and location of csv output file at MaxANAT
 ########## BEGIN LOGGING
 exec > >(tee -a "${LOG_OUTPUT}") 2>&1
 
