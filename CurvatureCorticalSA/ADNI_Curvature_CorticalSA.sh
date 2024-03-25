@@ -9,9 +9,13 @@ LOG_OUTPUT=${HOME}/Scripts/MyScripts/logs/$(basename "$0")_${CURRENT_DATETIME}.l
 
 ###### CAN BE CHANGED BY USER ONLY CHANGE THE PARTS THAT ARE NOT IN {} UNLESS YOU KNOW WHAT YOU ARE DOING
 DATASET=/N/project/aMSM_AD/ADNI/HCP/MSM # Folder containing subject data
-OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # output location for script
-CP_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet-CP.csv # name and location of csv output file at MaxCP
-ANAT_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet-ANAT.csv # name and location of csv output file at MaxANAT
+OUTPUT_DIR=/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING # output location for script
+CP_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet-CP.csv # name and location of initial csv output file at MaxCP
+ANAT_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet-ANAT.csv # name and location of initial csv output file at MaxANAT
+CP_CORRECTED_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet-CP-no_dups.csv # name and location of final csv output at MaxCP
+ANAT_CORRECTED_OUTPUT=${OUTPUT_DIR}/ADNI_datasheet-ANAT-no_dups.csv # name and location of final csv output at MaxANAT
+DUPLICATE_CSV=${OUTPUT_DIR}/dups.csv #duplicate file to be generated then deleted
+
 ########## BEGIN LOGGING
 exec > >(tee -a "${LOG_OUTPUT}") 2>&1
 
@@ -545,5 +549,20 @@ for DIR in ${DIRECTORIES[@]}; do
         echo "YOUNGER DATA AT ANATGRID ADDED TO CSV ${ANAT_OUTPUT}"
         echo "${ANAT_OLDER_DATA}">>"${ANAT_OUTPUT}"
         echo "OLDER DATA AT ANATGRID ADDED TO CSV ${ANAT_OUTPUT}"
+
+        ########## ERASE DUPLICATE DATA (ALLOWS SCRIPT TO BE RAN MULTIPLE TIMES NO MATTER HOW MANY SUBJECTS WE HAVE AND RETAIN A SINGLE FILE)
+        echo
+        echo "***************************************************************************"
+        echo "ERASING ALL DUPLICATE DATA"
+        echo "***************************************************************************"
+        ######## CPGRID
+        awk 'seen[$0]++{print $0 > ${DUPLICATE_CSV}; next}{print $0 > ${CP_CORRECTED_OUTPUT}}' ${CP_OUTPUT}
+        echo "CPGRID DATA COMPLETED, CORRECTED DATA SAVED AT ${CP_CORRECTED_OUTPUT}"
+
+        ######## ANATGRID
+        awk 'seen[$0]++{print $0 > ${DUPLICATE_CSV}; next}{print $0 > ${ANAT_CORRECTED_OUTPUT}}' ${ANAT_OUTPUT}
+        echo "ANATGRID DATA COMPLETED, CORRECTED DATA SAVED AT ${ANAT_CORRECTED_OUTPUT}"
+
+        rm ${DUPLICATE_CSV}
     fi
 done
