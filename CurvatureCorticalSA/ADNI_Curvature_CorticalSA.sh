@@ -556,7 +556,7 @@ for DIR in ${DIRECTORIES[@]}; do
         echo "ERASING ALL DUPLICATE DATA"
         echo "***************************************************************************"
         ######## CPGRID
-        awk 'seen[$0]++{print $0 > ${DUPLICATE_CSV}; next}{print $0 > ${CP_CORRECTED_OUTPUT}}' ${CP_OUTPUT}
+        awk -v DUPLICATE_CSV=${DUPLICATE_CSV} -v CORRECTED_OUTPUT=${CP_CORRECTED_OUTPUT} 'seen[$0]++{print $0 > DUPLICATE_CSV; next}{print $0 > CORRECTED_OUTPUT}' ${CP_OUTPUT}
         echo "CPGRID DATA COMPLETED, CORRECTED DATA SAVED AT ${CP_CORRECTED_OUTPUT}"
 
         ######## ANATGRID
