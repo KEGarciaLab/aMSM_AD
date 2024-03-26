@@ -560,7 +560,7 @@ for DIR in ${DIRECTORIES[@]}; do
         echo "CPGRID DATA COMPLETED, CORRECTED DATA SAVED AT ${CP_CORRECTED_OUTPUT}"
 
         ######## ANATGRID
-        awk 'seen[$0]++{print $0 > ${DUPLICATE_CSV}; next}{print $0 > ${ANAT_CORRECTED_OUTPUT}}' ${ANAT_OUTPUT}
+        awk 'seen[$0]++{print $0 > "${DUPLICATE_CSV}"; next}{print $0 > "${ANAT_CORRECTED_OUTPUT}"}' ${ANAT_OUTPUT}
         echo "ANATGRID DATA COMPLETED, CORRECTED DATA SAVED AT ${ANAT_CORRECTED_OUTPUT}"
 
         rm ${DUPLICATE_CSV}
