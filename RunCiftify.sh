@@ -113,4 +113,4 @@ EOF
         echo "SUBMITTING SCRIPT FOR ${SUBJECT} FOR TIME POINT ${TIME_POINT}"
         sbatch ${SCRIPT_OUTPUT_DIR}/recon_all_Subject_${SUBJECT}_${TIME_POINT}.sh
     done
-
+fi
