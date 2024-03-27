@@ -5,11 +5,11 @@ LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and
 
 ########## CHANGE AS NEEDED
 DATASET_NAME="IADRC" # Name of dataset being used, must be ADNI or IADRC
-DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION # Folder containing subject data
+DATASET=/N/project/aMSM_AD/IADRC # Folder containing subject data
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the text file so multiple runs keep data separate
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0") # Output location
 OUTPUT_FILE=${OUTPUT_DIR}/subject_numbers_${CURRENT_DATETIME}.txt # Output file name
-SUBJECTS="0056 0059 0069 0127 0156 0173 0210 0229 0296 0377" # Subjects to get full folder name for
+SUBJECTS="10011 10024 10031 10062 10099 10112 10128 10142 10144 10145" # Subjects to get full folder name for
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
