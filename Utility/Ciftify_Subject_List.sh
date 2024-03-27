@@ -29,3 +29,4 @@ elif [ "${DATASET_NAME}" == "IADRC" ]; then
         echo "SEARCHING FOR FILES FOR SUBJECT ${SUBJECT}"
         find ${DATASET} -maxdepth 1 -type d -name "${SUBJECT}_*" -exec basename {} \; >> ${OUTPUT_FILE}
     done
+fi
