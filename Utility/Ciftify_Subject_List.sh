@@ -8,8 +8,7 @@ DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION # Folder c
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the text file so multiple runs keep data separate
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0") # Output location
 OUTPUT_FILE=${OUTPUT_DIR}/subject_numbers_${CURRENT_DATETIME}.txt # Output file name
-SUBJECTS="0106 0112 0142 0150 0259 0416 0555 0626 0925 1032 1074 1098 1427 2130 2155 2220 4115 4365 4891" # Subjects to extract folder name for, this should be the first number after _S_
-
+SUBJECTS="0056 0059 0069 0127 0156 0173 0210 0229 0296 0377"
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
