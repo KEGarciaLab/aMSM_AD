@@ -211,7 +211,7 @@ EOF
 cat > ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.sh << EOF
 #!/bin/bash
 
-#SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.BL-${TIME_POINT}
+#SBATCH -J MSM.${SUBJECT}.${HEMISPHERE}.${TIME_POINT}-BL
 #SBATCH -p general
 #SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/%j_MSM_${SUBJECT}_${TIME_POINT}-BL.txt
 #SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/%j_MSM_${SUBJECT}_${TIME_POINT}-BL_error.txt
