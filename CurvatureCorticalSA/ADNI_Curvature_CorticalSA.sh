@@ -3,7 +3,7 @@
 ########## DEFINE VARIABLES
 
 ###### DO NOT CHANGE THESE
-CSV_HEADINGS="SUBJECT_ID,TIME_POINT,R_CORTICAL_SA,L_CORTICAL_SA,R_MEAN_GYRI,L_MEAN_GYRI,R_MEAN_SULCI,L_MEAN_SULCI,R_K2_VARIANCE,L_K2_VARIANCE" # headings of csv file
+CSV_HEADINGS="SUBJECT_ID,TIME_POINT,MONTH_NUMBER,R_CORTICAL_SA,L_CORTICAL_SA,R_MEAN_GYRI,L_MEAN_GYRI,R_MEAN_SULCI,L_MEAN_SULCI,R_K2_VARIANCE,L_K2_VARIANCE" # headings of csv file
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the csv file so multiple can be run keeping data seperate
 LOG_OUTPUT=${HOME}/Scripts/MyScripts/logs/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
 
@@ -54,6 +54,9 @@ for DIR in ${DIRECTORIES[@]}; do
         echo "***************************************************************************"
         echo "BEGIN PROCESSING FOR ${SUBJECT} ${TIME1} TO ${TIME2}"
         echo "***************************************************************************"
+        YOUNGER_MONTH_NUMBER=0
+        OLDER_MONTH_NUMBER=$(echo ${TIME2} | cut -c 2-)
+
         SUBJECT_LYS_CP=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.LYAS.CPgrid.surf.gii
         SUBJECT_RYS_CP=${DATASET}/${DIR}/${SUBJECT}_R_${TIME1}-${TIME2}.RYAS.CPgrid.surf.gii
         SUBJECT_LOS_CP=${DATASET}/${DIR}/${SUBJECT}_L_${TIME1}-${TIME2}.anat.CPgrid.reg.surf.gii
@@ -536,8 +539,8 @@ for DIR in ${DIRECTORIES[@]}; do
         echo "***************************************************************************"
         echo "ADDING DATA TO CSV FILES"
         echo "***************************************************************************"
-        CP_YOUNGER_DATA="${SUBJECT},${TIME1},${CP_RY_CORTICAL_SA},${CP_LY_CORTICAL_SA},${CP_RY_MEAN_GYRI},${CP_LY_MEAN_GYRI},${CP_RY_MEAN_SULCI},${CP_LY_MEAN_SULCI},${CP_RY_K2_VARIANCE},${CP_LY_K2_VARIANCE}"
-        CP_OLDER_DATA="${SUBJECT},${TIME2},${CP_RO_CORTICAL_SA},${CP_LO_CORTICAL_SA},${CP_RO_MEAN_GYRI},${CP_LO_MEAN_GYRI},${CP_RO_MEAN_SULCI},${CP_LO_MEAN_SULCI},${CP_RO_K2_VARIANCE},${CP_LO_K2_VARIANCE}"
+        CP_YOUNGER_DATA="${SUBJECT},${TIME1},${YOUNGER_MONTH_NUMBER},${CP_RY_CORTICAL_SA},${CP_LY_CORTICAL_SA},${CP_RY_MEAN_GYRI},${CP_LY_MEAN_GYRI},${CP_RY_MEAN_SULCI},${CP_LY_MEAN_SULCI},${CP_RY_K2_VARIANCE},${CP_LY_K2_VARIANCE}"
+        CP_OLDER_DATA="${SUBJECT},${TIME2},${OLDER_MONTH_NUMBER},${CP_RO_CORTICAL_SA},${CP_LO_CORTICAL_SA},${CP_RO_MEAN_GYRI},${CP_LO_MEAN_GYRI},${CP_RO_MEAN_SULCI},${CP_LO_MEAN_SULCI},${CP_RO_K2_VARIANCE},${CP_LO_K2_VARIANCE}"
         ANAT_YOUNGER_DATA="${SUBJECT},${TIME1},${ANAT_RY_CORTICAL_SA},${ANAT_LY_CORTICAL_SA},${ANAT_RY_MEAN_GYRI},${ANAT_LY_MEAN_GYRI},${ANAT_RY_MEAN_SULCI},${ANAT_LY_MEAN_SULCI},${ANAT_RY_K2_VARIANCE},${ANAT_LY_K2_VARIANCE}"
         ANAT_OLDER_DATA="${SUBJECT},${TIME2},${ANAT_RO_CORTICAL_SA},${ANAT_LO_CORTICAL_SA},${ANAT_RO_MEAN_GYRI},${ANAT_LO_MEAN_GYRI},${ANAT_RO_MEAN_SULCI},${ANAT_LO_MEAN_SULCI},${ANAT_RO_K2_VARIANCE},${ANAT_LO_K2_VARIANCE}"
 
