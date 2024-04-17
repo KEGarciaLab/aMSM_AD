@@ -1,6 +1,6 @@
 # VARIABLE DECLARATION
-PATH_TO_FREESURFER=/geode2/soft/hps/rhel7/freesurfer/6.0.0/freesurfer
-PATH_TO_FSL=/geode2/soft/hps/rhel7/fsl/6.0.5
+PATH_TO_FREESURFER=/geode2/soft/hps/rhel7/freesurfer/6.0.0/freesurfer/bin
+PATH_TO_FSL=/geode2/soft/hps/rhel7/fsl/6.0.5/bin
 
 # Downlad Ciftify
 echo "************************************************************************"
@@ -15,26 +15,14 @@ echo "************************************************************************"
 cp -v -- ${HOME}/MSM_HOCR-master/src/MSM/msm ${HOME}/ciftify-master
 chmod +x ${HOME}/ciftify-master/msm
 
-# Copy Freesurfer
-echo "************************************************************************"
-echo "*                        COPYING FREESURFER                            *"
-echo "************************************************************************"
-cp -a -v -- ${PATH_TO_FREESURFER} ${HOME}
-
-# Copy FSL
-echo "************************************************************************"
-echo "*                           COPYING FSL                                *"
-echo "************************************************************************"
-cp -a -r -v -- ${PATH_TO_FSL} ${HOME}/fsl
-
 # Update .bash_profile
 echo "************************************************************************"
 echo "*                       UPDATING BASH PROFILE                          *"
 echo "************************************************************************"
 cat >> .bash_profile << "EOF"
 
-export PATH=$PATH:$HOME/fsl/bin
-export PATH=$PATH:$HOME/freesurfer/bin
+export PATH=$PATH:/geode2/soft/hps/rhel7/fsl/6.0.5/bin
+export PATH=$PATH:/geode2/soft/hps/rhel7/freesurfer/6.0.0/freesurfer/bin
 export PATH=$HOME/.local/bin:$HOME/ciftify-master:$PATH
 module load python
 EOF
