@@ -53,5 +53,5 @@ for SUBJECT in ${SUBJECTS[@]}; do
         #YOUNGER_ANAT_SURF=
 
         ########## CREATE INVERSE MAP
-    fi
+    done
 done
