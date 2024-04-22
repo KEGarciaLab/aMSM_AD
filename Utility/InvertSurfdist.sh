@@ -13,7 +13,6 @@ MSM_OUT=/N/project/aMSM_AD/ADNI/HCP/MSM
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
-mkdir -p ${OUTPUT_DIR}
 
 ########## BEGIN LOGGING
 exec > >(tee -a "${LOG_OUTPUT}") 2>&1
