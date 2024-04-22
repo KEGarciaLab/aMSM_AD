@@ -36,7 +36,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
     echo "***************************************************************************"
     echo "BEGIN PROCESSING FOR SUBJECT ${SUBJECT}"
     echo "***************************************************************************"
-    TIME_POINT=$(echo "${SUBJECT}" | awk -F_ '{print $3}')
+    TIME_POINT=$(echo "${SUBJECT}" | awk -F_ '{print $2}')
     echo ${TIME_POINT}
     PREFIX=${MSM_OUT}/${SUBJECT}_${TIME_POINT}_to_BL/${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.
     echo ${PREFIX}
