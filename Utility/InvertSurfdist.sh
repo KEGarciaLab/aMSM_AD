@@ -48,10 +48,10 @@ for SUBJECT in ${SUBJECTS[@]}; do
         echo "LOCATING NECESSARY FILES"
         echo "***************************************************************************"
 
-        OLDER_CP_SURF=
-        OLDER_ANAT_SURFT=
-        YOUNGER_CP_SURF=
-        YOUNGER_ANAT_SURF=
+        #OLDER_CP_SURF=
+        #OLDER_ANAT_SURFT=
+        #YOUNGER_CP_SURF=
+        #YOUNGER_ANAT_SURF=
 
         ########## CREATE INVERSE MAP
     fi
