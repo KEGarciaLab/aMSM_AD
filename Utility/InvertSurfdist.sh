@@ -36,11 +36,17 @@ for SUBJECT in ${SUBJECTS[@]}; do
     echo "***************************************************************************"
     echo "BEGIN PROCESSING FOR SUBJECT ${SUBJECT}"
     echo "***************************************************************************"
-    TIME_POINT=$(echo "${SUBJECT}" | awk -F_ '{print $2}')
-    echo ${TIME_POINT}
-    PREFIX=${MSM_OUT}/${SUBJECT}_${TIME_POINT}_to_BL/${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL.
-    echo ${PREFIX}
-
+    ########## EXTRACT TIME POINTS
+    echo "FINDING TIMEPOINTS"
+    TIME_POINTS=()
+    for DIR in "${DATASET}"/*;do
+        if [ -d ${DIR} ]; then
+            TIME_POINT=$(echo "${DIR}" | grep -oP "(?<=Subject_${SUBJECT}_)m\d+")
+            TIME_POINTS+=("${TIME_POINT}")
+        fi
+    done
+    echo "SUBJECT ${SUBJECT} HAS THE FOLLOWING TIME POINTS: ${TIME_POINTS[@]}"
+    
     for HEMISPHERE in L R; do
         ########## LOCATE FILES
         echo "***************************************************************************"
