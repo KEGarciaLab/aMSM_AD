@@ -36,6 +36,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
     echo "***************************************************************************"
     echo "BEGIN PROCESSING FOR SUBJECT ${SUBJECT}"
     echo "***************************************************************************"
+    
     ########## EXTRACT TIME POINTS
     echo "FINDING TIMEPOINTS"
     TIME_POINTS=()
@@ -46,18 +47,21 @@ for SUBJECT in ${SUBJECTS[@]}; do
         fi
     done
     echo "SUBJECT ${SUBJECT} HAS THE FOLLOWING TIME POINTS: ${TIME_POINTS[@]}"
-    
-    for HEMISPHERE in L R; do
-        ########## LOCATE FILES
-        echo "***************************************************************************"
-        echo "LOCATING NECESSARY FILES"
-        echo "***************************************************************************"
 
-        #OLDER_CP_SURF=
-        #OLDER_ANAT_SURFT=
-        #YOUNGER_CP_SURF=
-        #YOUNGER_ANAT_SURF=
+    for TIME_POINT in ${TIME_POINTS}; do
+        for HEMISPHERE in L R; do
+            ########## LOCATE FILES
+            echo "***************************************************************************"
+            echo "LOCATING NECESSARY FILES"
+            echo "***************************************************************************"
+            PREFIX=${MSM_OUT}/${SUBJECT}_${TIME_POINT}_to_BL/${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL. #EVERY FILE STARTS WITH THIS PATH
 
-        ########## CREATE INVERSE MAP
+            OLDER_CP_SURF=${PREFIX}OAS.CPgrid.surf.gii
+            OLDER_ANAT_SURFT=${PREFIX}OAS.ANATgrid.surf.gii
+            YOUNGER_CP_SURF=${PREFIX}anat.CPgrid.reg.surf.gii
+            YOUNGER_ANAT_SURF=${PREFIX}anat.ANATgrid.reg.surf.gii
+
+            ########## CREATE INVERSE MAP
+        done
     done
 done
