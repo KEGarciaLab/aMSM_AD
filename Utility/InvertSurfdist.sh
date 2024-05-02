@@ -61,12 +61,23 @@ for SUBJECT in ${SUBJECTS[@]}; do
             YOUNGER_CP_SURF=${PREFIX}anat.CPgrid.reg.surf.gii
             YOUNGER_ANAT_SURF=${PREFIX}anat.ANATgrid.reg.surf.gii
 
+            echo "FOUND THE FOLLOWING FILES:"
+            echo ${YOUNGER_CP_SURF}
+            echo ${OLDER_CP_SURF}
+            echo ${YOUNGER_ANAT_SURF}
+            echo ${OLDER_ANAT_SURF}
+
             ########## CREATE INVERSE MAP
+            echo "***************************************************************************"
+            echo "GENERATING MAPS"
+            echo "***************************************************************************"
             ######## ANAT GRID
             wb_command -surface-distortion ${YOUNGER_ANAT_SURF} ${OLDER_ANAT_SURF} ${PREFIX}surfdist.ANATgrid.inverse.func.gii
+            echo "ANATgrid Completed"
 
             ######## CP GRID
             wb_command -surface-distortion ${YOUNGER_CP_SURF} ${OLDER_CP_SURF} ${PREFIX}surfdist.CPgrid.inverse.func.gii
+            echo "CPgrid Completed"
         done
     done
 done
