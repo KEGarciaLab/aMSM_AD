@@ -57,11 +57,16 @@ for SUBJECT in ${SUBJECTS[@]}; do
             PREFIX=${MSM_OUT}/${SUBJECT}_${TIME_POINT}_to_BL/${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL. #EVERY FILE STARTS WITH THIS PATH
 
             OLDER_CP_SURF=${PREFIX}OAS.CPgrid.surf.gii
-            OLDER_ANAT_SURFT=${PREFIX}OAS.ANATgrid.surf.gii
+            OLDER_ANAT_SURF=${PREFIX}OAS.ANATgrid.surf.gii
             YOUNGER_CP_SURF=${PREFIX}anat.CPgrid.reg.surf.gii
             YOUNGER_ANAT_SURF=${PREFIX}anat.ANATgrid.reg.surf.gii
 
             ########## CREATE INVERSE MAP
+            ######## ANAT GRID
+            wb_command -surface-distortion ${YOUNGER_ANAT_SURF} ${OLDER_ANAT_SURF} ${PREFIX}surfdist.ANATgrid.inverse.func.gii
+
+            ######## CP GRID
+            wb_command -surface-distortion ${YOUNGER_CP_SURF} ${OLDER_CP_SURF} ${PREFIX}surfdist.CPgrid.inverse.func.gii
         done
     done
 done
