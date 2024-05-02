@@ -56,8 +56,8 @@ for SUBJECT in ${SUBJECTS[@]}; do
             echo "***************************************************************************"
             PREFIX=${MSM_OUT}/${SUBJECT}_${TIME_POINT}_to_BL/${SUBJECT}_${HEMISPHERE}_${TIME_POINT}-BL. #EVERY FILE STARTS WITH THIS PATH
 
-            OLDER_CP_SURF=${PREFIX}OAS.CPgrid.surf.gii
-            OLDER_ANAT_SURF=${PREFIX}OAS.ANATgrid.surf.gii
+            OLDER_CP_SURF=${PREFIX}${HEMISPHERE}OAS.CPgrid.surf.gii
+            OLDER_ANAT_SURF=${PREFIX}${HEMISPHERE}OAS.ANATgrid.surf.gii
             YOUNGER_CP_SURF=${PREFIX}anat.CPgrid.reg.surf.gii
             YOUNGER_ANAT_SURF=${PREFIX}anat.ANATgrid.reg.surf.gii
 
