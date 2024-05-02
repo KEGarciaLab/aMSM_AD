@@ -48,7 +48,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
     done
     echo "SUBJECT ${SUBJECT} HAS THE FOLLOWING TIME POINTS: ${TIME_POINTS[@]}"
 
-    for TIME_POINT in ${TIME_POINTS}; do
+    for TIME_POINT in ${TIME_POINTS[@]}; do
         for HEMISPHERE in L R; do
             ########## LOCATE FILES
             echo "***************************************************************************"
