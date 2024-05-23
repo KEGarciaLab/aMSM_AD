@@ -1,3 +1,17 @@
+#!/bin/bash
+
+#SBATCH -J Image_Generation
+#SBATCH -p general
+#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/%j_Image_Generation.txt
+#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/%j_Image_Generation_error.txt
+#SBATCH --mail-type=fail
+#SBATCH --mail-user=sarigdon@iu.edu
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=49:00:00
+#SBATCH --mem=16G
+#SBATCH -A r00540
+
 ########## DEFINE VARIABLES
 
 ######### DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING
