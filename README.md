@@ -129,6 +129,8 @@ Script Manager: [Sammy Rigdon IV](mailto:srigdon5@?subject=[GitHub]aMSM_AD)
 
 * <a href="https://github.com/othneildrew/Best-README-Template"> Read me tepmplate by othneildrew</a>
 
+* <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/hbm.25455"> Publication: Iannopollo et al. Human Brain Mapping 2021</a>
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
