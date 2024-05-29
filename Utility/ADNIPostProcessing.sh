@@ -2,8 +2,8 @@
 
 #SBATCH -J Image_Generation
 #SBATCH -p general
-#SBATCH -o ${HOME}/Scripts/MyScripts/logs/Slurm/%j_Image_Generation.txt
-#SBATCH -e ${HOME}/Scripts/MyScripts/logs/Slurm/%j_Image_Generation_error.txt
+#SBATCH -o Scripts/MyScripts/logs/Slurm/%j_Image_Generation.txt
+#SBATCH -e Scripts/MyScripts/logs/Slurm/%j_Image_Generation_error.txt
 #SBATCH --mail-type=fail
 #SBATCH --mail-user=sarigdon@iu.edu
 #SBATCH --nodes=1
