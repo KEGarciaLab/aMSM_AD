@@ -129,7 +129,7 @@ Script Manager: [Sammy Rigdon IV](mailto:srigdon5@?subject=[GitHub]aMSM_AD)
 
 * <a href="https://github.com/othneildrew/Best-README-Template"> Read me tepmplate by othneildrew</a>
 
-* <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/hbm.25455"> Publication: Iannopollo et al. Human Brain Mapping 2021</a>
+* This Project is based on scripts and processes developed in the following publication: <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/hbm.25455"> Iannopollo, E., Garcia, K., & Alzheimer's Disease Neuroimaging Initiative. (2021). Enhanced detection of cortical atrophy in Alzheimer's disease using structural MRI with anatomically constrained longitudinal registration. Human Brain Mapping, 42(11), 3576-3592.</a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
