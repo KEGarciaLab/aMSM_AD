@@ -59,7 +59,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
     TIME_POINTS=()
     for DIR in "${DATASET}"/*;do
         if [ -d ${DIR} ]; then
-            TIME_POINT=$(echo "${DIR}" | grep -oP "(?<=Subject_${SUBJECT}_)m\d+")
+            TIME_POINT=$(echo "${DIR}" | grep -oP "(?<=Subject_${SUBJECT}_)(?!BL|1)[^/]+")
             TIME_POINTS+=("${TIME_POINT}")
         fi
     done
