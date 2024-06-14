@@ -30,3 +30,5 @@ elif [ "${DATASET_NAME}" == "IADRC" ]; then
         find ${DATASET} -maxdepth 1 -type d -name "${SUBJECT}_*" -exec basename {} \; >> ${OUTPUT_FILE}
     done
 fi
+
+echo "SEARCHING COMPLETE SAVED AT ${OUTPUT_FILE}"
