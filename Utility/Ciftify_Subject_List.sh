@@ -9,7 +9,7 @@ DATASET=/N/project/aMSM_AD/IADRC # Folder containing subject data
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the text file so multiple runs keep data separate
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0") # Output location
 OUTPUT_FILE=${OUTPUT_DIR}/subject_numbers_${CURRENT_DATETIME}.txt # Output file name
-SUBJECTS="10609 10615 10616 10617 10618 10620 10621 10623 10631 10634 10636 10641 10647 10651 10654 10670 10671 10672 10674 10684" # Subjects to get full folder name for
+SUBJECTS="10685 10687 10693 10703 10709 10712 10718 10730 10739 10751 10758 10763 10770 10775 10778 10781 10782 10796 10803 10806" # Subjects to get full folder name for
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
