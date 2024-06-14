@@ -17,7 +17,7 @@ MAXANAT=${DATASET}/ico6sphere.LR.reg.surf.gii # path to ico6sphere
 RESOLUTION="32k" # resolution of mesh to use either '32k' or '164k'
 RESOLUTION_LOCATION="MNINonLinear/fsaverage_LR32k" # location of meshes 32k should be 'MNINonLinear/fsaverage_LR32k' 164k should be 'MNINonLinear'
 MSMCONFIG=/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL # location of config file
-MSM_OUT=/N/project/aMSM_AD/ADNI/HCP/MSM # output for msm
+MSM_OUT=/N/project/aMSM_AD/IADRC_PROCESSING/MSM # output for msm
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
