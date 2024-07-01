@@ -8,7 +8,7 @@ SUBJECTS=() # Array of subject numbers to be processed
 LEVELS=6 # Levels for MSM
 
 ######### CHANGE AS NEEDED
-DATASET_NAME="IADRC" # Name of dataset must be eithe ADNI or IADRC
+STARTING_TIME="Time1" # Name of dataset must be eithe ADNI or IADRC
 DATASET=/N/project/aMSM_AD/IADRC_PROCESSING/TO_BE_PROCESSED # Folder containing subject data
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for generated scripts
 ACCOUNT="r00540" # Slurm allocation to use
@@ -26,14 +26,6 @@ mkdir -p ${OUTPUT_DIR}
 ########## BEGIN LOGGING
 exec > >(tee -a "${LOG_OUTPUT}") 2>&1
 
-########## DETERMINING STARTING TIMEPOINT
-if [ ${DATASET_NAME} == "IADRC" ]; then
-    STARTING_TIME="1"
-fi
-
-if [ ${DATASET_NAME} == "ADNI" ]; then
-    STARTING_TIME="BL"
-fi 
 ########## GET SUBJECTS
 echo "***************************************************************************"
 echo "LOCATING SUBJECTS"
@@ -59,7 +51,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
     TIME_POINTS=()
     for DIR in "${DATASET}"/*;do
         if [ -d ${DIR} ]; then
-            TIME_POINT=$(echo "${DIR}" | grep -oP "(?<=Subject_${SUBJECT}_)(?!BL|1)[^/]+")
+            TIME_POINT=$(echo "${DIR}" | grep -oP "(?<=Subject_${SUBJECT}_)(?!${STARTING_TIME})[^/]+")
             TIME_POINTS+=("${TIME_POINT}")
         fi
     done
