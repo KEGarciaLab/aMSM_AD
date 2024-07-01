@@ -9,7 +9,7 @@ DATASET=/N/slate/sarigdon # Folder containing subject data
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the text file so multiple runs keep data separate
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0") # Output location
 OUTPUT_FILE=${OUTPUT_DIR}/subject_numbers_${CURRENT_DATETIME}.txt # Output file name
-SUBJECTS="1326 1385 1387" # Subjects to get full folder name for
+SUBJECTS="10821 10832 10842 10846 10855 10861 10868 10870 10873 10877 10878 10884 10885 10894 10897 10901 10906 10914 10916 10918 10921 10922 10926 10927 10935" # Subjects to get full folder name for
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
