@@ -33,7 +33,7 @@ echo "**************************************************************************
 for DIR in "${DATASET}"/*;do
     echo "${DIR}"
     if [ -d ${DIR} ]; then
-        SUBJECT=$(echo "${DIR}" | grep -oP "(?<=Subject_)[a-zA-Z0-9](?=_${STARTING_TIME})")
+        SUBJECT=$(echo "${DIR}" | grep -oP "(?<=Subject_)[a-zA-Z0-9]+(?=_${STARTING_TIME})")
         SUBJECTS+=(${SUBJECT})
     fi
 done
