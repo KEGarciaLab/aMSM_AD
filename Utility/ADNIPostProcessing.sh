@@ -20,8 +20,9 @@ LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs #Directory for log file
 LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
 
 ######### CHANGE AS NEEDED
-DATASET=/N/project/aMSM_AD/ADNI/HCP/MSM # Folder containing subject data
-IMAGE_DIR=/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING # Location to copy all images to
+DATASET=/N/project/aMSM_AD/IADRC_PROCESSING/MSM # Folder containing subject data
+IMAGE_DIR=/N/project/aMSM_AD/IADRC_PROCESSING/POST_PROCESSING # Location to copy all images to
+STARTING_TIME="1" # The designation used for the baseline time point
 ACCOUNT="r00540" # Slurm allocation to use
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
@@ -45,7 +46,7 @@ for DIR in ${DIRECTORIES[@]}; do
     SUBJECT_DIR=${DATASET}/${DIR}
     TIME1=$(echo ${DIR} | cut -d "_" -f 2)
 
-    if [ ${TIME1} == "BL" ]; then
+    if [ ${TIME1} == "${STARTING_TIME}" ]; then
         echo "FORWARD REGISTRATION: ${SUBJECT_DIR}"
         FORWARD_DIRS+=(${SUBJECT_DIR})
     else
