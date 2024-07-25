@@ -4,11 +4,11 @@
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the log file so multiple can be run keeping data separate
 LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs
 LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
-SUBJECTS=() # Array of subject numbers to be processed
+SUBJECTS=() # Array of subject numbers to be processed, Leave empty
 LEVELS=6 # Levels for MSM
 
 ######### CHANGE AS NEEDED
-STARTING_TIME="1" # Name of dataset must be eithe ADNI or IADRC
+STARTING_TIME="1a" # Name of dataset must be eithe ADNI or IADRC
 DATASET=/N/project/aMSM_AD/IADRC_PROCESSING/TO_BE_PROCESSED # Folder containing subject data
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for generated scripts
 ACCOUNT="r00540" # Slurm allocation to use
