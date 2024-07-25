@@ -1,0 +1,17 @@
+--sigma_in=2,2,2,2,2,2
+--sigma_ref=2,2,2,2,2,2
+--lambda=0.01,10000,0.01,10000,10000,10000
+--it=50,50,50,50,50,50
+--opt=DISCRETE,DISCRETE,DISCRETE,DISCRETE,DISCRETE,DISCRETE
+--CPgrid=2,2,3,3,4,5
+--SGgrid=4,4,5,5,6,6
+--datagrid=4,4,5,5,6,6
+--anatgrid=5,5,5,5,5,5
+--regoption=5
+--regexp=1
+--dopt=HOCR
+--bulkmod=10
+--shearmod=1
+--rescaleL
+--IN
+--k_exponent=1
