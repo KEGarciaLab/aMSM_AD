@@ -13,7 +13,7 @@ DATASET_NAME="IADRC" # Name of dataset being used
 DATASET=/N/project/aMSM_AD/IADRC # Folder containing subject data
 CIFTIFY_OUTPUT_DIR=/N/project/aMSM_AD/IADRC_PROCESSING/TO_BE_PROCESSED # ouptut location for script results
 SCRIPT_OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # Output location for the generated scripts
-SUBJECT_TXT=${HOME}/Scripts/MyScripts/Output/Ciftify_Subject_List.sh/subject_numbers_2024-07-31_15-07-58.txt #List of subjects to run, ensure you have ran Ciftify_Subject_List.sh and are pointng to the correct file
+SUBJECT_TXT=${HOME}/Scripts/MyScripts/Output/Ciftify_Subject_List.sh/subject_numbers_2024-07-31_15-08-49.txt #List of subjects to run, ensure you have ran Ciftify_Subject_List.sh and are pointng to the correct file
 ACCOUNT="r00540" # Slurm allocation to use
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
