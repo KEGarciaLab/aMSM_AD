@@ -31,8 +31,9 @@ echo "**************************************************************************
 echo "LOCATING SUBJECTS"
 echo "***************************************************************************"
 for DIR in "${DATASET}"/*;do
-    echo "${DIR}"
+    echo "DIRECTORY LOCATED: ${DIR}"
     if [ -d ${DIR} ]; then
+        echo "CHECKING DIRECTORY: ${DIR}"
         SUBJECT=$(echo "${DIR}" | grep -oP "(?<=Subject_)[a-zA-Z0-9]+(?=_${STARTING_TIME})")
         SUBJECTS+=(${SUBJECT})
     fi
