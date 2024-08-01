@@ -8,8 +8,8 @@ SUBJECTS=() # Array of subject numbers to be processed, Leave empty
 LEVELS=6 # Levels for MSM
 
 ######### CHANGE AS NEEDED
-STARTING_TIME="3" # Name of dataset must be eithe ADNI or IADRC
-DATASET=/N/project/aMSM_AD/IADRC_PROCESSING/TO_BE_PROCESSED # Folder containing subject data
+STARTING_TIME="BL" # Name of dataset must be eithe ADNI or IADRC
+DATASET=/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED # Folder containing subject data
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for generated scripts
 ACCOUNT="r00540" # Slurm allocation to use
 MAXCP=${DATASET}/ico5sphere.LR.reg.surf.gii # path to ico5sphere
@@ -17,7 +17,7 @@ MAXANAT=${DATASET}/ico6sphere.LR.reg.surf.gii # path to ico6sphere
 RESOLUTION="32k" # resolution of mesh to use either '32k' or '164k'
 RESOLUTION_LOCATION="MNINonLinear/fsaverage_LR32k" # location of meshes 32k should be 'MNINonLinear/fsaverage_LR32k' 164k should be 'MNINonLinear'
 MSMCONFIG=/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL # location of config file
-MSM_OUT=/N/project/aMSM_AD/IADRC_PROCESSING/MSM # output for msm
+MSM_OUT=/N/project/aMSM_AD/ADNI/HCP/MSM # output for msm
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
