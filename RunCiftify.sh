@@ -7,13 +7,13 @@ LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and
 
 ######### CHANGE AS NEEDED
 DELIMITER="_" # Delimiter used in name of files to seperate name
-SUBJECT_PLACEMENT="1" # which place the subject id is based on delimiter 1 indicates the space to the left of first delimiter
-TIME_POINT_PLACEMENT="2" # which place holds the time point designation based on delimiter
-DATASET_NAME="IADRC" # Name of dataset being used
-DATASET=/N/project/aMSM_AD/IADRC # Folder containing subject data
-CIFTIFY_OUTPUT_DIR=/N/project/aMSM_AD/IADRC_PROCESSING/TO_BE_PROCESSED # ouptut location for script results
+SUBJECT_PLACEMENT="3" # which place the subject id is based on delimiter 1 indicates the space to the left of first delimiter
+TIME_POINT_PLACEMENT="4" # which place holds the time point designation based on delimiter
+DATASET_NAME="ADNI" # Name of dataset being used
+DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION # Folder containing subject data
+CIFTIFY_OUTPUT_DIR=/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED # ouptut location for script results
 SCRIPT_OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # Output location for the generated scripts
-SUBJECT_TXT=${HOME}/Scripts/MyScripts/Output/Ciftify_Subject_List.sh/subject_numbers_2024-08-01_20-03-12.txt #List of subjects to run, ensure you have ran Ciftify_Subject_List.sh and are pointng to the correct file
+SUBJECT_TXT=${HOME}/Scripts/MyScripts/Output/Ciftify_Subject_List.sh/subject_numbers_2024-08-01_20-07-23.txt #List of subjects to run, ensure you have ran Ciftify_Subject_List.sh and are pointng to the correct file
 ACCOUNT="r00540" # Slurm allocation to use
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
