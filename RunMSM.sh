@@ -8,7 +8,7 @@ SUBJECTS=() # Array of subject numbers to be processed, Leave empty
 LEVELS=6 # Levels for MSM
 
 ######### CHANGE AS NEEDED
-STARTING_TIME="BL" # Name of dataset must be eithe ADNI or IADRC
+STARTING_TIME="4" # Name of dataset must be eithe ADNI or IADRC
 DATASET=/N/project/aMSM_AD/IADRC_PROCESSING/TO_BE_PROCESSED # Folder containing subject data
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for generated scripts
 ACCOUNT="r00540" # Slurm allocation to use
