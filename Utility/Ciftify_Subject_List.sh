@@ -4,12 +4,12 @@ LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs # Dir for log file
 LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
 
 ########## CHANGE AS NEEDED
-DATASET_NAME="ADNI" # Name of dataset being used, must be ADNI or IADRC
-DATASET=/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION # Folder containing subject data
+DATASET_NAME="IADRC" # Name of dataset being used, must be ADNI or IADRC
+DATASET=/N/project/aMSM_AD/IADRC # Folder containing subject data
 CURRENT_DATETIME=$(date +'%Y-%m-%d_%H-%M-%S') # Date and time will be appended to the text file so multiple runs keep data separate
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0") # Output location
 OUTPUT_FILE=${OUTPUT_DIR}/subject_numbers_${CURRENT_DATETIME}.txt # Output file name
-SUBJECTS="4401 4448 4453 4464 4469 4576 4604 4855 4856 4872 4874" # Subjects to get full folder name for
+SUBJECTS="10503" # Subjects to get full folder name for
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
