@@ -67,7 +67,7 @@ for DIR in ${SUBJECT_DIRS[@]}; do
 #SBATCH --mem=16G
 #SBATCH -A ${ACCOUNT}
 
-ciftify_recon_all --fs-subjects-dir ${DATASET} --ciftify-work-dir ${SUBJECT_CIFTIFY_OUTPUT_DIR} ${DIR}
+ciftify_recon_all --fs-subjects-dir ${DATASET} --ciftify-work-dir ${SUBJECT_CIFTIFY_OUTPUT_DIR} --resample-to-T1w32k ${DIR}
 EOF
     ########## SUBMIT SCRIPT TO SLURM
     echo "SUBMITTING SCRIPT FOR ${SUBJECT} FOR TIME POINT ${TIME_POINT}"
