@@ -15,8 +15,8 @@ ACCOUNT="r00540" # Slurm allocation to use
 MAXCP=${DATASET}/ico5sphere.LR.reg.surf.gii # path to ico5sphere
 MAXANAT=${DATASET}/ico6sphere.LR.reg.surf.gii # path to ico6sphere
 RESOLUTION="32k" # resolution of mesh to use either '32k' or '164k'
-RESOLUTION_LOCATION="T1w/fsaverage_LR32K" # location of meshes 32k should be 'T1w/fsaverage_LR32K' 164k should be 'T1W'
-CURVATURE_LOCATION="MNINonLinear/fsaverage_LR32K"
+RESOLUTION_LOCATION="T1w/fsaverage_LR32k" # location of meshes 32k should be 'T1w/fsaverage_LR32k' 164k should be 'T1W'
+CURVATURE_LOCATION="MNINonLinear/fsaverage_LR32k"
 MSMCONFIG=/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL # location of config file
 MSM_OUT=/N/project/aMSM_AD/ADNI/HCP/MSM_T1W # output for msm
 
