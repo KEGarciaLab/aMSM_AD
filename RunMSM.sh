@@ -15,7 +15,7 @@ ACCOUNT="r00540" # Slurm allocation to use
 MAXCP=${DATASET}/ico5sphere.LR.reg.surf.gii # path to ico5sphere
 MAXANAT=${DATASET}/ico6sphere.LR.reg.surf.gii # path to ico6sphere
 RESOLUTION="32k" # resolution of mesh to use either '32k' or '164k'
-RESOLUTION_LOCATION="T1w/fsaverage_LR32k" # location of meshes 32k should be 'T1W/fsaverage_LR32k' 164k should be 'T1W'
+RESOLUTION_LOCATION="T1w/fsaverage_LR32K" # location of meshes 32k should be 'T1w/fsaverage_LR32K' 164k should be 'T1W'
 CURVATURE_LOCATION="MNINonLinear/fsaverage_LR32K"
 MSMCONFIG=/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL # location of config file
 MSM_OUT=/N/project/aMSM_AD/ADNI/HCP/MSM_T1W # output for msm
@@ -188,7 +188,7 @@ cat > ${OUTPUT_DIR}/Run_${SUBJECT}_${HEMISPHERE}_${STARTING_TIME}-${TIME_POINT}.
 #SBATCH -A ${ACCOUNT}
 
 ########## RUN MSM
-msm --levels=${LEVELS} --conf=${MSMCONFIG} --inmesh=${YSS} --refmesh=${OSS} --indata=${YC} --refdata=$OC --inanat=${YAS} --refanat=${OAS} --out=${F_OUT} --verbose
+msm --levels=${LEVELS} --conf=${MSMCONFIG} --inmesh=${YSS} --refmesh=${OSS} --indata=${YC} --refdata=${OC} --inanat=${YAS} --refanat=${OAS} --out=${F_OUT} --verbose
 
 ########## SURFACE DISTORTION
 wb_command -surface-resample ${YAS} ${YSS} ${MAXANAT} "BARYCENTRIC" ${F_OUT}${HEMISPHERE}YAS.ANATgrid.surf.gii
