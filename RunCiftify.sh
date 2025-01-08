@@ -51,7 +51,7 @@ for DIR in ${SUBJECT_DIRS[@]}; do
 
     ######### GENERATE SCRIPT
     echo "WRITING SCRIPT"
-    echo "SCRIPT COMMAND: ciftify_recon_all --fs-subjects-dir ${DATASET} --ciftify-work-dir ${SUBJECT_CIFTIFY_OUTPUT_DIR} ${DIR}"
+    echo "SCRIPT COMMAND: ciftify_recon_all --fs-subjects-dir ${DATASET} --ciftify-work-dir ${SUBJECT_CIFTIFY_OUTPUT_DIR} --resample-to-T1w32k ${DIR}"
     cat > ${SCRIPT_OUTPUT_DIR}/recon_all_Subject_${SUBJECT}_${TIME_POINT}.sh <<EOF
 #!/bin/bash
 
