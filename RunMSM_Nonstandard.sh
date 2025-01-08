@@ -8,17 +8,14 @@ SUBJECTS=() # Array of subject numbers to be processed, Leave empty
 LEVELS=6 # Levels for MSM
 
 ######### CHANGE AS NEEDED
-STARTING_TIME="BL" # Earliest Time point being used
-DATASET=/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED # Folder containing subject data
+STARTING_TIME="5" # Name of dataset must be eithe ADNI or IADRC
+DATASET=/N/project/aMSM_AD/IADRC_PROCESSING/TO_BE_PROCESSED # Folder containing subject data
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for generated scripts
 ACCOUNT="r00540" # Slurm allocation to use
 MAXCP=${DATASET}/ico5sphere.LR.reg.surf.gii # path to ico5sphere
 MAXANAT=${DATASET}/ico6sphere.LR.reg.surf.gii # path to ico6sphere
-RESOLUTION="32k" # resolution of mesh to use either '32k' or '164k'
-RESOLUTION_LOCATION="T1W/fsaverage_LR32k" # location of meshes 32k should be 'T1W/fsaverage_LR32k' 164k should be 'T1W'
-CURVATURE_LOCATION="MNINonLinear/fsaverage_LR32K"
 MSMCONFIG=/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL # location of config file
-MSM_OUT=/N/project/aMSM_AD/ADNI/HCP/MSM_T1W # output for msm
+MSM_OUT=/N/project/aMSM_AD/IADRC_PROCESSING/MSM # output for msm
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
@@ -35,7 +32,7 @@ for DIR in "${DATASET}"/*;do
     echo "DIRECTORY LOCATED: ${DIR}"
     if [ -d ${DIR} ]; then
         echo "CHECKING DIRECTORY: ${DIR}"
-        SUBJECT=$(echo "${DIR}" | grep -oP "(?<=Subject_)[a-zA-Z0-9]+(?=_${STARTING_TIME})")
+        SUBJECT=$(echo "${DIR}" | grep -oP "(?<=Subject_)[a-zA-Z0-9]+(?=_Image_${STARTING_TIME})")
         SUBJECTS+=(${SUBJECT})
     fi
 done
@@ -54,7 +51,7 @@ for SUBJECT in ${SUBJECTS[@]}; do
     TIME_POINTS=()
     for DIR in "${DATASET}"/*;do
         if [ -d ${DIR} ]; then
-            TIME_POINT=$(echo "${DIR}" | grep -oP "(?<=Subject_${SUBJECT}_)(?!${STARTING_TIME})[^/]+")
+            TIME_POINT=$(echo "${DIR}" | grep -oP "(?<=Subject_${SUBJECT}_Image_)(?!${STARTING_TIME})[^/]+")
             TIME_POINTS+=("${TIME_POINT}")
         fi
     done
@@ -62,20 +59,14 @@ for SUBJECT in ${SUBJECTS[@]}; do
 
     ########## DEFINE BASLINE FILES AS YOUNGER
     ######## GET DATA LOCATION 
-    DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_${STARTING_TIME}"/*)
-    DIRECTORIES=${DIRECTORIES[0]//*zz_templates/}
-    BL_DIR=${DATASET}/Subject_${SUBJECT}_${STARTING_TIME}/${DIRECTORIES[0]##*/} #Base directory withg baseline data
-    BL_FULL_DATA=$(basename "${BL_DIR}") # Full subject name for files
-    BL_THICK_DIR=${BL_DIR}/${RESOLUTION_LOCATION} # Directory with meshes
-    BL_CURVE_DIR=${BL_DIR}/${CURVATURE_LOCATION} # Directory with curvature files
-    echo "YOUNGER DATA LOACTED AT ${BL_THICK_DIR}"
-    echo "FULL YOUNGER DATA NAME: ${BL_FULL_DATA}"
+    BL_DIR=${DATASET}/Subject_${SUBJECT}_Image_${STARTING_TIME}
+    echo "YOUNGER DATA LOACTED AT ${BL_DIR}"
     
     ######## DEFINE MESHES
-    LYAS=${BL_THICK_DIR}/${BL_FULL_DATA}.L.midthickness.${RESOLUTION}_fs_LR.surf.gii # Left younger anatomical surface
-    RYAS=${BL_THICK_DIR}/${BL_FULL_DATA}.R.midthickness.${RESOLUTION}_fs_LR.surf.gii # Right younger anatomical surface
-    LYSS=${BL_THICK_DIR}/${BL_FULL_DATA}.L.sphere.${RESOLUTION}_fs_LR.surf.gii # Left younger spherical surface
-    RYSS=${BL_THICK_DIR}/${BL_FULL_DATA}.R.sphere.${RESOLUTION}_fs_LR.surf.gii # Right younger spherical surface
+    LYAS=${BL_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.L.midthickness.32k_fs_LR.surf.gii # Left younger anatomical surface
+    RYAS=${BL_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.R.midthickness.32k_fs_LR.surf.gii # Right younger anatomical surface
+    LYSS=${BL_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.L.sphere.32k_fs_LR.surf.gii # Left younger spherical surface
+    RYSS=${BL_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.R.sphere.32k_fs_LR.surf.gii # Right younger spherical surface
     echo "LEFT YOUNGER ANATOMICAL SURFACE: ${LYAS}"
     echo "RIGHT YOUNGER ANATOMICAL SURFACE: ${RYAS}"
     echo "LEFT YOUNGER SPHERICAL SURFACE: ${LYSS}"
@@ -87,12 +78,12 @@ for SUBJECT in ${SUBJECTS[@]}; do
     echo "***************************************************************************"
 
     ######## THICKNESS
-    wb_command -cifti-separate ${BL_CURVE_DIR}/${BL_FULL_DATA}.thickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_CURVE_DIR}/${BL_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${BL_CURVE_DIR}/${BL_FULL_DATA}_Thickness.R.func.gii
+    wb_command -cifti-separate ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Thickness.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Thickness.R.func.gii
 
     ######## CURVATURE
-    wb_command -cifti-separate ${BL_CURVE_DIR}/${BL_FULL_DATA}.curvature.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_CURVE_DIR}/${BL_FULL_DATA}_Curvature.L.func.gii -metric CORTEX_RIGHT ${BL_CURVE_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
-    LYC=${BL_CURVE_DIR}/${BL_FULL_DATA}_Curvature.L.func.gii
-    RYC=${BL_CURVE_DIR}/${BL_FULL_DATA}_Curvature.R.func.gii
+    wb_command -cifti-separate ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.curvature.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.R.func.gii
+    LYC=${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.L.func.gii
+    RYC=${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.R.func.gii
 
     ########## BEGIN ITERATING OVER TIME POINTS
     for TIME_POINT in ${TIME_POINTS[@]}; do
@@ -109,20 +100,14 @@ for SUBJECT in ${SUBJECTS[@]}; do
         mkdir -p ${MSM_R_DIR}
         
         ######## GET DATA LOCATION
-        DIRECTORIES=("${DATASET}/Subject_${SUBJECT}_${TIME_POINT}"/*)
-        DIRECTORIES=${DIRECTORIES[0]//*zz_templates/}
-        OLDER_DIR=${DATASET}/Subject_${SUBJECT}_${TIME_POINT}/${DIRECTORIES[0]##*/}
-        OLDER_FULL_DATA=$(basename "${OLDER_DIR}")
-        OLDER_THICK_DIR=${OLDER_DIR}/${RESOLUTION_LOCATION}
-        OLDER_CURVE_DIR=${OLDER_DIR}/${CURVATURE_LOCATION}
-        echo "OLDER DATA LOACTED AT ${OLDER_THICK_DIR}"
-        echo "FULL OLDER DATA NAME: ${OLDER_FULL_DATA}"
+        OLDER_DIR=${DATASET}/Subject_${SUBJECT}_${TIME_POINT}
+        echo "OLDER DATA LOACTED AT ${OLDER_DIR}"
         
         ######## DEFINE MESHES
-        LOAS=${OLDER_THICK_DIR}/${OLDER_FULL_DATA}.L.midthickness.${RESOLUTION}_fs_LR.surf.gii # Left older anatomical surface
-        ROAS=${OLDER_THICK_DIR}/${OLDER_FULL_DATA}.R.midthickness.${RESOLUTION}_fs_LR.surf.gii # Right older anatomical surface
-        LOSS=${OLDER_THICK_DIR}/${OLDER_FULL_DATA}.L.sphere.${RESOLUTION}_fs_LR.surf.gii # Left older spherical surface
-        ROSS=${OLDER_THICK_DIR}/${OLDER_FULL_DATA}.R.sphere.${RESOLUTION}_fs_LR.surf.gii # Right older spherical surface
+        LOAS=${OLDER_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.L.midthickness.32k_fs_LR.surf.gii # Left older anatomical surface
+        ROAS=${OLDER_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.R.midthickness.32k_fs_LR.surf.gii # Right older anatomical surface
+        LOSS=${OLDER_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.L.sphere.32k_fs_LR.surf.gii # Left older spherical surface
+        ROSS=${OLDER_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.R.sphere.32k_fs_LR.surf.gii # Right older spherical surface
         echo "LEFT OLDER ANATOMICAL SURFACE: ${LOAS}"
         echo "RIGHT OLDER ANATOMICAL SURFACE: ${ROAS}"
         echo "LEFT OLDER SPHERICAL SURFACE: ${LOSS}"
@@ -134,12 +119,12 @@ for SUBJECT in ${SUBJECTS[@]}; do
         echo "***************************************************************************"
 
         ######## THICKNESS
-        wb_command -cifti-separate ${OLDER_CURVE_DIR}/${OLDER_FULL_DATA}.thickness.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_CURVE_DIR}/${OLDER_FULL_DATA}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_CURVE_DIR}/${OLDER_FULL_DATA}_Thickness.R.func.gii
+        wb_command -cifti-separate ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Thickness.R.func.gii
         
         ######## CURVATURE
-        wb_command -cifti-separate ${OLDER_CURVE_DIR}/${OLDER_FULL_DATA}.curvature.${RESOLUTION}_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_CURVE_DIR}/${OLDER_FULL_DATA}_Curvature.L.func.gii -metric CORTEX_RIGHT ${OLDER_CURVE_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
-        LOC=${OLDER_CURVE_DIR}/${OLDER_FULL_DATA}_Curvature.L.func.gii
-        ROC=${OLDER_CURVE_DIR}/${OLDER_FULL_DATA}_Curvature.R.func.gii
+        wb_command -cifti-separate ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.curvature.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.R.func.gii
+        LOC=${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.L.func.gii
+        ROC=${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.R.func.gii
 
         ########## GENERATE FORWARD AND REVERSE SCRIPTS
         for HEMISPHERE in L R; do
