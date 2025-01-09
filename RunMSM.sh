@@ -18,7 +18,7 @@ RESOLUTION="32k" # resolution of mesh to use either '32k' or '164k'
 RESOLUTION_LOCATION="T1w/fsaverage_LR32k" # location of meshes 32k should be 'T1w/fsaverage_LR32k' 164k should be 'T1W'
 CURVATURE_LOCATION="MNINonLinear/fsaverage_LR32k"
 MSMCONFIG=/N/project/aMSM/ADNI/SetupFiles/Config/configAnatGrid6 # location of config file
-MSM_OUT=/N/project/aMSM_AD/ADNI/HCP/MSM_T1W # output for msm
+MSM_OUT=/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG # output for msm
 
 ########## ENSURE THAT OUTPUT AND LOG DIRS EXISTS
 mkdir -p ${LOG_OUTPUT_DIR}
