@@ -20,8 +20,8 @@ LOG_OUTPUT_DIR=${HOME}/Scripts/MyScripts/logs #Directory for log file
 LOG_OUTPUT=${LOG_OUTPUT_DIR}/$(basename "$0")_${CURRENT_DATETIME}.log # name and location of log file
 
 ######### CHANGE AS NEEDED
-DATASET=/N/project/aMSM_AD/ADNI/HCP/MSM_T1W # Folder containing subject data
-IMAGE_DIR=/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING_T1W # Location to copy all images to
+DATASET=/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG # Folder containing subject data
+IMAGE_DIR=/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING_T1W_ANATCONFIG # Location to copy all images to
 STARTING_TIME="BL" # The designation used for the baseline time point
 ACCOUNT="r00540" # Slurm allocation to use
 
