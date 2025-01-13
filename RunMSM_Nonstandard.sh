@@ -105,7 +105,7 @@ for IMAGE_NUMBER in ${LOWEST_IMAGE_NUMBERS}; do
             mkdir -p ${MSM_R_DIR}
             
             ######## GET DATA LOCATION
-            OLDER_DIR=${DATASET}/Subject_${SUBJECT}_${TIME_POINT}
+            OLDER_DIR=${DATASET}/Subject_${SUBJECT}_Image_${TIME_POINT}
             echo "OLDER DATA LOACTED AT ${OLDER_DIR}"
             
             ######## DEFINE MESHES
