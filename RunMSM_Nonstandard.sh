@@ -27,6 +27,7 @@ exec > >(tee -a "${LOG_OUTPUT}") 2>&1
 LOWEST_IMAGE_NUMBERS="35039 40392 32777 45126 82509 40378 52129 125029 32755 120403 86345 83521 65874 86318 74496 40657 31500 82571 65268 51934 90989 87493 64862 89124 65561 34195 34371 124115 40404 59214 35653 40191 34190 39197 32817 75459 63508 35014 39200 79784 65374 47757 66018 90925 40828 47186 47177 90026 33046 64116 90916 40352 34168 39203 40172 59955 53802 37190 90942 40269 40840 59677 31446 40254 40692 33114 59986 52107 31107 66824 118916 31392 86327 58054 74600 52138 53836 59174 35029 53845 38887 32785 34866 81434 31468 38878 39288 30968 31540"
 for IMAGE_NUMBER in ${LOWEST_IMAGE_NUMBERS}; do
     STARTING_TIME=${IMAGE_NUMBER}
+    echo "CURRENT STARTING TIME: ${STARTING_TIME}"
     SUBJECTS=()
     ########## GET SUBJECTS
     echo "***************************************************************************"
@@ -82,12 +83,12 @@ for IMAGE_NUMBER in ${LOWEST_IMAGE_NUMBERS}; do
         echo "***************************************************************************"
 
         ######## THICKNESS
-        wb_command -cifti-separate ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Thickness.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Thickness.R.func.gii
+        wb_command -cifti-separate ${BL_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Thickness.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Thickness.R.func.gii
 
         ######## CURVATURE
-        wb_command -cifti-separate ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.curvature.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.R.func.gii
-        LYC=${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.L.func.gii
-        RYC=${BL_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.R.func.gii
+        wb_command -cifti-separate ${BL_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.curvature.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${BL_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.L.func.gii -metric CORTEX_RIGHT ${BL_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.R.func.gii
+        LYC=${BL_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.L.func.gii
+        RYC=${BL_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}_Curvature.R.func.gii
 
         ########## BEGIN ITERATING OVER TIME POINTS
         for TIME_POINT in ${TIME_POINTS[@]}; do
@@ -123,12 +124,12 @@ for IMAGE_NUMBER in ${LOWEST_IMAGE_NUMBERS}; do
             echo "***************************************************************************"
 
             ######## THICKNESS
-            wb_command -cifti-separate ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Thickness.R.func.gii
+            wb_command -cifti-separate ${OLDER_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Thickness.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Thickness.R.func.gii
             
             ######## CURVATURE
-            wb_command -cifti-separate ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.curvature.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.R.func.gii
-            LOC=${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.L.func.gii
-            ROC=${OLDER_DIR}/MNINonLinear/faaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.R.func.gii
+            wb_command -cifti-separate ${OLDER_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.curvature.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT ${OLDER_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.L.func.gii -metric CORTEX_RIGHT ${OLDER_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.R.func.gii
+            LOC=${OLDER_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.L.func.gii
+            ROC=${OLDER_DIR}/MNINonLinear/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}_Curvature.R.func.gii
 
             ########## GENERATE FORWARD AND REVERSE SCRIPTS
             for HEMISPHERE in L R; do
