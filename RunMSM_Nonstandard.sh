@@ -68,10 +68,10 @@ for IMAGE_NUMBER in ${LOWEST_IMAGE_NUMBERS}; do
         echo "YOUNGER DATA LOACTED AT ${BL_DIR}"
         
         ######## DEFINE MESHES
-        LYAS=${BL_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.L.midthickness.32k_fs_LR.surf.gii # Left younger anatomical surface
-        RYAS=${BL_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.R.midthickness.32k_fs_LR.surf.gii # Right younger anatomical surface
-        LYSS=${BL_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.L.sphere.32k_fs_LR.surf.gii # Left younger spherical surface
-        RYSS=${BL_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.R.sphere.32k_fs_LR.surf.gii # Right younger spherical surface
+        LYAS=${BL_DIR}/T1w/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.L.midthickness.32k_fs_LR.surf.gii # Left younger anatomical surface
+        RYAS=${BL_DIR}/T1w/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.R.midthickness.32k_fs_LR.surf.gii # Right younger anatomical surface
+        LYSS=${BL_DIR}/T1w/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.L.sphere.32k_fs_LR.surf.gii # Left younger spherical surface
+        RYSS=${BL_DIR}/T1w/fsaverage_LR32k/Subject_${SUBJECT}_Image_${STARTING_TIME}.R.sphere.32k_fs_LR.surf.gii # Right younger spherical surface
         echo "LEFT YOUNGER ANATOMICAL SURFACE: ${LYAS}"
         echo "RIGHT YOUNGER ANATOMICAL SURFACE: ${RYAS}"
         echo "LEFT YOUNGER SPHERICAL SURFACE: ${LYSS}"
@@ -109,10 +109,10 @@ for IMAGE_NUMBER in ${LOWEST_IMAGE_NUMBERS}; do
             echo "OLDER DATA LOACTED AT ${OLDER_DIR}"
             
             ######## DEFINE MESHES
-            LOAS=${OLDER_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.L.midthickness.32k_fs_LR.surf.gii # Left older anatomical surface
-            ROAS=${OLDER_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.R.midthickness.32k_fs_LR.surf.gii # Right older anatomical surface
-            LOSS=${OLDER_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.L.sphere.32k_fs_LR.surf.gii # Left older spherical surface
-            ROSS=${OLDER_DIR}/T1w/fsaverave_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.R.sphere.32k_fs_LR.surf.gii # Right older spherical surface
+            LOAS=${OLDER_DIR}/T1w/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.L.midthickness.32k_fs_LR.surf.gii # Left older anatomical surface
+            ROAS=${OLDER_DIR}/T1w/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.R.midthickness.32k_fs_LR.surf.gii # Right older anatomical surface
+            LOSS=${OLDER_DIR}/T1w/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.L.sphere.32k_fs_LR.surf.gii # Left older spherical surface
+            ROSS=${OLDER_DIR}/T1w/fsaverage_LR32k/Subject_${SUBJECT}_Image_${TIME_POINT}.R.sphere.32k_fs_LR.surf.gii # Right older spherical surface
             echo "LEFT OLDER ANATOMICAL SURFACE: ${LOAS}"
             echo "RIGHT OLDER ANATOMICAL SURFACE: ${ROAS}"
             echo "LEFT OLDER SPHERICAL SURFACE: ${LOSS}"
