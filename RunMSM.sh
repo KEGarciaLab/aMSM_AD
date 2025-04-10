@@ -9,7 +9,7 @@ LEVELS=6 # Levels for MSM
 
 ######### CHANGE AS NEEDED
 STARTING_TIME="BL" # Earliest Time point being used
-DATASET=/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED # Folder containing subject data
+DATASET=/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST # Folder containing subject data
 OUTPUT_DIR=${HOME}/Scripts/MyScripts/Output/$(basename "$0")/${CURRENT_DATETIME} # ouptut location for generated scripts
 ACCOUNT="r00540" # Slurm allocation to use
 MAXCP=${DATASET}/ico5sphere.LR.reg.surf.gii # path to ico5sphere
