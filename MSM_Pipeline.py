@@ -9,7 +9,7 @@ def Ciftify_Subject_List(dataset: str, subjects: list, pattern: str):
     
     for subject in subjects:
         for entry in listdir(dataset):
-            full_path = os.path.join(dataset, entry)
+            full_path = path.join(dataset, entry)
             if path.isdir(full_path) and pattern.match(entry):
                 subjects_dirs.append(entry)
     
