@@ -256,14 +256,14 @@ def Run_MSM_BL_To_All(dataset: str, output: str, starting_time: str, slurm_accou
             if subject not in subjects:
                 print(f"Found subject number {subject}")
                 subjects.append(subject)
-    
+    subjects = subjects.sort()
     print("\nAll subjects found. Beginning MSM")
     print('*' *50)
     for subject in subjects:
         print(f"Serching for time points for subject {subject}")
         time_points = Get_Subject_Time_Points(dataset=dataset, subject_id=subject)
         print(*time_points)
-        print(f"The following time points have been located: ", *time_points, sep='')
+        print(f"The following time points have been located: ", *time_points, sep=' ')
         print()
         for time_point in time_points:
             if time_point != starting_time:
