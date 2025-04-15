@@ -53,7 +53,9 @@ def Run_Ciftify(dataset: str, directories: list, delimiter: str, subjuect_index:
         subject_output_path = path.join(output_path, f"Subject_{subject}_{time_point}")
         makedirs(output_path, exist_ok=True)
         
-        with open("Ciftify_template.txt", 'r') as f:
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "Ciftify_template.txt")
+        with open(template_path, 'r') as f:
             template_read = f.read()
         template = Template(template_read)
         to_write = template.substitute(subject=subject, time_point=time_point, account=slurm_account, email=slurm_email, dataset=dataset, output_dir=subject_output_path, dir=directory)
@@ -144,7 +146,9 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
         
         print()
         print(fr"Generating script file {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
-        with open("MSM_template_forward_L.txt", "r") as f:
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "MSM_template_forward_L.txt")
+        with open(template_path, "r") as f:
             template_read = f.read()
         template = Template(template_read)
         to_write = template.substitute(subject=subject, starting_time=younger_timepoint, ending_time=older_timepoint, user_home=user_home, email=slurm_email, account=slurm_account,
@@ -165,7 +169,9 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
         
         (print)
         print(fr"Generating script {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
-        with open("MSM_template_forward_R.txt", "r") as f:
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "MSM_template_forward_R.txt")
+        with open(template_path, "r") as f:
             template_read = f.read()
         template = Template(template_read)
         to_write = template.substitute(subject=subject, starting_time=younger_timepoint, ending_time=older_timepoint, user_home=user_home, email=slurm_email, account=slurm_account,
@@ -191,7 +197,9 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
         
         print()
         print(fr"Generating script {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh")
-        with open("MSM_template_reverse_L.txt", "r") as f:
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "MSM_template_reverse_L.txt")
+        with open(template_path, "r") as f:
             template_read = f.read()
         template = Template(template_read)
         to_write = template.substitute(subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint, user_home=user_home, email=slurm_email, account=slurm_account,
@@ -212,7 +220,9 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
         
         print()
         print(fr"Generating Script {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh")
-        with open("MSM_template_reverse_R.txt", "r") as f:
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "MSM_template_reverse_R.txt")
+        with open(template_path, "r") as f:
             template_read = f.read()
         template = Template(template_read)
         to_write = template.substitute(subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint, user_home=user_home, email=slurm_email, account=slurm_account,
