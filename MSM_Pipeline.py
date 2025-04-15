@@ -205,7 +205,7 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
         template = Template(template_read)
         to_write = template.substitute(subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint, user_home=user_home, email=slurm_email, account=slurm_account,
                                     levels=levels, config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4], oc=older_files[4], yas=younger_files[0],
-                                    oas=older_files[0], f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                                    oas=older_files[0], r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
         
         with open(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
@@ -228,7 +228,7 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
         template = Template(template_read)
         to_write = template.substitute(subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint, user_home=user_home, email=slurm_email, account=slurm_account,
                                     levels=levels, config=config, yss=younger_files[3], oss=older_files[3], yc=younger_files[5], oc=older_files[5], yas=younger_files[1],
-                                    oas=older_files[1], f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                                    oas=older_files[1], r_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
         with open(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write) 
         
