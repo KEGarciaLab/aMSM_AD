@@ -61,7 +61,7 @@ def Run_Ciftify(dataset: str, directories: list, delimiter: str, subjuect_index:
         with open(fr"{temp_output}/Subject_{subject}_{time_point}_recon_all.sh", 'w') as f:
             f.write(to_write)
             
-        run(fr"sbatch {temp_output}/Subject_{subject}_{time_point}_recon_all.sh")
+        run(fr"sbatch {temp_output}/Subject_{subject}_{time_point}_recon_all.sh", shell=True)
   
                 
 # Function to get all time points for a subject
@@ -100,8 +100,8 @@ def Get_MSM_Files(dataset: str, subject: str, time_point: str):
     right_spherical_surface = path.join(subject_thickness_dir, f"{subject_full_name}.L.sphere.32k_fs_LR.surf.gii")
     
     # run seperate commands for curvatures
-    run(fr"wb_command -cifti-separate {subject_curvature_dir}/{subject_full_name}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT {subject_curvature_dir}/{subject_full_name}_Thickness.L.func.gii -metric CORTEX_RIGHT {subject_curvature_dir}/{subject_full_name}_Thickness.R.func.gii")
-    run(fr"wb_command -cifti-separate {subject_curvature_dir}/{subject_full_name}.curvature.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT {subject_curvature_dir}/{subject_full_name}_Curvature.L.func.gii -metric CORTEX_RIGHT {subject_curvature_dir}/{subject_full_name}_Curvature.R.func.gii")
+    run(fr"wb_command -cifti-separate {subject_curvature_dir}/{subject_full_name}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT {subject_curvature_dir}/{subject_full_name}_Thickness.L.func.gii -metric CORTEX_RIGHT {subject_curvature_dir}/{subject_full_name}_Thickness.R.func.gii", shell=True)
+    run(fr"wb_command -cifti-separate {subject_curvature_dir}/{subject_full_name}.curvature.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT {subject_curvature_dir}/{subject_full_name}_Curvature.L.func.gii -metric CORTEX_RIGHT {subject_curvature_dir}/{subject_full_name}_Curvature.R.func.gii", shell=True)
     
     # get full path for curvature files
     left_curvature = fr"{subject_curvature_dir}/{subject_full_name}_Curvature.L.func.gii"
@@ -161,7 +161,7 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
             sleep(2 * 3600)
             jobs_open = Slurm_Queue_Open(slurm_user)
         print("Jobs open submitting script")
-        run(fr"sbatch {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
+        run(fr"sbatch {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
         
         (print)
         print(fr"Generating script {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
@@ -182,7 +182,7 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
             sleep(2 * 3600)
             jobs_open = Slurm_Queue_Open(slurm_user)
         print("Jobs open submitting script")
-        run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
+        run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
     
     elif mode == "reverse":
         output = path.join(output, fr"{subject}_{older_timepoint}_to_{younger_timepoint}")
@@ -208,7 +208,7 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
             sleep(2 * 3600)
             jobs_open = Slurm_Queue_Open(slurm_user)
         print("Jobs open submitting script")
-        run(fr"sbatch {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh")
+        run(fr"sbatch {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True)
         
         print()
         print(fr"Generating Script {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh")
@@ -228,7 +228,7 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
             sleep(2 * 3600)
             jobs_open = Slurm_Queue_Open(slurm_user)
         print("Jobs open submitting script")
-        run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
+        run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
     
         
 
