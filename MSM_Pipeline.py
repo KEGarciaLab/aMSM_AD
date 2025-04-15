@@ -1,9 +1,31 @@
+import sys
 from os import listdir, path, makedirs
 from re import compile
 from subprocess import check_output, run
 from time import sleep
 from string import Template
 from typing import Literal
+
+# class for logging
+class Tee:
+    def __init__(self, *streams):
+        self.streams = streams
+    
+    def write(self, message):
+        for stream in self.streams:
+            stream.write(message)
+            stream.flush()
+    
+    def flush(self):
+        for stream in self.streams:
+            stream.flush()
+            
+log_path = path.expanduser('~/Scripts/MSM_Pipeline/output/full_pipeline_log.txt')
+log_file = open(log_path, 'w')
+
+sys.stdout = Tee(sys.__stdout__, log_file)
+sys.stderr = Tee(sys.__stderr__, log_file)
+
 
 # Function for gathering subjects for ciftify
 def Ciftify_Subject_List(dataset: str, subjects: list, pattern: str):
