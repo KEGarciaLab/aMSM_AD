@@ -82,7 +82,8 @@ def Get_Subject_Time_Points(dataset: str, subject_id: str):
         if time_point not in time_points:
             time_points.append(time_point)
     
-    return time_points.sort()
+    time_points.sort()
+    return time_points
 
 def Get_MSM_Files(dataset: str, subject: str, time_point: str):
     # get directory containing data and name prefix
@@ -256,7 +257,8 @@ def Run_MSM_BL_To_All(dataset: str, output: str, starting_time: str, slurm_accou
             if subject not in subjects:
                 print(f"Found subject number {subject}")
                 subjects.append(subject)
-    subjects = subjects.sort()
+    
+    subjects.sort()
     print("\nAll subjects found. Beginning MSM")
     print('*' *50)
     for subject in subjects:
