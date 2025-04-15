@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#SBATCH -J MSM.$subject.L.$starting_time-$ending_time
+#SBATCH -p general
+#SBATCH -o ${user_home}/Scripts/MyScripts/logs/Slurm/%j_MSM_$subject_$starting_time-$ending_time.txt
+#SBATCH -e ${user_home}/Scripts/MyScripts/logs/Slurm/%j_MSM_$subject_$starting_time-$ending_time_error.txt
+#SBATCH --mail-type=fail
+#SBATCH --mail-user=$email
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=49:00:00
+#SBATCH --mem=16G
+#SBATCH -A $account
+
+########## RUN MSM
+msm --levels=$levels --conf=$config --inmesh=$oss --refmesh=$yss --indata=$oc --refdata=$yc --inanat=$oas --refanat=$yas --out=${r_out} --verbose
+
+########## SURFACE DISTORTION
+wb_command -surface-resample $oas $oss $maxanat "BARYCENTRIC" ${r_out}LOAS.ANATgrid.surf.gii
+wb_command -set-structure ${r_out}LOAS.ANATgrid.surf.gii CORTEX_LEFT
+wb_command -surface-resample $oas $oss $maxcp "BARYCENTRIC" ${r_out}LOAS.CPgrid.surf.gii
+wb_command -set-structure ${r_out}LOAS.CPgrid.surf.gii CORTEX_LEFT
+
+########## OUTPUT CALCULATIONS
+wb_command -surface-resample $yas $yss ${r_out}sphere.reg.surf.gii "BARYCENTRIC" ${r_out}anat.true.reg.surf.gii
+wb_command -surface-distortion $oas ${r_out}anat.true.reg.surf.gii ${r_out}surfdist.func.gii
+
+######## MAXANAT
+wb_command -surface-sphere-project-unproject $maxanat $oss ${r_out}sphere.reg.surf.gii ${r_out}sphere.ANATgrid.reg.surf.gii
+wb_command -surface-resample $yas $yss ${r_out}sphere.ANATgrid.reg.surf.gii "BARYCENTRIC" ${r_out}anat.ANATgrid.reg.surf.gii
+wb_command -surface-distortion ${r_out}LOAS.ANATgrid.surf.gii ${r_out}anat.ANATgrid.reg.surf.gii ${r_out}surfdist.ANATgrid.func.gii
+
+######## MAXCP
+wb_command -surface-sphere-project-unproject $maxcp $oss ${r_out}sphere.reg.surf.gii ${r_out}sphere.CPgrid.reg.surf.gii
+wb_command -surface-resample $yas $yss ${r_out}sphere.CPgrid.reg.surf.gii "BARYCENTRIC" ${r_out}anat.CPgrid.reg.surf.gii
+wb_command -surface-distortion ${r_out}LOAS.CPgrid.surf.gii ${r_out}anat.CPgrid.reg.surf.gii ${r_out}surfdist.CPgrid.func.gii
