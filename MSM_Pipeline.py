@@ -82,7 +82,7 @@ def Get_Subject_Time_Points(dataset: str, subject_id: str):
         if time_point not in time_points:
             time_points.append(time_point)
     
-    return time_points
+    return time_points.sort()
 
 def Get_MSM_Files(dataset: str, subject: str, time_point: str):
     # get directory containing data and name prefix
