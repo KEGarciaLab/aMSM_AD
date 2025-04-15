@@ -239,7 +239,7 @@ def Run_MSM(dataset: str, output: str, subject: str, younger_timepoint: str, old
             sleep(2 * 3600)
             jobs_open = Slurm_Queue_Open(slurm_user)
         print("Jobs open submitting script")
-        run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
+        run(fr"sbatch {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True)
     
         
 
