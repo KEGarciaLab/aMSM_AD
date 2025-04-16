@@ -286,6 +286,8 @@ def Run_MSM_BL_To_All(dataset: str, output: str, starting_time: str, slurm_accou
     for subject in subjects:
         print(f"Serching for time points for subject {subject}")
         time_points = Get_Subject_Time_Points(dataset=dataset, subject_id=subject)
+        if starting_time not in time_points:
+            print(f"ERROR: Starting Time missing for {subject}! Proceeding to next subject")
         print(*time_points)
         print(f"The following time points have been located: ", *time_points, sep=' ')
         print()
