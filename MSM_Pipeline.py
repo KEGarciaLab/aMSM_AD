@@ -135,7 +135,7 @@ def get_subject_time_points(dataset: str, subject: str, alphanumeric_timepoints:
             time_points.append(time_point)
 
     if alphanumeric_timepoints:
-        sort_time_points(
+        time_points = sort_time_points(
             time_points, time_point_number_start_character, starting_time)
     else:
         time_points.sort()
