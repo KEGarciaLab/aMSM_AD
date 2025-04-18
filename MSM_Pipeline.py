@@ -24,6 +24,7 @@ class Tee:
 
 log_path = path.expanduser(
     '~/Scripts/MyScripts/Output/MSM_Pipeline/full_pipeline_log.txt')
+makedirs(path.dirname(log_path), exist_ok=True)
 log_file = open(log_path, 'w+')
 sys.stdout = Tee(sys.__stdout__, log_file)
 sys.stderr = Tee(sys.__stderr__, log_file)
