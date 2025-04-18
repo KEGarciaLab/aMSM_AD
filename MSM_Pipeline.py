@@ -102,12 +102,27 @@ def run_ciftify(dataset: str, directories: list, delimiter: str,
             shell=True)
 
 
+# Helper function for sorting time points
+def sort_time_points(time_points: list, number_start_character: int, starting_time=None):
+    copy = time_points.copy()
+    if starting_time is not None and starting_time in time_points:
+        copy.pop(time_points.index(starting_time))
+
+    copy.sort(key=lambda time_point: int(
+        time_point[number_start_character:]))
+
+    if starting_time is not None and starting_time in time_points:
+        copy.insert(0, starting_time)
+
+    return copy
+
+
 # Function to get all time points for a subject
-def get_subject_time_points(dataset: str, subject_id: str):
-    print(f"\nSerching for time points for subject {subject_id}")
+def get_subject_time_points(dataset: str, subject: str, alphanumeric_timepoints: bool, time_point_number_start_character: str, starting_time=None):
+    print(f"\nSerching for time points for subject {subject}")
     subject_dirs = []
     time_points = []
-    pattern = compile(fr"Subject_{subject_id}_.*")
+    pattern = compile(fr"Subject_{subject}_.*")
     for entry in listdir(dataset):
         full_path = path.join(dataset, entry)
         if path.isdir(full_path) and pattern.match(entry):
@@ -119,7 +134,11 @@ def get_subject_time_points(dataset: str, subject_id: str):
         if time_point not in time_points:
             time_points.append(time_point)
 
-    time_points.sort()
+    if alphanumeric_timepoints:
+        sort_time_points(
+            time_points, time_point_number_start_character, starting_time)
+    else:
+        time_points.sort()
     print("The following time points have been located: ", *time_points, sep=' ')
     return time_points
 
@@ -329,23 +348,22 @@ def get_subjects(dataset: str):
 
 
 # Function for MSM BL tp all
-def run_msm_bl_To_all(dataset: str, output: str, starting_time: str,
-                      slurm_account: str, slurm_user: str, slurm_email: str, levels: int,
-                      config: str, max_anat: str, max_cp: str):
+def run_msm_bl_To_all(dataset: str, alphanumeric_timepoints: bool, time_point_number_start_character: int,
+                      output: str, starting_time: str, slurm_account: str, slurm_user: str,
+                      slurm_email: str, levels: int, config: str,
+                      max_anat: str, max_cp: str):
 
     subjects = get_subjects(dataset)
     print("\nAll subjects found. Beginning MSM")
     print('*' * 50)
     for subject in subjects:
         time_points = get_subject_time_points(
-            dataset=dataset, subject_id=subject)
+            dataset, subject, alphanumeric_timepoints, time_point_number_start_character, starting_time)
         if starting_time not in time_points:
             print(
                 f"ERROR: Starting Time missing for {subject}! Proceeding to next subject")
             continue
 
-        print("The following time points have been located: ",
-              *time_points, sep=' ')
         for time_point in time_points:
             if time_point != starting_time:
                 run_msm(dataset, output, subject, starting_time, time_point, "forward",
@@ -355,15 +373,17 @@ def run_msm_bl_To_all(dataset: str, output: str, starting_time: str,
 
 
 # Function to run MSM on shirt time windows
-def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str,
-                               slurm_user: str, slurm_email: str, levels: int,
-                               config: str, max_anat: str, max_cp: str):
+def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
+                               time_point_number_start_character: int,
+                               output: str, slurm_account: str, slurm_user: str,
+                               slurm_email: str, levels: int, config: str,
+                               max_anat: str, max_cp: str, starting_time=None):
     subjects = get_subjects(dataset)
     print("\nAll subjects found. Beginning MSM")
     print('*' * 50)
     for subject in subjects:
         time_points = get_subject_time_points(
-            dataset=dataset, subject_id=subject)
+            dataset, subject, alphanumeric_timepoints, time_point_number_start_character, starting_time)
         for i, time_point in enumerate(time_points):
             while i + 1 <= len(time_points):
                 younger_time = time_point
@@ -376,6 +396,8 @@ def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str,
 
 run_msm_bl_To_all(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
+    True,
+    1,
     r"/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
     "BL",
     "r00540",
@@ -389,6 +411,8 @@ run_msm_bl_To_all(
 
 run_msm_short_time_windows(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
+    True,
+    1,
     r"/N/project/aMSM_AD/ADNI/HCP/HCP/MSM_T1W_ANATCONFIG",
     "r00540",
     "sarigdon",
