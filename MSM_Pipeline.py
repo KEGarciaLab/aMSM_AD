@@ -23,7 +23,7 @@ class Tee:
 
 
 log_path = path.expanduser(
-    '~/Scripts/MSM_Pipeline/output/full_pipeline_log.txt')
+    '~/Scripts/MyScripts/Output/MSM_Pipeline/full_pipeline_log.txt')
 log_file = open(log_path, 'w')
 sys.stdout = Tee(sys.__stdout__, log_file)
 sys.stderr = Tee(sys.__stderr__, log_file)
@@ -52,12 +52,12 @@ def is_slurm_queue_open(slurm_user: str):
          f"-u{slurm_user}",
          "-o '%.10i %.9p %40j %.8u %.10T %.10M %.6D %R'", "-a"]).decode("utf-8")
     user_home = path.expanduser('~')
-    output_dir = rf"{user_home}/Scripts/MSM_Pipeline/output"
+    output_dir = rf"{user_home}/Scripts/MyScripts/Output/MSM_Pipeline"
 
     makedirs(output_dir, exist_ok=True)
-    with open(rf"{user_home}/Scripts/MSM_Pipeline/output/queue.txt", 'w+') as f:
+    with open(rf"{user_home}/Scripts/MyScripts/Output/MSM_Pipeline/queue.txt", 'w+') as f:
         f.write(jobs)
-    with open(rf"{user_home}/Scripts/MSM_Pipeline/output/queue.txt", 'r') as f:
+    with open(rf"{user_home}/Scripts/MyScripts/Output/MSM_Pipeline/queue.txt", 'r') as f:
         jobs = (sum(1 for line in f)) - 1
     open_jobs = 500 - jobs
 
@@ -69,8 +69,8 @@ def run_ciftify(dataset: str, directories: list, delimiter: str,
                 subject_index: int, time_index: int, output_path: str, slurm_account: str,
                 slurm_user: str, slurm_email: str):
     user_home = path.expanduser('~')
-    temp_output = path.join(user_home, "Scripts",
-                            "MSM_Pipeline", "output", "ciftify_scripts")
+    temp_output = path.join(user_home, "Scripts", "MyScripts", "Output",
+                            "MSM_Pipeline", "ciftify_scripts")
 
     makedirs(temp_output, exist_ok=True)
     for directory in directories:
@@ -191,10 +191,10 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
 
     user_home = path.expanduser('~')
     if mode == "forward":
-        temp_output = path.join(user_home, "Scripts", "MSM_Pipeline", "output",
+        temp_output = path.join(user_home, "Scripts", "MyScripts", "Output", "MSM_Pipeline",
                                 "MSM_scripts", fr"{subject}_{younger_timepoint}_to_{older_timepoint}")
     elif mode == "reverse":
-        temp_output = path.join(user_home, "Scripts", "MSM_Pipeline", "output",
+        temp_output = path.join(user_home, "Scripts", "MyScripts", "Output" "MSM_Pipeline",
                                 "MSM_scripts", fr"{subject}_{older_timepoint}_to_{younger_timepoint}")
     print(f"Creating the following script directory: {temp_output}")
     makedirs(temp_output, exist_ok=True)
@@ -216,8 +216,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
     if mode == "forward":
         output = path.join(
             output, fr"{subject}_{younger_timepoint}_to_{older_timepoint}")
-        left_file_prefix = fr"{subject}_L_{younger_timepoint}-{older_timepoint}."
-        right_file_prefix = fr"{subject}_R_{younger_timepoint}-{older_timepoint}."
+        left_file_prefix = fr"{output}/{subject}_L_{younger_timepoint}-{older_timepoint}."
+        right_file_prefix = fr"{output}/{subject}_R_{younger_timepoint}-{older_timepoint}."
 
         print(" \n")
         print(
@@ -274,8 +274,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
     elif mode == "reverse":
         output = path.join(
             output, fr"{subject}_{older_timepoint}_to_{younger_timepoint}")
-        left_file_prefix = fr"{subject}_L_{older_timepoint}-{younger_timepoint}."
-        right_file_prefix = fr"{subject}_R_{older_timepoint}-{younger_timepoint}."
+        left_file_prefix = fr"{output}/{subject}_L_{older_timepoint}-{younger_timepoint}."
+        right_file_prefix = fr"{output}/{subject}_R_{older_timepoint}-{younger_timepoint}."
 
         print(" \n")
         print(
