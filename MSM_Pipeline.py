@@ -73,23 +73,22 @@ def is_slurm_queue_open(slurm_user: str):
 def run_ciftify(dataset: str, directories: list, delimiter: str,
                 subject_index: int, time_index: int, output_path: str, slurm_account: str,
                 slurm_user: str, slurm_email: str):
+    print("\nStarting ciftify runs")
+    print('*' * 50)
     user_home = path.expanduser('~')
     temp_output = path.join(user_home, "Scripts", "MyScripts", "Output",
                             "MSM_Pipeline", "ciftify_scripts")
 
     makedirs(temp_output, exist_ok=True)
     for directory in directories:
-        jobs_open = is_slurm_queue_open(slurm_user=slurm_user)
-        while jobs_open <= 0:
-            sleep(2 * 3600)
-            jobs_open = is_slurm_queue_open(slurm_user=slurm_user)
-
         fields = directory.split(delimiter)
         subject = fields[subject_index]
         time_point = fields[time_index]
         subject_output_path = path.join(
             output_path, f"Subject_{subject}_{time_point}")
         makedirs(output_path, exist_ok=True)
+        print(
+            f"\nCiftify run for subject {subject} at time point {time_point}")
 
         script_dir = path.dirname(path.realpath(__file__))
         template_path = path.join(script_dir, "Ciftify_template.txt")
@@ -102,7 +101,13 @@ def run_ciftify(dataset: str, directories: list, delimiter: str,
 
         with open(fr"{temp_output}/Subject_{subject}_{time_point}_recon_all.sh", 'w') as f:
             f.write(to_write)
+        print(
+            fr"Script wrote to {temp_output}/Subject_{subject}_{time_point}_recon_all.sh")
 
+        jobs_open = is_slurm_queue_open(slurm_user=slurm_user)
+        while jobs_open <= 0:
+            sleep(2 * 3600)
+            jobs_open = is_slurm_queue_open(slurm_user=slurm_user)
         run(fr"sbatch {temp_output}/Subject_{subject}_{time_point}_recon_all.sh",
             shell=True)
 
