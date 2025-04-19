@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#SBATCH -J recon_all_Subject_$subject_$time_point
+#SBATCH -J recon_all_Subject_${subject}_${time_point}
 #SBATCH -p general
 #SBATCH --mail-type=fail
-#SBATCH --mail-user=$email
+#SBATCH --mail-user=${email}
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=49:00:00
 #SBATCH --mem=16G
 #SBATCH -A $account
 
-ciftify_recon_all --fs-subjects-dir $dataset --ciftify-work-dir $output_dir --resample-to-T1w32k $dir
+ciftify_recon_all --fs-subjects-dir ${dataset} --ciftify-work-dir ${output_dir} --resample-to-T1w32k $dir

@@ -32,17 +32,21 @@ sys.stderr = Tee(sys.__stderr__, log_file)
 
 # Function for gathering subjects for ciftify
 def get_ciftify_subject_list(dataset: str, subjects: list, pattern: str):
-    pattern = compile(pattern)
+    print("\nBegin ciftify subject list generation")
+    print('*' * 50)
+    print("Finding all files for the following subjects:")
+    print(*subjects, sep='\n')
     subjects_dirs = []
 
     for subject in subjects:
+        subject_pattern = pattern.replace('#', subject)
+        subject_pattern = compile(subject_pattern)
         for entry in listdir(dataset):
-            if subject in entry:
-                full_path = path.join(dataset, entry)
-                if path.isdir(full_path) and pattern.match(entry):
-                    subjects_dirs.append(entry)
+            full_path = path.join(dataset, entry)
+            if path.isdir(full_path) and subject_pattern.match(entry) and entry not in subjects_dirs:
+                subjects_dirs.append(entry)
 
-    return subjects_dirs
+    return sorted(subjects_dirs)
 
 
 # Function to check number of slurm jobs remaining
@@ -195,7 +199,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         temp_output = path.join(user_home, "Scripts", "MyScripts", "Output", "MSM_Pipeline",
                                 "MSM_scripts", fr"{subject}_{younger_timepoint}_to_{older_timepoint}")
     elif mode == "reverse":
-        temp_output = path.join(user_home, "Scripts", "MyScripts", "Output" "MSM_Pipeline",
+        temp_output = path.join(user_home, "Scripts", "MyScripts", "Output", "MSM_Pipeline",
                                 "MSM_scripts", fr"{subject}_{older_timepoint}_to_{younger_timepoint}")
     print(f"Creating the following script directory: {temp_output}")
     makedirs(temp_output, exist_ok=True)
@@ -395,7 +399,28 @@ def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
 
 
-run_msm_bl_To_all(
+subjects_to_run = ['0021', '0031', '0056', '0059', '0069', '0072', '0074', '0106', '0112', '0113', '0120', '0127', '0142', '0150', '0156', '0173', '0205', '0210', '0229', '0259', '0296', '0298', '0303', '0359', '0377', '0382', '0384', '0413', '0416', '0419', '0454', '0473', '0498', '0553', '0555', '0602', '0605', '0618', '0626', '0668', '0677', '0679', '0680', '0731', '0734', '0746', '0751', '0767', '0800', '0802', '0908', '0925', '0934', '1016', '1032', '1052', '1074', '1098', '1122', '1155', '1169', '1261', '1280', '1286', '1300',
+                   '1352', '1418', '1427', '2002', '2121', '2123', '2130', '2155', '2180', '2182', '2184', '2187', '2220', '2234', '2239', '2245', '2263', '2304', '2308', '2315', '2332', '2333', '2392', '2395', '4028', '4036', '4043', '4076', '4084', '4115', '4119', '4127', '4148', '4164', '4187', '4200', '4210', '4212', '4224', '4278', '4288', '4292', '4313', '4356', '4365', '4369', '4384', '4399', '4400', '4401', '4448', '4453', '4464', '4469', '4489', '4513', '4514', '4576', '4604', '4674', '4722', '4723', '4855', '4856', '4869', '4872', '4874', '4891']
+
+subjects_dirs = get_ciftify_subject_list(
+    '/N/project/ADNI_Processing/ADNI_F26_ADSP/FINAL_FOR_EXTRACTION',
+    subjects_to_run,
+    '.*_S_#_.*'
+)
+
+run_ciftify(
+    '/N/project/ADNI_Processing/ADNI_F26_ADSP/FINAL_FOR_EXTRACTION',
+    subjects_dirs,
+    '_',
+    2,
+    3,
+    "/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
+    "r00540",
+    'sarigdon',
+    'sarigdon@iu.edu'
+)
+
+"""run_msm_bl_To_all(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
     True,
     1,
@@ -423,3 +448,4 @@ run_msm_short_time_windows(
     r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
     r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii"
 )
+"""
