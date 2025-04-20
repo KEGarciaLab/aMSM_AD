@@ -408,13 +408,13 @@ subjects_to_run = ['0021', '0031', '0056', '0059', '0069', '0072', '0074', '0106
                    '1352', '1418', '1427', '2002', '2121', '2123', '2130', '2155', '2180', '2182', '2184', '2187', '2220', '2234', '2239', '2245', '2263', '2304', '2308', '2315', '2332', '2333', '2392', '2395', '4028', '4036', '4043', '4076', '4084', '4115', '4119', '4127', '4148', '4164', '4187', '4200', '4210', '4212', '4224', '4278', '4288', '4292', '4313', '4356', '4365', '4369', '4384', '4399', '4400', '4401', '4448', '4453', '4464', '4469', '4489', '4513', '4514', '4576', '4604', '4674', '4722', '4723', '4855', '4856', '4869', '4872', '4874', '4891']
 
 subjects_dirs = get_ciftify_subject_list(
-    '/N/project/ADNI_Processing/ADNI_F26_ADSP/FINAL_FOR_EXTRACTION',
+    '/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION',
     subjects_to_run,
     '.*_S_#_.*'
 )
 
 run_ciftify(
-    '/N/project/ADNI_Processing/ADNI_F26_ADSP/FINAL_FOR_EXTRACTION',
+    '/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION',
     subjects_dirs,
     '_',
     2,
