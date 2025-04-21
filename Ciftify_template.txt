@@ -1,6 +1,8 @@
 #!/bin/bash
 
 #SBATCH -J recon_all_Subject_${subject}_${time_point}
+#SBATCH -o ${user_home}/Scripts/MyScripts/logs/Slurm/%j_recon_all_Subject_${subject}_${time_point}.txt
+#SBATCH -e ${user_home}/Scripts/MyScripts/logs/Slurm/%j_recon_all_Subject_${subject}_${time_point}_error.txt
 #SBATCH -p general
 #SBATCH --mail-type=fail
 #SBATCH --mail-user=${email}
