@@ -226,6 +226,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
     if mode == "forward":
         output = path.join(
             output, fr"{subject}_{younger_timepoint}_to_{older_timepoint}")
+        makedirs(output, exist_ok=True)
         left_file_prefix = fr"{output}/{subject}_L_{younger_timepoint}-{older_timepoint}."
         right_file_prefix = fr"{output}/{subject}_R_{younger_timepoint}-{older_timepoint}."
 
@@ -284,6 +285,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
     elif mode == "reverse":
         output = path.join(
             output, fr"{subject}_{older_timepoint}_to_{younger_timepoint}")
+        makedirs(output, exist_ok=True)
         left_file_prefix = fr"{output}/{subject}_L_{older_timepoint}-{younger_timepoint}."
         right_file_prefix = fr"{output}/{subject}_R_{older_timepoint}-{younger_timepoint}."
 
@@ -437,7 +439,7 @@ run_msm_bl_To_all(
     "sarigdon",
     "sarigdon@iu.edu",
     6,
-    r"/N/project/aMSM_AD/ADNI/HCP/configFINAL",
+    r"/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL",
     r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
     r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii"
 )
