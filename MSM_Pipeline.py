@@ -439,7 +439,7 @@ run_msm_bl_To_all(
     "sarigdon",
     "sarigdon@iu.edu",
     6,
-    r"/N/project/aMSM/ADNI/SetupFiles/Config/configFINAL",
+    r"/N/project/aMSM_AD/ADNI/HCP/configAnatGrid6",
     r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
     r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii"
 )
