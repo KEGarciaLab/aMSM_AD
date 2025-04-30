@@ -427,7 +427,6 @@ run_ciftify(
     'sarigdon',
     'sarigdon@iu.edu'
 )
-"""
 
 run_msm_bl_To_all(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
@@ -443,6 +442,7 @@ run_msm_bl_To_all(
     r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
     r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii"
 )
+"""
 
 run_msm_short_time_windows(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
@@ -455,5 +455,6 @@ run_msm_short_time_windows(
     6,
     r"/N/project/aMSM_AD/ADNI/HCP/configAnatGrid6",
     r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
-    r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii"
+    r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
+    "BL"
 )
