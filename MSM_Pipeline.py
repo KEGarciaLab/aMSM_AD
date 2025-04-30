@@ -448,7 +448,7 @@ run_msm_short_time_windows(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
     True,
     1,
-    r"/N/project/aMSM_AD/ADNI/HCP/HCP/MSM_T1W_ANATCONFIG",
+    r"/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
     "r00540",
     "sarigdon",
     "sarigdon@iu.edu",
