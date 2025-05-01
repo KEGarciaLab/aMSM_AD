@@ -397,7 +397,7 @@ def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
         time_points = get_subject_time_points(
             dataset, subject, alphanumeric_timepoints, time_point_number_start_character, starting_time)
         for i, time_point in enumerate(time_points):
-            if i + 1 <= len(time_points):
+            if i + 1 >= len(time_points):
                 break
             younger_time = time_point
             older_time = time_points[i + 1]
