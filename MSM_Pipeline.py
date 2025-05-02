@@ -190,12 +190,104 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
     return subject_files
 
 
-MSM_Mode = Literal["forward", "reverse"]
+Mode = Literal["forward", "reverse"]
+# generate forward post processing images
+
+
+def generate_post_processing_image(subject_directory: str, subject: str, starting_time: str, ending_time: str, resolution: str, mode: Mode):
+    # get all files for for post processing
+    if mode == "forward":
+        left_younger_surface = path.join(
+            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.LYAS.{resolution}.surf.gii")
+        right_younger_surface = path.join(
+            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.RYAS.{resolution}.surf.gii")
+        left_older_surface = path.join(
+            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.anat.{resolution}.reg.surf.gii")
+        right_older_surface = path.join(
+            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.anat.{resolution}.reg.surf.gii")
+    elif mode == "reverse":
+        left_younger_surface = path.join(
+            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.anat.{resolution}.reg.surf.gii")
+        right_younger_surface = path.join(
+            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.anat.{resolution}.reg.surf.gii")
+        left_older_surface = path.join(
+            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.LOAS.{resolution}.surf.gii")
+        right_older_surface = path.join(
+            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.ROAS.{resolution}.surf.gii")
+
+    left_surface_map = path.join(
+        subject_directory, f"{subject}_L_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
+    right_surface_map = path.join(
+        subject_directory, f"{subject}_R_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
+    spec_file = path.join(
+        subject_directory, f"{subject}_{starting_time}-{ending_time}.spec")
+
+    # add to spec file
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_younger_surface}", shell=True)
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_older_surface}", shell=True)
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_surface_map}", shell=True)
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_RIGHT {right_younger_surface}", shell=True)
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_RIGHT {right_older_surface}", shell=True)
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_RIGHT {right_surface_map}", shell=True)
+
+    # create scene file for auto scale
+    script_dir = path.dirname(path.realpath(__file__))
+    if mode == "forward":
+        template_path_auto_scale = path.join(
+            script_dir, "post_processing_template_forward.scene")
+        template_path_set_scale = path.join(
+            script_dir, "post_processing_set_scale_template_forward.scene")
+    elif mode == "reverse":
+        template_path_auto_scale = path.join(
+            script_dir, "post_processing_template_reverse.scene")
+        template_path_set_scale = path.join(
+            script_dir, "post_processing_set_scale_template_forward.scene")
+
+    with open(template_path_auto_scale, "r") as f:
+        template_read_auto_scale = f.read()
+    template_auto_scale = Template(template_read_auto_scale)
+    to_write_auto_scale = template_auto_scale.substitute(
+        left_younger_surface=left_younger_surface,
+        left_older_surface=left_older_surface,
+        left_surface_map=left_surface_map,
+        right_younger_surface=right_younger_surface,
+        right_older_surface=right_older_surface,
+        right_surface_map=right_surface_map
+    )
+    template_auto_scale_output = path.join(
+        subject_directory, f"{subject}_{starting_time}-{ending_time}.scene")
+    with open(template_auto_scale_output, "w+") as f:
+        f.write(to_write_auto_scale)
+
+    # create scene file for set scale
+    with open(template_path_set_scale, "r") as f:
+        template_read_set_scale = f.read()
+    template_set_scale = Template(template_read_set_scale)
+    to_write_set_scale = template_set_scale.substitute(
+        left_younger_surface=left_younger_surface,
+        left_older_surface=left_older_surface,
+        left_surface_map=left_surface_map,
+        right_younger_surface=right_younger_surface,
+        right_older_surface=right_older_surface,
+        right_surface_map=right_surface_map
+    )
+    template_set_scale_output = path.join(
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.scene")
+    with open(template_set_scale_output, "w+") as f:
+        f.write(to_write_set_scale)
+
+    # generate images
+    scene_auto_scale = path.join(
+        subject_directory, f"{subject}_{starting_time}-{ending_time}.scene")
+    scene_set_scale = path.join(
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.scene")
+    run(f"wb_command -show-scene {scene_auto_scale} {subject_directory}/{subject}_{starting_time}-{ending_time}.png 1024 512", shell=True)
+    run(f"wb_command -show-scene {scene_set_scale} {subject_directory}/{subject}_{starting_time}-{ending_time}_SET-SCALE.png 1024 512", shell=True)
+
+
 # Function for running MSM commands
-
-
 def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
-            older_timepoint: str, mode: MSM_Mode, levels: int, config: str,
+            older_timepoint: str, mode: Mode, levels: int, config: str,
             max_anat: str, max_cp: str, slurm_email: str,
             slurm_account: str, slurm_user: str):
 
@@ -405,6 +497,50 @@ def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
                     levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
             run_msm(dataset, output, subject, older_time, younger_time, "reverse",
                     levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
+
+
+# Function to run post processing on all subjects
+def post_process_all(dataset: str, starting_time: str, resolution: str):
+    for directory in listdir(dataset):
+        full_path = path.join(dataset, directory)
+        fields = directory.split("_")
+        subject = fields[0]
+        first_time = fields[1]
+        second_time = fields[3]
+        first_month = first_time[1:]
+        second_month = second_time[2:]
+
+        if first_time == starting_time:
+            generate_post_processing_image(full_path,
+                                           subject,
+                                           first_time,
+                                           second_time,
+                                           resolution,
+                                           "forward")
+
+        elif second_time == starting_time:
+            generate_post_processing_image(full_path,
+                                           subject,
+                                           first_time,
+                                           second_time,
+                                           resolution,
+                                           "reverse")
+
+        elif int(first_month) < int(second_month):
+            generate_post_processing_image(full_path,
+                                           subject,
+                                           first_time,
+                                           second_time,
+                                           resolution,
+                                           "forward")
+
+        elif int(first_month) > int(second_month):
+            generate_post_processing_image(full_path,
+                                           subject,
+                                           first_time,
+                                           second_time,
+                                           resolution,
+                                           "reverse")
 
 
 """
