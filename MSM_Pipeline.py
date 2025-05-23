@@ -622,7 +622,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     left_revfor_anatgrid_sphere = f"{msm_avg_output}/{subject}_L_{older_timepoint}-{younger_timepoint}.revfor.sphere.ANATgrid.reg.surf.gii"
     right_revfor_anatgrid_sphere = f"{msm_avg_output}/{subject}_R_{older_timepoint}-{younger_timepoint}.revfor.sphere.ANATgrid.reg.surf.gii"
 
-    # avgfor sphere output names
+    # avgfor sphere names
     left_avgfor_base_sphere = f"{msm_avg_output}/{subject}_L_{younger_timepoint}-{older_timepoint}.avgfor.sphere.reg.surf.gii"
     right_avgfor_base_sphere = f"{msm_avg_output}/{subject}_R_{younger_timepoint}-{older_timepoint}.avgfor.sphere.reg.surf.gii"
     left_avgfor_cpgrid_sphere = f"{msm_avg_output}/{subject}_L_{younger_timepoint}-{older_timepoint}.avgfor.sphere.CPgrid.reg.surf.gii"
@@ -649,6 +649,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     right_avgfor_anatgrid_surfdist = f"{msm_avg_output}/{subject}_R_{younger_timepoint}-{older_timepoint}.avgfor.surfdist.ANATgrid.reg.surf.gii"
 
     # Generate Revfor spheres
+    print("Begin generating revfor spheres")
     run(f"wb_command -surface-sphere-project-unproject {left_older_spherical_surface} {left_base_sphere_reverse} {left_younger_spherical_surface} {left_revfor_base_sphere}", shell=True)
     run(f"wb_command -surface-sphere-project-unproject {right_older_spherical_surface} {right_base_sphere_reverse} {right_younger_spherical_surface} {right_revfor_base_sphere}", shell=True)
     run(
@@ -666,6 +667,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     run(f"wb_command -surface-average {right_avgfor_anatgrid_sphere} -surf {right_anatgrid_sphere_forward} -surf {right_revfor_anatgrid_sphere}", shell=True)
 
     # Generate AvgFor Shpheres
+    print("Begin generating avgfor spheres")
     run(
         f"wb_command -surface-modify-sphere -recenter {left_avgfor_base_sphere} 100 {left_avgfor_base_sphere}", shell=True)
     run(
@@ -680,18 +682,21 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
         f"wb_command -surface-modify-sphere -recenter {right_avgfor_anatgrid_sphere} 100 {right_avgfor_anatgrid_sphere}", shell=True)
 
     # Generate AvgFor Anatomical Surfaces
+    print("Begin generating avgfor surfaces")
     run(f"wb_command -surface-resample {left_older_anatomical_surface} {max_cp} {left_avgfor_cpgrid_sphere} BARYCENTRIC {left_avgfor_cpgrid_anat}", shell=True)
     run(f"wb_command -surface-resample {right_older_anatomical_surface} {max_cp} {right_avgfor_cpgrid_sphere} BARYCENTRIC {right_avgfor_cpgrid_anat}", shell=True)
     run(f"wb_command -surface-resample {left_older_anatomical_surface} {max_anat} {left_avgfor_anatgrid_sphere} BARYCENTRIC {left_avgfor_anatgrid_anat}", shell=True)
     run(f"wb_command -surface-resample {right_older_anatomical_surface} {max_anat} {right_avgfor_anatgrid_sphere} BARYCENTRIC {right_avgfor_anatgrid_anat}", shell=True)
 
     # Generate revfor surfdist
+    print("Begin generating revfor surfdist")
     run(f"wb_command -metric-resample {left_cpgrid_surfdist_reverse} {left_cpgrid_sphere_reverse} {left_revfor_cpgrid_sphere} BARYCENTRIC {left_revfor_cpgrid_surfdist}", shell=True)
     run(f"wb_command -metric-resample {left_anatgrid_surfdist_reverse} {left_anatgrid_sphere_reverse} {left_revfor_anatgrid_sphere} BARYCENTRIC {left_revfor_anatgrid_surfdist}", shell=True)
     run(f"wb_command -metric-resample {right_cpgrid_surfdist_reverse} {right_cpgrid_sphere_reverse} {right_revfor_cpgrid_sphere} BARYCENTRIC {right_revfor_cpgrid_surfdist}", shell=True)
     run(f"wb_command -metric-resample {right_anatgrid_surfdist_reverse} {right_anatgrid_sphere_reverse} {right_revfor_anatgrid_sphere} BARYCENTRIC {right_revfor_anatgrid_surfdist}", shell=True)
 
     # calculate average surfdist
+    print("begin calculating avgfor surfdists")
     run(f"wb_command -metric-math '(J1+J2)/2' {left_avgfor_cpgrid_surfdist} -var J1 {left_revfor_cpgrid_surfdist} -var J2 {left_cpgrid_surfdist_forward}", shell=True)
     run(f"wb_command -metric-math '(J1+J2)/2' {left_avgfor_anatgrid_surfdist} -var J1 {left_revfor_anatgrid_surfdist} -var J2 {left_anatgrid_surfdist_forward}", shell=True)
     run(f"wb_command -metric-math '(J1+J2)/2' {right_avgfor_cpgrid_surfdist} -var J1 {right_revfor_cpgrid_surfdist} -var J2 {right_cpgrid_surfdist_forward}", shell=True)
@@ -700,6 +705,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     run(f"wb_command -set-structure {left_avgfor_anatgrid_surfdist} CORTEX_LEFT")
     run(f"wb_command -set-structure {right_avgfor_cpgrid_surfdist} CORTEX_RIGHT")
     run(f"wb_command -set-structure {right_avgfor_anatgrid_surfdist} CORTEX_RIGHT")
+    print("complete\n")
 
 
 def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_anat: str, starting_time: str):
@@ -712,7 +718,9 @@ def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_an
         first_month = first_time[1:]
         second_month = second_time[2:]
 
-        if second_month > first_month or second_time == starting_time:
+        if second_month < first_month or second_time == starting_time:
+            print(
+                f"Beginning average maps for {subject} for times {second_month} to {first_month}")
             generate_avg_maps(ciftify_dataset, msm_dataset,
                               subject, second_time, first_time, max_cp, max_anat)
 
