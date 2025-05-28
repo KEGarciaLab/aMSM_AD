@@ -683,10 +683,10 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
     # Generate AvgFor Anatomical Surfaces
     print("Begin generating avgfor surfaces")
-    run(f"wb_command -surface-resample {left_older_anatomical_surface} {max_cp} {left_avgfor_cpgrid_sphere} BARYCENTRIC {left_avgfor_cpgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {right_older_anatomical_surface} {max_cp} {right_avgfor_cpgrid_sphere} BARYCENTRIC {right_avgfor_cpgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {left_older_anatomical_surface} {max_anat} {left_avgfor_anatgrid_sphere} BARYCENTRIC {left_avgfor_anatgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {right_older_anatomical_surface} {max_anat} {right_avgfor_anatgrid_sphere} BARYCENTRIC {right_avgfor_anatgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {left_older_anatomical_surface} {left_older_spherical_surface} {max_cp} {left_avgfor_cpgrid_sphere} BARYCENTRIC {left_avgfor_cpgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {right_older_anatomical_surface} {right_older_spherical_surface} {max_cp} {right_avgfor_cpgrid_sphere} BARYCENTRIC {right_avgfor_cpgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {left_older_anatomical_surface} {left_older_spherical_surface} {max_anat} {left_avgfor_anatgrid_sphere} BARYCENTRIC {left_avgfor_anatgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {right_older_anatomical_surface} {right_older_spherical_surface} {max_anat} {right_avgfor_anatgrid_sphere} BARYCENTRIC {right_avgfor_anatgrid_anat}", shell=True)
 
     # Generate revfor surfdist
     print("Begin generating revfor surfdist")
