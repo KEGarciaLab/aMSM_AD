@@ -709,7 +709,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
 
 def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_anat: str, starting_time: str):
-    print("BEGIN FUNCTION FOR AVG MAPS")
+    print("\nBEGIN FUNCTION FOR AVG MAPS")
     print('*' * 50)
     for directory in listdir(msm_dataset):
         fields = directory.split("_")
@@ -717,12 +717,12 @@ def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_an
         first_time = fields[1]
         second_time = fields[3]
         first_month = first_time[1:]
-        second_month = second_time[2:]
+        second_month = second_time[1:]
         print(f"Subject: {subject}", f"First time pont and month: {first_time}/{first_month}",
               f"Second time point: {second_time}/{second_month}", sep="\n")
-        if first_month == starting_time:
+        if first_time == starting_time:
             continue
-        elif second_month == starting_time:
+        elif second_time == starting_time:
             print(
                 f"Beginning average maps for {subject} for times {second_month} to {first_month}")
             generate_avg_maps(ciftify_dataset, msm_dataset,
