@@ -728,10 +728,7 @@ def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_an
             generate_avg_maps(ciftify_dataset, msm_dataset,
                               subject, second_time, first_time, max_cp, max_anat)
         elif second_month < first_month:
-            print(
-                f"Beginning average maps for {subject} for times {second_month} to {first_month}")
-            generate_avg_maps(ciftify_dataset, msm_dataset,
-                              subject, second_time, first_time, max_cp, max_anat)
+            continue
         else:
             continue
 
