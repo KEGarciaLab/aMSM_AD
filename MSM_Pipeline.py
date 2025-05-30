@@ -707,10 +707,10 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     run(f"wb_command -metric-math '(J1+J2)/2' {left_avgfor_anatgrid_surfdist} -var J1 {left_revfor_anatgrid_surfdist} -var J2 {left_anatgrid_surfdist_forward}", shell=True)
     run(f"wb_command -metric-math '(J1+J2)/2' {right_avgfor_cpgrid_surfdist} -var J1 {right_revfor_cpgrid_surfdist} -var J2 {right_cpgrid_surfdist_forward}", shell=True)
     run(f"wb_command -metric-math '(J1+J2)/2' {right_avgfor_anatgrid_surfdist} -var J1 {right_revfor_anatgrid_surfdist} -var J2 {right_anatgrid_surfdist_forward}", shell=True)
-    run(f"wb_command -set-structure {left_avgfor_cpgrid_surfdist} CORTEX_LEFT")
-    run(f"wb_command -set-structure {left_avgfor_anatgrid_surfdist} CORTEX_LEFT")
-    run(f"wb_command -set-structure {right_avgfor_cpgrid_surfdist} CORTEX_RIGHT")
-    run(f"wb_command -set-structure {right_avgfor_anatgrid_surfdist} CORTEX_RIGHT")
+    run(f"wb_command -set-structure {left_avgfor_cpgrid_surfdist} CORTEX_LEFT", shell=True)
+    run(f"wb_command -set-structure {left_avgfor_anatgrid_surfdist} CORTEX_LEFT", shell=True)
+    run(f"wb_command -set-structure {right_avgfor_cpgrid_surfdist} CORTEX_RIGHT", shell=True)
+    run(f"wb_command -set-structure {right_avgfor_anatgrid_surfdist} CORTEX_RIGHT", shell=True)
     print("complete\n")
 
 
