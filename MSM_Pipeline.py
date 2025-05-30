@@ -560,9 +560,11 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     younger_files = get_msm_files(ciftify_dataset, subject, younger_timepoint)
     older_files = get_msm_files(ciftify_dataset, subject, older_timepoint)
     left_younger_spherical_surface = younger_files[2]
+    left_younger_anatomical_surface = younger_files[0]
     left_older_anatomical_surface = older_files[0]
     left_older_spherical_surface = older_files[2]
     right_younger_spherical_surface = younger_files[3]
+    right_younger_anatomical_surface = younger_files[1]
     right_older_anatomical_surface = older_files[1]
     right_older_spherical_surface = older_files[3]
 
@@ -683,10 +685,10 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
     # Generate AvgFor Anatomical Surfaces
     print("Begin generating avgfor surfaces")
-    run(f"wb_command -surface-resample {left_older_anatomical_surface} {left_avgfor_cpgrid_sphere} {max_cp} \"BARYCENTRIC\" {left_avgfor_cpgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {right_older_anatomical_surface} {right_avgfor_cpgrid_sphere} {max_cp} \"BARYCENTRIC\" {right_avgfor_cpgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {left_older_anatomical_surface} {left_avgfor_anatgrid_sphere} {max_anat} \"BARYCENTRIC\" {left_avgfor_anatgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {right_older_anatomical_surface} {right_avgfor_anatgrid_sphere} {max_anat} \"BARYCENTRIC\" {right_avgfor_anatgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {left_younger_anatomical_surface} {left_avgfor_cpgrid_sphere} {max_cp} \"BARYCENTRIC\" {left_avgfor_cpgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {right_younger_anatomical_surface} {right_avgfor_cpgrid_sphere} {max_cp} \"BARYCENTRIC\" {right_avgfor_cpgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {left_younger_anatomical_surface} {left_avgfor_anatgrid_sphere} {max_anat} \"BARYCENTRIC\" {left_avgfor_anatgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {right_younger_anatomical_surface} {right_avgfor_anatgrid_sphere} {max_anat} \"BARYCENTRIC\" {right_avgfor_anatgrid_anat}", shell=True)
 
     # Generate revfor surfdist
     print("Begin generating revfor surfdist")
