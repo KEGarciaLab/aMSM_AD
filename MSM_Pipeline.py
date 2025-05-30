@@ -560,17 +560,17 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     younger_files = get_msm_files(ciftify_dataset, subject, younger_timepoint)
     older_files = get_msm_files(ciftify_dataset, subject, older_timepoint)
     left_younger_spherical_surface = younger_files[2]
-    left_younger_anatomical_surface = younger_files[0]
-    left_older_anatomical_surface = older_files[0]
     left_older_spherical_surface = older_files[2]
     right_younger_spherical_surface = younger_files[3]
-    right_younger_anatomical_surface = younger_files[1]
-    right_older_anatomical_surface = older_files[1]
     right_older_spherical_surface = older_files[3]
 
     # files for msm resverse registration
     msm_reverse_folder = path.join(
         msm_dataset, f"{subject}_{older_timepoint}_to_{younger_timepoint}")
+    left_older_anatomical_surface_cpgrid = path.join(
+        msm_reverse_folder, f"{subject}_L_{older_timepoint}-{younger_timepoint}.LOAS.CPgrid.surf.gii")
+    left_older_anatomical_surface_anatgrid = path.join(
+        msm_reverse_folder, f"{subject}_L_{older_timepoint}-{younger_timepoint}.LOAS.ANATgrid.surf.gii")
     left_base_sphere_reverse = path.join(
         msm_reverse_folder, f"{subject}_L_{older_timepoint}-{younger_timepoint}.sphere.reg.surf.gii")
     left_cpgrid_sphere_reverse = path.join(
@@ -581,6 +581,10 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
         msm_reverse_folder, f"{subject}_L_{older_timepoint}-{younger_timepoint}.surfdist.CPgrid.func.gii")
     left_anatgrid_surfdist_reverse = path.join(
         msm_reverse_folder, f"{subject}_L_{older_timepoint}-{younger_timepoint}.surfdist.ANATgrid.func.gii")
+    right_older_anatomical_surface_cpgrid = path.join(
+        msm_reverse_folder, f"{subject}_R_{older_timepoint}-{younger_timepoint}.ROAS.CPgrid.surf.gii")
+    right_older_anatomical_surface_anatgrid = path.join(
+        msm_reverse_folder, f"{subject}_R_{older_timepoint}-{younger_timepoint}.ROAS.ANATgrid.surf.gii")
     right_base_sphere_reverse = path.join(
         msm_reverse_folder, f"{subject}_R_{older_timepoint}-{younger_timepoint}.sphere.reg.surf.gii")
     right_cpgrid_sphere_reverse = path.join(
@@ -631,12 +635,6 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     right_avgfor_cpgrid_sphere = f"{msm_avg_output}/{subject}_R_{younger_timepoint}-{older_timepoint}.avgfor.sphere.CPgrid.reg.surf.gii"
     left_avgfor_anatgrid_sphere = f"{msm_avg_output}/{subject}_L_{younger_timepoint}-{older_timepoint}.avgfor.sphere.ANATgrid.reg.surf.gii"
     right_avgfor_anatgrid_sphere = f"{msm_avg_output}/{subject}_R_{younger_timepoint}-{older_timepoint}.avgfor.sphere.ANATgrid.reg.surf.gii"
-
-    # revfor anat names
-    left_revfor_cpgrid_anat = f"{msm_avg_output}/{subject}_L_{younger_timepoint}-{older_timepoint}.revfor.anat.CPgrid.reg.surf.gii"
-    right_revfor_cpgrid_anat = f"{msm_avg_output}/{subject}_R_{younger_timepoint}-{older_timepoint}.revfor.anat.CPgrid.reg.surf.gii"
-    left_revfor_anatgrid_anat = f"{msm_avg_output}/{subject}_L_{younger_timepoint}-{older_timepoint}.revfor.anat.ANATgrid.reg.surf.gii"
-    right_revfor_anatgrid_anat = f"{msm_avg_output}/{subject}_R_{younger_timepoint}-{older_timepoint}.revfor.anat.ANATgrid.reg.surf.gii"
 
     # avgfor anat names
     left_avgfor_cpgrid_anat = f"{msm_avg_output}/{subject}_L_{younger_timepoint}-{older_timepoint}.avgfor.anat.CPgrid.reg.surf.gii"
@@ -691,10 +689,10 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
     # Generate RevFor Anatomical Surfaces
     print("Begin generating revfor surfaces")
-    run(f"wb_command -surface-resample {left_older_anatomical_surface} {max_cp} {left_avgfor_cpgrid_sphere} \"BARYCENTRIC\" {left_revfor_cpgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {right_older_anatomical_surface} {max_cp} {right_avgfor_cpgrid_sphere} \"BARYCENTRIC\" {right_revfor_cpgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {left_older_anatomical_surface} {max_anat} {left_avgfor_anatgrid_sphere} \"BARYCENTRIC\" {left_revfor_anatgrid_anat}", shell=True)
-    run(f"wb_command -surface-resample {right_older_anatomical_surface} {max_anat} {right_avgfor_anatgrid_sphere} \"BARYCENTRIC\" {right_revfor_anatgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {left_older_anatomical_surface_cpgrid} {max_cp} {left_avgfor_cpgrid_sphere} \"BARYCENTRIC\" {left_avgfor_cpgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {right_older_anatomical_surface_cpgrid} {max_cp} {right_avgfor_cpgrid_sphere} \"BARYCENTRIC\" {right_avgfor_cpgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {left_older_anatomical_surface_anatgrid} {max_anat} {left_avgfor_anatgrid_sphere} \"BARYCENTRIC\" {left_avgfor_anatgrid_anat}", shell=True)
+    run(f"wb_command -surface-resample {right_older_anatomical_surface_anatgrid} {max_anat} {right_avgfor_anatgrid_sphere} \"BARYCENTRIC\" {right_avgfor_anatgrid_anat}", shell=True)
 
     # Generate revfor surfdist
     print("Begin generating revfor surfdist")
