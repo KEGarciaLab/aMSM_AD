@@ -98,7 +98,7 @@ def run_ciftify(dataset: str, directories: list, delimiter: str,
         template = Template(template_read)
         to_write = template.substitute(subject=subject, time_point=time_point,
                                        account=slurm_account, email=slurm_email, dataset=dataset,
-                                       output_dir=subject_output_path, dir=directory)
+                                       output_dir=subject_output_path, dir=directory, user_home=user_home)
 
         with open(fr"{temp_output}/Subject_{subject}_{time_point}_recon_all.sh", 'w') as f:
             f.write(to_write)
