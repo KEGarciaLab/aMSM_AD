@@ -76,6 +76,7 @@ def run_ciftify(dataset: str, directories: list, delimiter: str,
     print("\nStarting ciftify runs")
     print('*' * 50)
     user_home = path.expanduser('~')
+    print(user_home)
     temp_output = path.join(user_home, "Scripts", "MyScripts", "Output",
                             "MSM_Pipeline", "ciftify_scripts")
 
