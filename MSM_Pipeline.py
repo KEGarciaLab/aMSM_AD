@@ -740,7 +740,7 @@ def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_an
             continue
 
 
-subjects_to_run = ["1122"]
+"""subjects_to_run = ["1122"]
 
 subjects_dirs = get_ciftify_subject_list(
     '/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION',
@@ -789,7 +789,7 @@ run_msm_short_time_windows(
     r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
     "BL"
 )
-
+"""
 run_avg_maps_all(
     "/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
     "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
