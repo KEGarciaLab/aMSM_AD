@@ -5,6 +5,7 @@ from subprocess import check_output, run
 from time import sleep
 from string import Template
 from typing import Literal
+from shutil import copy2
 
 
 # class for logging
@@ -195,7 +196,7 @@ Mode = Literal["forward", "reverse"]
 # generate forward post processing images
 
 
-def generate_post_processing_image(subject_directory: str, subject: str, starting_time: str, ending_time: str, resolution: str, mode: Mode):
+def generate_post_processing_image(subject_directory: str, subject: str, starting_time: str, ending_time: str, resolution: str, mode: Mode, output: str):
     # get all files for for post processing
     if mode == "forward":
         left_younger_surface = path.join(
@@ -288,8 +289,13 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         subject_directory, f"{subject}_{starting_time}-{ending_time}.scene")
     scene_set_scale = path.join(
         subject_directory, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.scene")
-    run(f"wb_command -show-scene {scene_auto_scale} {subject_directory}/{subject}_{starting_time}-{ending_time}.png 1024 512", shell=True)
-    run(f"wb_command -show-scene {scene_set_scale} {subject_directory}/{subject}_{starting_time}-{ending_time}_SET-SCALE.png 1024 512", shell=True)
+    image_auto_scale = f"{subject_directory}/{subject}_{starting_time}-{ending_time}.png"
+    image_set_scale = f"{subject_directory}/{subject}_{starting_time}-{ending_time}_SET-SCALE.png"
+    run(f"wb_command -show-scene {scene_auto_scale} {image_auto_scale} 1024 512", shell=True)
+    run(f"wb_command -show-scene {scene_set_scale} {image_set_scale} 1024 512", shell=True)
+
+    copy2(image_auto_scale, output)
+    copy2(image_set_scale, output)
 
 
 # Function for running MSM commands
@@ -507,7 +513,7 @@ def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
 
 
 # Function to run post processing on all subjects
-def post_process_all(dataset: str, starting_time: str, resolution: str):
+def post_process_all(dataset: str, starting_time: str, resolution: str, output: str):
     for directory in listdir(dataset):
         full_path = path.join(dataset, directory)
         fields = directory.split("_")
@@ -523,7 +529,8 @@ def post_process_all(dataset: str, starting_time: str, resolution: str):
                                            first_time,
                                            second_time,
                                            resolution,
-                                           "forward")
+                                           "forward",
+                                           output)
 
         elif second_time == starting_time:
             generate_post_processing_image(full_path,
@@ -531,7 +538,8 @@ def post_process_all(dataset: str, starting_time: str, resolution: str):
                                            first_time,
                                            second_time,
                                            resolution,
-                                           "reverse")
+                                           "reverse",
+                                           output)
 
         elif int(first_month) < int(second_month):
             generate_post_processing_image(full_path,
@@ -539,7 +547,8 @@ def post_process_all(dataset: str, starting_time: str, resolution: str):
                                            first_time,
                                            second_time,
                                            resolution,
-                                           "forward")
+                                           "forward",
+                                           output)
 
         elif int(first_month) > int(second_month):
             generate_post_processing_image(full_path,
@@ -547,7 +556,8 @@ def post_process_all(dataset: str, starting_time: str, resolution: str):
                                            first_time,
                                            second_time,
                                            resolution,
-                                           "reverse")
+                                           "reverse",
+                                           output)
 
 
 # Function to generate average maps
@@ -759,7 +769,7 @@ run_ciftify(
     'sarigdon',
     'sarigdon@iu.edu'
 )
-"""
+
 run_msm_bl_To_all(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
     True,
@@ -789,7 +799,7 @@ run_msm_short_time_windows(
     r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
     "BL"
 )
-"""
+
 run_avg_maps_all(
     "/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
     "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
@@ -798,3 +808,17 @@ run_avg_maps_all(
     "BL"
 )
 """
+
+post_process_all(
+    "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
+    "BL",
+    "CPgrid",
+    "/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING_T1W_ANATCONFIG"
+)
+
+post_process_all(
+    "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
+    "BL",
+    "ANATgrid",
+    "/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING_T1W_ANATCONFIG"
+)
