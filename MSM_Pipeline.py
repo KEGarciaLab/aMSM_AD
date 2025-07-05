@@ -198,6 +198,7 @@ Mode = Literal["forward", "reverse"]
 
 def generate_post_processing_image(subject_directory: str, subject: str, starting_time: str, ending_time: str, resolution: str, mode: Mode, output: str):
     # get all files for for post processing
+    print("Locating Surfaces")
     if mode == "forward":
         left_younger_surface = path.join(
             subject_directory, f"{subject}_L_{starting_time}-{ending_time}.LYAS.{resolution}.surf.gii")
@@ -219,6 +220,7 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         right_older_surface = path.join(
             subject_directory, f"{subject}_R_{starting_time}-{ending_time}.ROAS.{resolution}.surf.gii")
 
+    print("Locating Maps")
     left_surface_map = path.join(
         subject_directory, f"{subject}_L_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
     right_surface_map = path.join(
@@ -231,6 +233,7 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         subject_directory, f"{subject}_{starting_time}-{ending_time}.spec")
 
     # add to spec file
+    print("Adding to Spec File")
     run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_younger_surface}", shell=True)
     run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_older_surface}", shell=True)
     run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_surface_map}", shell=True)
@@ -239,6 +242,7 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
     run(f"wb_command -add-to-spec-file {spec_file} CORTEX_RIGHT {right_surface_map}", shell=True)
 
     # create scene file for auto scale
+    print("Creating Auto Scale Scene")
     script_dir = path.dirname(path.realpath(__file__))
     if mode == "forward":
         template_path_auto_scale = path.join(
@@ -268,6 +272,7 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         f.write(to_write_auto_scale)
 
     # create scene file for set scale
+    print("Creating Set Scale Scene")
     with open(template_path_set_scale, "r") as f:
         template_read_set_scale = f.read()
     template_set_scale = Template(template_read_set_scale)
@@ -285,15 +290,19 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         f.write(to_write_set_scale)
 
     # generate images
+    print("Generating Images")
     scene_auto_scale = path.join(
         subject_directory, f"{subject}_{starting_time}-{ending_time}.scene")
     scene_set_scale = path.join(
         subject_directory, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.scene")
-    image_auto_scale = f"{subject_directory}/{subject}_{starting_time}-{ending_time}.png"
-    image_set_scale = f"{subject_directory}/{subject}_{starting_time}-{ending_time}_SET-SCALE.png"
+    image_auto_scale = path.join(
+        {subject_directory}, f"{subject}_{starting_time}-{ending_time}.png")
+    image_set_scale = path.join(
+        {subject_directory}, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.png")
     run(f"wb_command -show-scene {scene_auto_scale} {image_auto_scale} 1024 512", shell=True)
     run(f"wb_command -show-scene {scene_set_scale} {image_set_scale} 1024 512", shell=True)
 
+    print("Copying Imagesd to Output")
     copy2(image_auto_scale, output)
     copy2(image_set_scale, output)
 
@@ -522,8 +531,13 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         second_time = fields[3]
         first_month = first_time[1:]
         second_month = second_time[2:]
-
+        print("*" * 50)
+        print("Begin Post Processing at {resolution} resolution")
+        print("*" * 50)
+        print(
+            f"Path: {full_path}\nSubject: {subject}\nTime1: {first_time}\nTime2: {second_time}")
         if first_time == starting_time:
+            print("Mode: Forward")
             generate_post_processing_image(full_path,
                                            subject,
                                            first_time,
@@ -533,6 +547,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            output)
 
         elif second_time == starting_time:
+            print("Mode: Reverse")
             generate_post_processing_image(full_path,
                                            subject,
                                            first_time,
@@ -542,6 +557,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            output)
 
         elif int(first_month) < int(second_month):
+            print("Mode: Forward")
             generate_post_processing_image(full_path,
                                            subject,
                                            first_time,
@@ -551,6 +567,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            output)
 
         elif int(first_month) > int(second_month):
+            print("Mode: Reverse")
             generate_post_processing_image(full_path,
                                            subject,
                                            first_time,
