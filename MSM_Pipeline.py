@@ -531,7 +531,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         second_time = fields[3]
         first_month = first_time[1:]
         second_month = second_time[2:]
-        output = path.join(output, subject)
+        output = f"{output}/{subject}"
         makedirs(output, exist_ok=True)
         print("*" * 50)
         print("Begin Post Processing at {resolution} resolution")
