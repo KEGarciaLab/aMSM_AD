@@ -531,13 +531,13 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         second_time = fields[3]
         first_month = first_time[1:]
         second_month = second_time[2:]
-        output = f"{output}/{subject}"
+        subject_output = path.join(output, subject)
         makedirs(output, exist_ok=True)
         print("*" * 50)
         print("Begin Post Processing at {resolution} resolution")
         print("*" * 50)
         print(
-            f"Path: {full_path}\nSubject: {subject}\nTime1: {first_time}\nTime2: {second_time}\nOutput: {output}")
+            f"Path: {full_path}\nSubject: {subject}\nTime1: {first_time}\nTime2: {second_time}\nOutput: {subject_output}")
         if first_time == starting_time:
             print("Mode: Forward")
             generate_post_processing_image(full_path,
@@ -546,7 +546,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            second_time,
                                            resolution,
                                            "forward",
-                                           output)
+                                           subject_output)
 
         elif second_time == starting_time:
             print("Mode: Reverse")
@@ -556,7 +556,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            second_time,
                                            resolution,
                                            "reverse",
-                                           output)
+                                           subject_output)
 
         elif int(first_month) < int(second_month):
             print("Mode: Forward")
@@ -566,7 +566,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            second_time,
                                            resolution,
                                            "forward",
-                                           output)
+                                           subject_output)
 
         elif int(first_month) > int(second_month):
             print("Mode: Reverse")
@@ -576,7 +576,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            second_time,
                                            resolution,
                                            "reverse",
-                                           output)
+                                           subject_output)
 
 
 # Function to generate average maps
