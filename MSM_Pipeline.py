@@ -267,7 +267,7 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         right_surface_map=right_surface_map
     )
     template_auto_scale_output = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}.scene")
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
     with open(template_auto_scale_output, "w+") as f:
         f.write(to_write_auto_scale)
 
@@ -285,20 +285,20 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         right_surface_map=right_surface_map
     )
     template_set_scale_output = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.scene")
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
     with open(template_set_scale_output, "w+") as f:
         f.write(to_write_set_scale)
 
     # generate images
     print("Generating Images")
     scene_auto_scale = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}.scene")
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
     scene_set_scale = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.scene")
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
     image_auto_scale = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}.png")
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.png")
     image_set_scale = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.png")
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}SET-SCALE.png")
     run(f"wb_command -show-scene {scene_auto_scale} 1 {image_auto_scale} 1024 512", shell=True)
     run(f"wb_command -show-scene {scene_set_scale} 1 {image_set_scale} 1024 512", shell=True)
 
