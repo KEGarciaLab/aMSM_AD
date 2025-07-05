@@ -531,11 +531,12 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         second_time = fields[3]
         first_month = first_time[1:]
         second_month = second_time[2:]
+        output = path.join(output, subject)
         print("*" * 50)
         print("Begin Post Processing at {resolution} resolution")
         print("*" * 50)
         print(
-            f"Path: {full_path}\nSubject: {subject}\nTime1: {first_time}\nTime2: {second_time}")
+            f"Path: {full_path}\nSubject: {subject}\nTime1: {first_time}\nTime2: {second_time}\nOutput: {output}")
         if first_time == starting_time:
             print("Mode: Forward")
             generate_post_processing_image(full_path,
