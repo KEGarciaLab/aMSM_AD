@@ -299,8 +299,8 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         subject_directory, f"{subject}_{starting_time}-{ending_time}.png")
     image_set_scale = path.join(
         subject_directory, f"{subject}_{starting_time}-{ending_time}_SET-SCALE.png")
-    run(f"wb_command -show-scene {scene_auto_scale} {image_auto_scale} 1024 512", shell=True)
-    run(f"wb_command -show-scene {scene_set_scale} {image_set_scale} 1024 512", shell=True)
+    run(f"wb_command -show-scene {scene_auto_scale} 1 {image_auto_scale} 1024 512", shell=True)
+    run(f"wb_command -show-scene {scene_set_scale} 1 {image_set_scale} 1024 512", shell=True)
 
     print("Copying Imagesd to Output")
     copy2(image_auto_scale, output)
