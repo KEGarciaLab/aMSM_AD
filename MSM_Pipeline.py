@@ -790,28 +790,7 @@ run_ciftify(
 )
 
 
-run_msm_short_time_windows(
-    r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
-    True,
-    1,
-    r"/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
-    "r00540",
-    "sarigdon",
-    "sarigdon@iu.edu",
-    6,
-    r"/N/project/aMSM_AD/ADNI/HCP/configAnatGrid6",
-    r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
-    r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
-    "BL"
-)
 
-run_avg_maps_all(
-    "/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
-    "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
-    "/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
-    "/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
-    "BL"
-)
 
 post_process_all(
     "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
@@ -826,7 +805,6 @@ post_process_all(
     "ANATgrid",
     "/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING_T1W_ANATCONFIG"
 )
-"""
 
 run_msm_bl_To_all(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
@@ -841,4 +819,28 @@ run_msm_bl_To_all(
     r"/N/project/aMSM_AD/ADNI/HCP/configAnatGrid6",
     r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
     r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii"
+)
+
+run_avg_maps_all(
+    "/N/project/aMSM_AD/ADNI/HCP/PROCESSED_T1W_ANATCONFIG",
+    "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
+    "/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
+    "/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
+    "BL"
+)
+"""
+
+run_msm_short_time_windows(
+    r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
+    True,
+    1,
+    r"/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
+    "r00540",
+    "sarigdon",
+    "sarigdon@iu.edu",
+    6,
+    r"/N/project/aMSM_AD/ADNI/HCP/configAnatGrid6",
+    r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
+    r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
+    "BL"
 )
