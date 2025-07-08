@@ -789,9 +789,6 @@ run_ciftify(
     'sarigdon@iu.edu'
 )
 
-
-
-
 post_process_all(
     "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
     "BL",
@@ -828,8 +825,8 @@ run_avg_maps_all(
     "/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
     "BL"
 )
-"""
 
+"""
 run_msm_short_time_windows(
     r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
     True,
