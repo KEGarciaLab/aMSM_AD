@@ -892,28 +892,49 @@ if __name__ == "__main__":
     raa.add_argument("--starting_time", required=True, help="Basleine of registrations, used to determine which avg maps are needed")
 
     args = parser.parse_args()
-    args_dict = vars(args)
-    args_dict.pop("command", None)
+    
 
     if args.command == "get_ciftify_subject_list":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         get_ciftify_subject_list(**args_dict)
     elif args.command == "is_slurm_queue_open":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         is_slurm_queue_open(**args_dict)
     elif args.command == "run_ciftify":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         run_ciftify(**args_dict)
     elif args.command == "get_subject_time_points":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         get_subject_time_points(**args_dict)
     elif args.command == "generate_post_processing_image":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         generate_post_processing_image(**args_dict)
     elif args.command == "run_msm":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         run_msm(**args_dict)
     elif args.command == "run_msm_bl_to_all":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         run_msm_bl_to_all(**args_dict)
     elif args.command == "run_msm_short_time_windows":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         run_msm_short_time_windows(**args_dict)
     elif args.command == "post_process_all":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         post_process_all(**args_dict)
     elif args.command == "generate_avg_maps":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         generate_avg_maps(**args_dict)
     elif args.command == "run_avg_maps_all":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
         run_avg_maps_all(**args_dict)
