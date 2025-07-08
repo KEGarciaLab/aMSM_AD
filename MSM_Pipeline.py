@@ -1,3 +1,4 @@
+import argparse
 import sys
 from os import listdir, path, makedirs
 from re import compile
@@ -46,7 +47,7 @@ def get_ciftify_subject_list(dataset: str, subjects: list, pattern: str):
             full_path = path.join(dataset, entry)
             if path.isdir(full_path) and subject_pattern.match(entry) and entry not in subjects_dirs:
                 subjects_dirs.append(entry)
-
+    print (sorted(subjects_dirs))
     return sorted(subjects_dirs)
 
 
@@ -66,6 +67,8 @@ def is_slurm_queue_open(slurm_user: str):
     with open(rf"{user_home}/Scripts/MyScripts/Output/MSM_Pipeline/queue.txt", 'r') as f:
         jobs = (sum(1 for line in f)) - 1
     open_jobs = 500 - jobs
+    if open_jobs > 0:
+        print(f"{open_jobs} jobs currently open")
 
     return open_jobs
 
@@ -155,6 +158,7 @@ def get_subject_time_points(dataset: str, subject: str, alphanumeric_timepoints:
     return time_points
 
 
+# Helper function for retriving MSM files
 def get_msm_files(dataset: str, subject: str, time_point: str):
     # get directory containing data and name prefix
     subject_dir = path.join(dataset, f"Subject_{subject}_{time_point}")
@@ -193,9 +197,9 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
 
 
 Mode = Literal["forward", "reverse"]
+
+
 # generate forward post processing images
-
-
 def generate_post_processing_image(subject_directory: str, subject: str, starting_time: str, ending_time: str, resolution: str, mode: Mode, output: str):
     # get all files for for post processing
     print("Locating Surfaces")
@@ -473,8 +477,8 @@ def get_subjects(dataset: str):
     return subjects
 
 
-# Function for MSM BL tp all
-def run_msm_bl_To_all(dataset: str, alphanumeric_timepoints: bool, time_point_number_start_character: int,
+# Function for MSM BL to all
+def run_msm_bl_to_all(dataset: str, alphanumeric_timepoints: bool, time_point_number_start_character: int,
                       output: str, starting_time: str, slurm_account: str, slurm_user: str,
                       slurm_email: str, levels: int, config: str,
                       max_anat: str, max_cp: str):
@@ -515,10 +519,11 @@ def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
                 break
             younger_time = time_point
             older_time = time_points[i + 1]
-            run_msm(dataset, output, subject, younger_time, older_time, "forward",
-                    levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
-            run_msm(dataset, output, subject, older_time, younger_time, "reverse",
-                    levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
+            if younger_time != starting_time and older_time != starting_time:
+                run_msm(dataset, output, subject, younger_time, older_time, "forward",
+                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
+                run_msm(dataset, output, subject, younger_time, older_time, "reverse",
+                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
 
 
 # Function to run post processing on all subjects
@@ -744,6 +749,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     print("complete\n")
 
 
+# Function to run all average maps
 def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_anat: str, starting_time: str):
     print("\nBEGIN FUNCTION FOR AVG MAPS")
     print('*' * 50)
@@ -769,75 +775,143 @@ def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_an
             continue
 
 
-"""subjects_to_run = ["1122"]
+# Command line interface
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run MSM Pipeline Functions")
+    subparser = parser.add_subparsers(dest="command", required=True)
+    
+    # Get Ciftify Subject List
+    csl = subparser.add_parser("get_ciftify_subject_list", help="Retrieve list of subejcts for Ciftify")
+    csl.add_argument("--dataset", required=True, help="Path to data that needs to be ran through ciftify")
+    csl.add_argument("--subjects", nargs='+', required=True, help="List of subject IDs space seperated")
+    csl.add_argument("--pattern", required=True, help="Regex template of directory names using # as a stand-in for the subject ID. ie '.*_S_#_.*")
 
-subjects_dirs = get_ciftify_subject_list(
-    '/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION',
-    subjects_to_run,
-    '.*_S_#_.*'
-)
+    # Is Slurm Queue Open
+    sqo = subparser.add_parser("is_slurm_queue_open", help="Check how many open jobs are avaliable for the indicated user")
+    sqo.add_argument("--slurm_user", required=True, help="The account name of the Slurm user to check")
 
-run_ciftify(
-    '/N/project/ADNI_Processing/ADNI_FS6_ADSP/FINAL_FOR_EXTRACTION',
-    subjects_dirs,
-    '_',
-    2,
-    3,
-    "/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
-    "r00540",
-    'sarigdon',
-    'sarigdon@iu.edu'
-)
+    # Run Ciftify
+    rc = subparser.add_parser("run_ciftify", help="Run ciftify-recon-all on the indicated directories and palce them in the indicated output")
+    rc.add_argument("--dataset", required=True, help="Path to data that needs to be ran through ciftify")
+    rc.add_argument("--directories", nargs='+', required=True, help="List of directories to run space seperated")
+    rc.add_argument("--delimiter", required=True, help="Delimiiter used in directory names to seperate fields")
+    rc.add_argument("--subject_index", required=True, help="Index of subject ID based on delimiter")
+    rc.add_argument("--time_index", required=True, help="Index of time point based on delimeter")
+    rc.add_argument("--output_path", required=True, help="Path to output of the command, must be empty")
+    rc.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
+    rc.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
+    rc.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
 
-post_process_all(
-    "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
-    "BL",
-    "CPgrid",
-    "/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING_T1W_ANATCONFIG"
-)
+    # Get Subject Time Points
+    gst = subparser.add_parser("get_subject_time_points", help="Retrieve list of time points based on subejct")
+    gst.add_argument("--dataset", required=True, help="Path to directory containing subject data")
+    gst.add_argument("--subject", required=True, help="The subject ID to retrieve time points for")
+    gst.add_argument("--alphanumeric_timepoints", required=True, help="If the timepoints are alphanumeric")
+    gst.add_argument("--time_point_number_start_character", required=True, help="the character where numbers begin in the timepoint 0 indexed")
+    gst.add_argument("--starting_time", required=False, help="Used if the starting time point uses a different naming convnetion")
 
-post_process_all(
-    "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
-    "BL",
-    "ANATgrid",
-    "/N/project/aMSM_AD/ADNI/HCP/POST_PROCESSING_T1W_ANATCONFIG"
-)
+    # Generate Post Processing Image
+    gppi = subparser.add_parser("generate_post_processing_image", help="Generate post-processing scene and image for one subject")
+    gppi.add_argument("--subject_directory", required=True, help="Path to directory containing MSM files for images you wish to create")
+    gppi.add_argument("--subject", required=True, help="Subject ID used in file names")
+    gppi.add_argument("--starting_time", required=True, help="The starting time point of the MSM run, may not always be younger")
+    gppi.add_argument("--ending_time", required=True, help="The ending time point of the MSM run, may not always be older")
+    gppi.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
+    gppi.add_argument("--mode", choices=["forward", "reverse"], required=True, help="Either forward or reverse dependant on registration")
+    gppi.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
 
-run_msm_bl_To_all(
-    r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
-    True,
-    1,
-    r"/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
-    "BL",
-    "r00540",
-    "sarigdon",
-    "sarigdon@iu.edu",
-    6,
-    r"/N/project/aMSM_AD/ADNI/HCP/configAnatGrid6",
-    r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
-    r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii"
-)
+    # Run MSM
+    rm = subparser.add_parser("run_msm", help="Run MSM on the indicated subject and time points in the indicated direction")
+    rm.add_argument("--dataset", required=True, help="Path to directory containing all time points for registration")
+    rm.add_argument("--output", required=True, help="Path for output of MSM files, a folder for each registration will be created here")
+    rm.add_argument("--subject", required=True, help="The subject ID MSM registration")
+    rm.add_argument("--younger-timepoint", required=True, help="The younger time point for registration")
+    rm.add_argument("--older_timepoint", required=True, help="The older time point for registration")
+    rm.add_argument("--mode", choices=["forward", "reverse"], required=True, help="The registration mode, either forward or reverse")
+    rm.add_argument("--levels",required=True, help="Levels of MSM to run, see documentation for more information")
+    rm.add_argument("--config", required=True, help="Path to MSM config file to use, see MSM documentation for more information")
+    rm.add_argument("--max_anat", required=True, help="Path to MaxAnat reference sphere, typically ico6sphere")
+    rm.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
+    rm.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rm.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
+    rm.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
 
-run_avg_maps_all(
-    "/N/project/aMSM_AD/ADNI/HCP/PROCESSED_T1W_ANATCONFIG",
-    "/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
-    "/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
-    "/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
-    "BL"
-)
+    # Run MSM BL to All
+    rmba = subparser.add_parser("run_msm_bl_to_all", help="Run MSM from baseline to all time points, both forward and reverse")
+    rmba.add_argument("--dataset", required=True, help="Path to directory containing all data for registration")
+    rmba.add_argument("--alphanumeric_timepoints", required=True, help="If the time points are alphanumeric")
+    rmba.add_argument("--time_point_number_start_character", required=True, help="the character where numbers begin in the timepoint 0 indexed")
+    rmba.add_argument("--output", required=True, help="Path for output of MSM files, a folder for each registration will be created here")
+    rmba.add_argument("--starting_time", required=True, help="The time point used as baseline or 'bl' for all registrations")
+    rmba.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
+    rmba.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
+    rmba.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rmba.add_argument("--levels",required=True, help="Levels of MSM to run, see documentation for more information")
+    rmba.add_argument("--config", required=True, help="Path to MSM config file to use, see MSM documentation for more information")
+    rmba.add_argument("--max_anat", required=True, help="Path to MaxAnat reference sphere, typically ico6sphere")
+    rmba.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
 
-"""
-run_msm_short_time_windows(
-    r"/N/project/aMSM_AD/ADNI/HCP/TO_BE_PROCESSED_FIRST",
-    True,
-    1,
-    r"/N/project/aMSM_AD/ADNI/HCP/MSM_T1W_ANATCONFIG",
-    "r00540",
-    "sarigdon",
-    "sarigdon@iu.edu",
-    6,
-    r"/N/project/aMSM_AD/ADNI/HCP/configAnatGrid6",
-    r"/N/project/aMSM_AD/ADNI/HCP/ico6sphere.LR.reg.surf.gii",
-    r"/N/project/aMSM_AD/ADNI/HCP/ico5sphere.LR.reg.surf.gii",
-    "BL"
-)
+    # Run MSM Short Time Windows
+    rmst = subparser.add_parser("run_msm_short_time_windows", help="Run MSM on sequential time points, both forward and reverse")
+    rmst.add_argument("--dataset", required=True, help="Path to directory containing all data for registration")
+    rmst.add_argument("--alphanumeric_timepoints", required=True, help="If the time points are alphanumeric")
+    rmst.add_argument("--time_point_number_start_character", required=True, help="the character where numbers begin in the timepoint 0 indexed")
+    rmst.add_argument("--output", required=True, help="Path for output of MSM files, a folder for each registration will be created here")
+    rmst.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
+    rmst.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
+    rmst.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rmst.add_argument("--levels",required=True, help="Levels of MSM to run, see documentation for more information")
+    rmst.add_argument("--config", required=True, help="Path to MSM config file to use, see MSM documentation for more information")
+    rmst.add_argument("--max_anat", required=True, help="Path to MaxAnat reference sphere, typically ico6sphere")
+    rmst.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
+    rmst.add_argument("--starting_time", required=False, help="The starting time point, only used if you want to skip baseline registrations")
+
+    # Post Process All
+    ppa = subparser.add_parser("post_process_all", help="Generatee Post Processing images for all MSM registrations")
+    ppa.add_argument("--dataset", required=True, help="Loaction of MSM registrations")
+    ppa.add_argument("--starting_time", required=True, help="Basline timepoint of data, used to determine if forward or reverse registration was used")
+    ppa.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
+    ppa.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
+
+    # Generate Avg Maps
+    gam = subparser.add_parser("generate_avg_maps", help="Generate average maps for one subject")
+    gam.add_argument("--ciftify_dataset", required=True, help="Path to data from ciftify run")
+    gam.add_argument("--msm_dataset", required=True, help="Path to MSM registrations")
+    gam.add_argument("--subject", required=True, help="Subject ID to generate average maps")
+    gam.add_argument("--younger_timepoint", required=True, help="The younger time point of the registration")
+    gam.add_argument("--older_timepoint", required=True, help="The older time point of the registration")
+    gam.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
+    gam.add_argument("--max_anat", required=True, help="Path to MaxANAT reference sphere, typically ico6sphere")
+        
+    # Generate All Avg Maps
+    raa = subparser.add_parser("run_avg_maps_all", help="Run average map generation on all subjects")
+    raa.add_argument("--ciftify_dataset", required=True, help="Path to data from ciftify run")
+    raa.add_argument("--msm_dataset", required=True, help="Path to MSM registrations")
+    raa.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
+    raa.add_argument("--max_anat", required=True, help="Path to MaxANAT reference sphere, typically ico6sphere")
+    raa.add_argument("--starting_time", required=True, help="Basleine of registrations, used to determine which avg maps are needed")
+
+    args = parser.parse_args()
+
+    if args.command == "get_ciftify_subject_list":
+        get_ciftify_subject_list(**vars(args))
+    elif args.command == "is_slurm_queue_open":
+        is_slurm_queue_open(**vars(args))
+    elif args.command == "run_ciftify":
+        run_ciftify(**vars(args))
+    elif args.command == "get_subject_time_points":
+        get_subject_time_points(**vars(args))
+    elif args.command == "generate_post_processing_image":
+        generate_post_processing_image(**vars(args))
+    elif args.command == "run_msm":
+        run_msm(**vars(args))
+    elif args.command == "run_msm_bl_to_all":
+        run_msm_bl_to_all(**vars(args))
+    elif args.command == "run_msm_short_time_windows":
+        run_msm_short_time_windows(**vars(args))
+    elif args.command == "post_process_all":
+        post_process_all(**vars(args))
+    elif args.command == "generate_avg_maps":
+        generate_avg_maps(**vars(args))
+    elif args.command == "run_avg_maps_all":
+        run_avg_maps_all(**vars(args))
