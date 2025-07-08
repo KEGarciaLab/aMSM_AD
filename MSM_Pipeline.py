@@ -892,26 +892,28 @@ if __name__ == "__main__":
     raa.add_argument("--starting_time", required=True, help="Basleine of registrations, used to determine which avg maps are needed")
 
     args = parser.parse_args()
+    args_dict = vars(args)
+    args_dict.pop("command", None)
 
     if args.command == "get_ciftify_subject_list":
-        get_ciftify_subject_list(**vars(args))
+        get_ciftify_subject_list(**args_dict)
     elif args.command == "is_slurm_queue_open":
-        is_slurm_queue_open(**vars(args))
+        is_slurm_queue_open(**args_dict)
     elif args.command == "run_ciftify":
-        run_ciftify(**vars(args))
+        run_ciftify(**args_dict)
     elif args.command == "get_subject_time_points":
-        get_subject_time_points(**vars(args))
+        get_subject_time_points(**args_dict)
     elif args.command == "generate_post_processing_image":
-        generate_post_processing_image(**vars(args))
+        generate_post_processing_image(**args_dict)
     elif args.command == "run_msm":
-        run_msm(**vars(args))
+        run_msm(**args_dict)
     elif args.command == "run_msm_bl_to_all":
-        run_msm_bl_to_all(**vars(args))
+        run_msm_bl_to_all(**args_dict)
     elif args.command == "run_msm_short_time_windows":
-        run_msm_short_time_windows(**vars(args))
+        run_msm_short_time_windows(**args_dict)
     elif args.command == "post_process_all":
-        post_process_all(**vars(args))
+        post_process_all(**args_dict)
     elif args.command == "generate_avg_maps":
-        generate_avg_maps(**vars(args))
+        generate_avg_maps(**args_dict)
     elif args.command == "run_avg_maps_all":
-        run_avg_maps_all(**vars(args))
+        run_avg_maps_all(**args_dict)
