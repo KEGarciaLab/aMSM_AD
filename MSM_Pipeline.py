@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import sys
 from os import listdir, path, makedirs
@@ -157,6 +159,7 @@ def get_subject_time_points(dataset: str, subject: str, alphanumeric_timepoints:
     print("The following time points have been located: ", *time_points, sep=' ')
     return time_points
 
+# Rescale Developmental surface
 
 # Helper function for retriving MSM files
 def get_msm_files(dataset: str, subject: str, time_point: str):
@@ -893,7 +896,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
-
     if args.command == "get_ciftify_subject_list":
         args_dict = vars(args)
         args_dict.pop("command", None)
