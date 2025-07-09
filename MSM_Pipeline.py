@@ -26,12 +26,12 @@ class Tee:
             stream.flush()
 
 
-log_path = path.expanduser(
-    '~/Scripts/MyScripts/Output/MSM_Pipeline/full_pipeline_log.txt')
+log_path = path.expanduser('~/Scripts/MyScripts/Output/MSM_Pipeline/full_pipeline_log.txt')
 makedirs(path.dirname(log_path), exist_ok=True)
 log_file = open(log_path, 'w+')
 sys.stdout = Tee(sys.__stdout__, log_file)
 sys.stderr = Tee(sys.__stderr__, log_file)
+Mode = Literal["forward", "reverse", "average"]
 
 
 # Function for gathering subjects for ciftify
@@ -159,7 +159,9 @@ def get_subject_time_points(dataset: str, subject: str, alphanumeric_timepoints:
     print("The following time points have been located: ", *time_points, sep=' ')
     return time_points
 
+
 # Rescale Developmental surface
+
 
 # Helper function for retriving MSM files
 def get_msm_files(dataset: str, subject: str, time_point: str):
@@ -199,10 +201,7 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
     return subject_files
 
 
-Mode = Literal["forward", "reverse"]
-
-
-# generate forward post processing images
+# Generate post processing images
 def generate_post_processing_image(subject_directory: str, subject: str, starting_time: str, ending_time: str, resolution: str, mode: Mode, output: str):
     # get all files for for post processing
     print("Locating Surfaces")
@@ -215,8 +214,6 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
             subject_directory, f"{subject}_L_{starting_time}-{ending_time}.anat.{resolution}.reg.surf.gii")
         right_older_surface = path.join(
             subject_directory, f"{subject}_R_{starting_time}-{ending_time}.anat.{resolution}.reg.surf.gii")
-        right_older_avg_surface = None
-        left_older_avg_surface = None
     elif mode == "reverse":
         left_younger_surface = path.join(
             subject_directory, f"{subject}_L_{starting_time}-{ending_time}.anat.{resolution}.reg.surf.gii")
@@ -226,16 +223,28 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
             subject_directory, f"{subject}_L_{starting_time}-{ending_time}.LOAS.{resolution}.surf.gii")
         right_older_surface = path.join(
             subject_directory, f"{subject}_R_{starting_time}-{ending_time}.ROAS.{resolution}.surf.gii")
-
+    elif mode == "average":
+        left_younger_surface = path.join(
+            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.LYAS.{resolution}.surf.gii")
+        right_younger_surface = path.join(
+            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.RYAS.{resolution}.surf.gii")
+        left_older_avg_surface = path.join(
+            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.avgfor.anat.{resolution}.reg.surf.gii")
+        right_older_avg_surface = path.join(
+            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.avgfor.anat.{resolution}.reg.surf.gii")
+        
+    
     print("Locating Maps")
-    left_surface_map = path.join(
-        subject_directory, f"{subject}_L_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
-    right_surface_map = path.join(
-        subject_directory, f"{subject}_R_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
-    avg_left_surface_map = path.join(
-        subject_directory, f"{subject}_L_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
-    avg_right_surface_map = path.join(
-        subject_directory, f"{subject}_R_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
+    if mode == "average":
+        left_surface_map = path.join(
+            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.avgfor.surfdist.{resolution}.reg.func.gii")
+        right_surface_map = path.join(
+            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.avgfor.surfdist.{resolution}.reg.func.gii")
+    else:
+        left_surface_map = path.join(
+            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
+        right_surface_map = path.join(
+            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
     spec_file = path.join(
         subject_directory, f"{subject}_{starting_time}-{ending_time}.spec")
 
@@ -587,11 +596,55 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            subject_output)
 
 
+# Function to generate post processing for average maps
+def post_process_avg(dataset: str, starting_time: str, resolution: str, output: str):
+    for directory in listdir(dataset):
+        full_path = path.join(dataset, directory)
+        fields = directory.split("_")
+        subject = fields[0]
+        first_time = fields[1]
+        second_time = fields[3]
+        first_month = first_time[1:]
+        second_month = second_time[2:]
+        subject_output = path.join(output, subject)
+        makedirs(subject_output, exist_ok=True)
+        print("*" * 50)
+        print("Begin Post Processing at {resolution} resolution")
+        print("*" * 50)
+        print(
+            f"Path: {full_path}\nSubject: {subject}\nTime1: {first_time}\nTime2: {second_time}\nOutput: {subject_output}")
+        if first_time == starting_time:
+            print("Mode: Average")
+            generate_post_processing_image(full_path,
+                                           subject,
+                                           first_time,
+                                           second_time,
+                                           resolution,
+                                           "average",
+                                           subject_output)
+
+        elif second_time == starting_time:
+            continue
+
+        elif int(first_month) < int(second_month):
+            print("Mode: Average")
+            generate_post_processing_image(full_path,
+                                           subject,
+                                           first_time,
+                                           second_time,
+                                           resolution,
+                                           "average",
+                                           subject_output)
+
+        elif int(first_month) > int(second_month):
+           continue
+
+
 # Function to generate average maps
 def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, younger_timepoint: str, older_timepoint: str, max_cp: str, max_anat: str):
     # create output for average maps
     msm_avg_output = path.join(
-        msm_dataset, f"{subject}_{older_timepoint}_to_{younger_timepoint}_averaged")
+        msm_dataset, f"{subject}_{older_timepoint}_to_{younger_timepoint}")
     makedirs(msm_avg_output, exist_ok=True)
 
     # create variables for file locations from pre-msm
@@ -820,7 +873,7 @@ if __name__ == "__main__":
     gppi.add_argument("--starting_time", required=True, help="The starting time point of the MSM run, may not always be younger")
     gppi.add_argument("--ending_time", required=True, help="The ending time point of the MSM run, may not always be older")
     gppi.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
-    gppi.add_argument("--mode", choices=["forward", "reverse"], required=True, help="Either forward or reverse dependant on registration")
+    gppi.add_argument("--mode", choices=["forward", "reverse", "average"], required=True, help="Either forward or reverse dependant on registration")
     gppi.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
 
     # Run MSM
