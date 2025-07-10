@@ -246,7 +246,7 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
         right_surface_map = path.join(
             subject_directory, f"{subject}_R_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
     spec_file = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}.spec")
+        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.spec")
 
     # add to spec file
     print("Adding to Spec File")
