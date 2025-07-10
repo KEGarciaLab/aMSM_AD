@@ -202,7 +202,14 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
 
 
 # Generate post processing images
-def generate_post_processing_image(subject_directory: str, subject: str, starting_time: str, ending_time: str, resolution: str, mode: Mode, output: str):
+def generate_post_processing_image(subject_directory: str, resolution: str, mode: Mode, output: str):
+    # extreact info prom path
+    subject_basename = path.basename(subject_directory)
+    subject_basename_list = subject_basename.split("_")
+    subject = subject_basename_list[0]
+    starting_time = subject_basename_list[1]
+    ending_time = subject_basename_list[3]
+    
     # get all files for for post processing
     print("Locating Surfaces")
     if mode == "forward":
@@ -247,6 +254,11 @@ def generate_post_processing_image(subject_directory: str, subject: str, startin
             subject_directory, f"{subject}_R_{starting_time}-{ending_time}.surfdist.{resolution}.func.gii")
     spec_file = path.join(
         subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.spec")
+    
+    # set palette
+    print("Setting Palette")
+    run(f"wb_command -metric-palette {left_surface_map} MODE_AUTO_SCALE -palette-name raich6_clrmid", shell=True)
+    run(f"wb_command -metric-palette {right_surface_map} MODE_AUTO_SCALE -palette-name raich6_clrmid", shell=True)
 
     # add to spec file
     print("Adding to Spec File")
@@ -558,9 +570,6 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         if first_time == starting_time:
             print("Mode: Forward")
             generate_post_processing_image(full_path,
-                                           subject,
-                                           first_time,
-                                           second_time,
                                            resolution,
                                            "forward",
                                            subject_output)
@@ -568,9 +577,6 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         elif second_time == starting_time:
             print("Mode: Reverse")
             generate_post_processing_image(full_path,
-                                           subject,
-                                           first_time,
-                                           second_time,
                                            resolution,
                                            "reverse",
                                            subject_output)
@@ -578,9 +584,6 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         elif int(first_month) < int(second_month):
             print("Mode: Forward")
             generate_post_processing_image(full_path,
-                                           subject,
-                                           first_time,
-                                           second_time,
                                            resolution,
                                            "forward",
                                            subject_output)
@@ -588,9 +591,6 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         elif int(first_month) > int(second_month):
             print("Mode: Reverse")
             generate_post_processing_image(full_path,
-                                           subject,
-                                           first_time,
-                                           second_time,
                                            resolution,
                                            "reverse",
                                            subject_output)
@@ -616,9 +616,6 @@ def post_process_avg(dataset: str, starting_time: str, resolution: str, output: 
         if first_time == starting_time:
             print("Mode: Average")
             generate_post_processing_image(full_path,
-                                           subject,
-                                           first_time,
-                                           second_time,
                                            resolution,
                                            "average",
                                            subject_output)
@@ -629,9 +626,6 @@ def post_process_avg(dataset: str, starting_time: str, resolution: str, output: 
         elif int(first_month) < int(second_month):
             print("Mode: Average")
             generate_post_processing_image(full_path,
-                                           subject,
-                                           first_time,
-                                           second_time,
                                            resolution,
                                            "average",
                                            subject_output)
@@ -869,9 +863,6 @@ if __name__ == "__main__":
     # Generate Post Processing Image
     gppi = subparser.add_parser("generate_post_processing_image", help="Generate post-processing scene and image for one subject")
     gppi.add_argument("--subject_directory", required=True, help="Path to directory containing MSM files for images you wish to create")
-    gppi.add_argument("--subject", required=True, help="Subject ID used in file names")
-    gppi.add_argument("--starting_time", required=True, help="The starting time point of the MSM run, may not always be younger")
-    gppi.add_argument("--ending_time", required=True, help="The ending time point of the MSM run, may not always be older")
     gppi.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
     gppi.add_argument("--mode", choices=["forward", "reverse", "average"], required=True, help="Either forward or reverse dependant on registration")
     gppi.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
@@ -928,6 +919,13 @@ if __name__ == "__main__":
     ppa.add_argument("--starting_time", required=True, help="Basline timepoint of data, used to determine if forward or reverse registration was used")
     ppa.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
     ppa.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
+    
+    # Post Process Avg
+    ppavg = subparser.add_parser("post_process_avg")
+    ppavg.add_argument("--dataset", required=True, help="Loaction of MSM registrations")
+    ppavg.add_argument("--starting_time", required=True, help="Basline timepoint of data, used to determine if forward or reverse registration was used")
+    ppavg.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
+    ppavg.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
 
     # Generate Avg Maps
     gam = subparser.add_parser("generate_avg_maps", help="Generate average maps for one subject")
@@ -985,6 +983,10 @@ if __name__ == "__main__":
         args_dict = vars(args)
         args_dict.pop("command", None)
         post_process_all(**args_dict)
+    elif args.command == "post_process_avg":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
+        post_process_avg(**args_dict)
     elif args.command == "generate_avg_maps":
         args_dict = vars(args)
         args_dict.pop("command", None)
