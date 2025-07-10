@@ -220,7 +220,7 @@
    &lt;AutoScalePercentageValues&gt;98.000000 2.000000 2.000000 98.000000&lt;/AutoScalePercentageValues&gt;
    &lt;AutoScaleAbsolutePercentageValues&gt;2.000000 98.000000&lt;/AutoScaleAbsolutePercentageValues&gt;
    &lt;UserScaleValues&gt;-100.000000 0.000000 0.000000 100.000000&lt;/UserScaleValues&gt;
-   &lt;PaletteName&gt;videen_style&lt;/PaletteName&gt;
+   &lt;PaletteName&gt;raich6_clrmid&lt;/PaletteName&gt;
    &lt;InterpolatePalette&gt;true&lt;/InterpolatePalette&gt;
    &lt;InvertPalette&gt;OFF&lt;/InvertPalette&gt;
    &lt;DisplayPositiveData&gt;true&lt;/DisplayPositiveData&gt;
@@ -531,7 +531,7 @@
    &lt;AutoScalePercentageValues&gt;98.000000 2.000000 2.000000 98.000000&lt;/AutoScalePercentageValues&gt;
    &lt;AutoScaleAbsolutePercentageValues&gt;2.000000 98.000000&lt;/AutoScaleAbsolutePercentageValues&gt;
    &lt;UserScaleValues&gt;-100.000000 0.000000 0.000000 100.000000&lt;/UserScaleValues&gt;
-   &lt;PaletteName&gt;videen_style&lt;/PaletteName&gt;
+   &lt;PaletteName&gt;raich6_clrmid&lt;/PaletteName&gt;
    &lt;InterpolatePalette&gt;true&lt;/InterpolatePalette&gt;
    &lt;InvertPalette&gt;OFF&lt;/InvertPalette&gt;
    &lt;DisplayPositiveData&gt;true&lt;/DisplayPositiveData&gt;
