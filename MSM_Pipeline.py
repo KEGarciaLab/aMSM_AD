@@ -827,7 +827,7 @@ def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_an
 
 # Command line interface
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run MSM Pipeline Functions")
+    parser = argparse.ArgumentParser(description="Run MSM Pipeline Functions", usage="MSM_Pipeline.py [-h] <command> [<args>]")
     subparser = parser.add_subparsers(dest="command", required=True)
     
     # Get Ciftify Subject List

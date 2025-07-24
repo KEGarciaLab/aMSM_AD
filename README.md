@@ -79,7 +79,7 @@ To get started with using these tools for the instructions below to install them
 
 ### Installation
 
-All scripts used for installation of the various tools can be found in Installation folder of the repo. They should be ran in the order listed below to avoid errors. It is also reccomended that you either reboot your system (or reconnect through an ssh) after each installation to ensure it was completed properly. Finally, the MSM install was made assuming this would be ran on one of the IU supercomputing clusters. If you are outside of IU or are not using one of these systems you will need to skip the `MSM-install.sh` and manually install MSM instead, ensuring that it is installed in the folder `MSM_HOCR-master` located in your Home directory. Failure to follow these steps will cause the ciftify install to fail.
+All scripts used for installation of the various tools can be found in Installation folder of the repo. They should be ran in the order listed below to avoid errors. It is also reccomended that you either reboot your system (or reconnect through an ssh) after each installation to ensure it was completed properly. Finally, these installation scripts were made assuming this would be ran on one of the IU supercomputing clusters. If you are outside of IU or are not using one of these systems you will need to install MSM, Ciftify, and Conetome Workbench manually, including updating `.bash_profile` in order to add the commands to PATH.
 
 ```sh
 bash InstallationScripts/MSM-install.sh
@@ -97,6 +97,51 @@ bash InstallationScripts/Workbench-install.sh
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+
+The entire pipeline has been bundled into a single Python script with a command line interface. The easiest way to use this pipeline is to either add the cloned repo to PATH or to copy the script itself `MSM_Pipeline.py` and the `Pipeline_Templates` directory into a location that is already part of PATH such as `user/bin.` Once one of the above steps has been completed ensure that it was done correctly by using the command `MSM_Pipeline -h`. This should bring up the help text, detailing all avaliable commands. Below I have detailed the various commands avaliable within the pipeline as well as the arguments needed for each one. Note that every argument is a keyword and not positional. `-h` can be used after any command name to see all arguments needed for any command.
+
+### `is_slurm_queue_open`
+Checks the slurm queue of the specified user and returns the number of open jobs. Also prints the queue to a .txt file. Note that this assumes a job limit of 500. The slurm queue can still be checked manually 
+#### Arguments
+* `--slurm_user` The username of the user to check the queue for.
+
+### `get_ciftify_subject_list`
+This command is used to retrive a list of all folders of subject data that need to converted using `run_ciftify`.
+#### Arguments
+* `--dataset` The location of the freesurfer data. This should be the root folder containing all the folders of subjetcts and time points.
+* `--subjects` A space seperated list of subject IDs that you want to find the folders names for.
+* `--pattern` A regex of the format of the folder name in regards to the location of the subeject ID, using "#" as a placeholder for the ID. e.g. `.*_S_#_.*` this will search for folders that contain `_S_<subject_id>_` with the subject ID being pulled from the list of subjects provided.
+
+### `run_cifitify`
+This commadn is used to run the `ciftify-recon-all` command on the indicated directories and place the output in the indicated folder. This creates one output directory for each input directory in the indicated location.
+#### Arguments
+* `--dataset` This is the folder where your directories are located. Note: there are plans to make this automatic and remove the need for this argument
+* `--directories` A space seperated list of directories to run. This can be generated using the `get_ciftify_subject_list` command. Note: there are currently plans to make this automatic and remove the need for this argument
+* `--delimiter` The character used to seperate fields in the orginal directory name, typically "_"
+* `--subject_index` The location of the subject id based on the delimiter, with the first field being 0
+* `--time_index` The same as above but for the time point of the scan
+* `--output_path` The full path where you want all of the directories created
+* `--slurm_account` The slurm account ID used for job allocations
+* `--slurm_user` Slurm username for checking queue
+* `--slurm_email` The email address you wish for failed job notifications to be sent to
+
+### `get_subject_time_points` A helper function that lists all time points for a given subject in a given dataset. Useful for troubleshooting
+
+### `generate_post_processing_image`
+
+### `post_process_all`
+
+### `run_msm`
+
+### `run_msm_bl_to_all`
+
+### `run_msm_short_time_windows`
+
+### `generate_avg_maps`
+
+### `run_avg_maps_all`
+
+**DEPRECATED**
 
 All scripts provided have a section where various variables can be changed to suit the needs of the user. Be sure to check this section for accuracy before running any scripts. These will mostly be able to guide you through the usage of each one. Further instructions are detailed below.
 
