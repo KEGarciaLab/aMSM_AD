@@ -801,7 +801,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
 
 # Function to run all average maps
-def run_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_anat: str, starting_time: str):
+def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_anat: str, starting_time: str):
     print("\nBEGIN FUNCTION FOR AVG MAPS")
     print('*' * 50)
     for directory in listdir(msm_dataset):
@@ -939,7 +939,7 @@ if __name__ == "__main__":
     gam.add_argument("--max_anat", required=True, help="Path to MaxANAT reference sphere, typically ico6sphere")
         
     # Generate All Avg Maps
-    raa = subparser.add_parser("run_avg_maps_all", help="Run average map generation on all subjects")
+    raa = subparser.add_parser("generate_avg_maps_all", help="Run average map generation on all subjects")
     raa.add_argument("--ciftify_dataset", required=True, help="Path to data from ciftify run")
     raa.add_argument("--msm_dataset", required=True, help="Path to MSM registrations")
     raa.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
@@ -992,7 +992,7 @@ if __name__ == "__main__":
         args_dict = vars(args)
         args_dict.pop("command", None)
         generate_avg_maps(**args_dict)
-    elif args.command == "run_avg_maps_all":
+    elif args.command == "generate_avg_maps_all":
         args_dict = vars(args)
         args_dict.pop("command", None)
-        run_avg_maps_all(**args_dict)
+        generate_avg_maps_all(**args_dict)
