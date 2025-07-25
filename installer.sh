@@ -1,16 +1,12 @@
 #!/bin/bash
 
-INSTALL_DIR="$HOME/bin/MSM_Pipeline"
+INSTALL_DIR="$HOME/bin"
 mkdir -p "$INSTALL_DIR"
 
 cp MSM_Pipeline.py "$INSTALL_DIR/MSM_Pipeline"
 chmod +x "$INSTALL_DIR/MSM_Pipeline"
 
 cp -r Templates "$INSTALL_DIR/"
-
-# Optional symlink or wrapper for PATH
-mkdir -p "$HOME/bin"
-ln -sf "$INSTALL_DIR/MSM_Pipeline" "$HOME/bin/MSM_Pipeline"
 
 echo "Installed to $INSTALL_DIR"
 
