@@ -99,7 +99,7 @@ def run_ciftify(dataset: str, directories: list, delimiter: str,
             f"\nCiftify run for subject {subject} at time point {time_point}")
 
         script_dir = path.dirname(path.realpath(__file__))
-        template_path = path.join(script_dir, "Ciftify_template.txt")
+        template_path = path.join(script_dir, "Templates", "Ciftify_template.txt")
         with open(template_path, 'r') as f:
             template_read = f.read()
         template = Template(template_read)
@@ -275,14 +275,14 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
     script_dir = path.dirname(path.realpath(__file__))
     if mode == "forward":
         template_path_auto_scale = path.join(
-            script_dir, "post_processing_template_forward.scene")
+            script_dir, "Templates", "post_processing_template_forward.scene")
         template_path_set_scale = path.join(
-            script_dir, "post_processing_set_scale_template_forward.scene")
+            script_dir, "Templates", "post_processing_set_scale_template_forward.scene")
     elif mode == "reverse":
         template_path_auto_scale = path.join(
-            script_dir, "post_processing_template_reverse.scene")
+            script_dir, "Templates", "post_processing_template_reverse.scene")
         template_path_set_scale = path.join(
-            script_dir, "post_processing_set_scale_template_forward.scene")
+            script_dir, "Templates", "post_processing_set_scale_template_forward.scene")
 
     with open(template_path_auto_scale, "r") as f:
         template_read_auto_scale = f.read()
@@ -377,7 +377,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         print(
             fr"Generating script file {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
         script_dir = path.dirname(path.realpath(__file__))
-        template_path = path.join(script_dir, "MSM_template_forward_L.txt")
+        template_path = path.join(script_dir, "Templates", "MSM_template_forward_L.txt")
         with open(template_path, "r") as f:
             template_read = f.read()
         template = Template(template_read)
@@ -403,7 +403,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         print(
             fr"Generating script {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
         script_dir = path.dirname(path.realpath(__file__))
-        template_path = path.join(script_dir, "MSM_template_forward_R.txt")
+        template_path = path.join(script_dir, "Templates", "MSM_template_forward_R.txt")
         with open(template_path, "r") as f:
             template_read = f.read()
         template = Template(template_read)
@@ -436,7 +436,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         print(
             fr"Generating script {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh")
         script_dir = path.dirname(path.realpath(__file__))
-        template_path = path.join(script_dir, "MSM_template_reverse_L.txt")
+        template_path = path.join(script_dir, "Templates", "MSM_template_reverse_L.txt")
         with open(template_path, "r") as f:
             template_read = f.read()
         template = Template(template_read)
@@ -462,7 +462,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         print(
             fr"Generating Script {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh")
         script_dir = path.dirname(path.realpath(__file__))
-        template_path = path.join(script_dir, "MSM_template_reverse_R.txt")
+        template_path = path.join(script_dir, "Templates", "MSM_template_reverse_R.txt")
         with open(template_path, "r") as f:
             template_read = f.read()
         template = Template(template_read)
