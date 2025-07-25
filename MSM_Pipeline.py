@@ -485,6 +485,128 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         run(fr"sbatch {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True)
 
 
+# Funciton for running a single MSM run locally
+def run_msm_local(dataset: str, output: str, subject: str, younger_timepoint: str,
+            older_timepoint: str, mode: Mode, levels: int, config: str,
+            max_anat: str, max_cp: str):
+
+    user_home = path.expanduser('~')
+    if mode == "forward":
+        temp_output = path.join(user_home, "Scripts", "MyScripts", "Output", "MSM_Pipeline",
+                                "MSM_scripts", fr"{subject}_{younger_timepoint}_to_{older_timepoint}")
+    elif mode == "reverse":
+        temp_output = path.join(user_home, "Scripts", "MyScripts", "Output", "MSM_Pipeline",
+                                "MSM_scripts", fr"{subject}_{older_timepoint}_to_{younger_timepoint}")
+    print(f"Creating the following script directory: {temp_output}")
+    makedirs(temp_output, exist_ok=True)
+
+    print(
+        f"\nRetriving files for time points {younger_timepoint} and {older_timepoint}")
+    younger_files = get_msm_files(
+        dataset=dataset, subject=subject, time_point=younger_timepoint)
+    older_files = get_msm_files(
+        dataset=dataset, subject=subject, time_point=older_timepoint)
+
+    if not younger_files or not older_files:
+        print("no files found skipping this run")
+        return
+
+    print("Younger time point:", *younger_files, sep='\n')
+    print("Older time point:", *older_files, sep="\n")
+
+    if mode == "forward":
+        output = path.join(
+            output, fr"{subject}_{younger_timepoint}_to_{older_timepoint}")
+        makedirs(output, exist_ok=True)
+        left_file_prefix = fr"{output}/{subject}_L_{younger_timepoint}-{older_timepoint}."
+        right_file_prefix = fr"{output}/{subject}_R_{younger_timepoint}-{older_timepoint}."
+
+        print(" \n")
+        print(
+            fr"Generating script file {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "Templates", "MSM_template_forward_L.txt")
+        with open(template_path, "r") as f:
+            template_read = f.read()
+        template = Template(template_read)
+        to_write = template.substitute(
+            subject=subject, starting_time=younger_timepoint, ending_time=older_timepoint, levels=levels,
+            config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
+            oc=older_files[4], yas=younger_files[0], oas=older_files[0],
+            f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+
+        with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
+            f.write(to_write)
+
+        
+        run(fr"bash {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
+
+        print(" \n")
+        print(
+            fr"Generating script {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "Templates", "MSM_template_forward_R.txt")
+        with open(template_path, "r") as f:
+            template_read = f.read()
+        template = Template(template_read)
+        to_write = template.substitute(
+            subject=subject, starting_time=younger_timepoint, ending_time=older_timepoint, levels=levels,
+            config=config, yss=younger_files[3], oss=older_files[3], yc=younger_files[5],
+            oc=older_files[5], yas=younger_files[1], oas=older_files[1],
+            f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
+
+        with open(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
+            f.write(to_write)
+
+        run(fr"bash {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
+
+    elif mode == "reverse":
+        output = path.join(
+            output, fr"{subject}_{older_timepoint}_to_{younger_timepoint}")
+        makedirs(output, exist_ok=True)
+        left_file_prefix = fr"{output}/{subject}_L_{older_timepoint}-{younger_timepoint}."
+        right_file_prefix = fr"{output}/{subject}_R_{older_timepoint}-{younger_timepoint}."
+
+        print(" \n")
+        print(
+            fr"Generating script {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh")
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "Templates", "MSM_template_reverse_L.txt")
+        with open(template_path, "r") as f:
+            template_read = f.read()
+        template = Template(template_read)
+        to_write = template.substitute(
+            subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint, levels=levels,
+            config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
+            oc=older_files[4], yas=younger_files[0], oas=older_files[0],
+            r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+
+        with open(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
+            f.write(to_write)
+
+        
+        run(fr"bash {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True)
+
+        print(" \n")
+        print(
+            fr"Generating Script {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh")
+        script_dir = path.dirname(path.realpath(__file__))
+        template_path = path.join(script_dir, "Templates", "MSM_template_reverse_R.txt")
+        with open(template_path, "r") as f:
+            template_read = f.read()
+        template = Template(template_read)
+        to_write = template.substitute(
+            subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint, levels=levels,
+            config=config, yss=younger_files[3], oss=older_files[3], yc=younger_files[5],
+            oc=older_files[5], yas=younger_files[1], oas=older_files[1],
+            r_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
+
+        with open(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
+            f.write(to_write)
+
+        run(fr"bash {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True)
+
+
 # helper function for retriving subjects
 def get_subjects(dataset: str):
     subjects = []
@@ -886,6 +1008,19 @@ if __name__ == "__main__":
     rm.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rm.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rm.add_argument("--slurm_job_limit", required=True, help="The users Slurm job limit")
+    
+    # Run MSM Local
+    rml = subparser.add_parser("run_msm_local", help="Runs MSM on a single subject and time point pair locally")
+    rml.add_argument("--datset", required=True, help="Path to directory containing all time points for registration")
+    rml.add_argument("--output", required=True, help="Path for output of MSM files, a folder for each registration will be created here")
+    rml.add_argument("--subject", required=True, help="The subject ID MSM registration")
+    rml.add_argument("--younger-timepoint", required=True, help="The younger time point for registration")
+    rml.add_argument("--older_timepoint", required=True, help="The older time point for registration")
+    rml.add_argument("--mode", choices=["forward", "reverse"], required=True, help="The registration mode, either forward or reverse")
+    rml.add_argument("--levels",required=True, type=int, help="Levels of MSM to run, see documentation for more information")
+    rml.add_argument("--config", required=True, help="Path to MSM config file to use, see MSM documentation for more information")
+    rml.add_argument("--max_anat", required=True, help="Path to MaxAnat reference sphere, typically ico6sphere")
+    rml.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
 
     # Run MSM BL to All
     rmba = subparser.add_parser("run_msm_bl_to_all", help="Run MSM from baseline to all time points, both forward and reverse")
@@ -974,6 +1109,10 @@ if __name__ == "__main__":
         args_dict.pop("command", None)
         generate_post_processing_image(**args_dict)
     elif args.command == "run_msm":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
+        run_msm(**args_dict)
+    elif args.command == "run_msm_local":
         args_dict = vars(args)
         args_dict.pop("command", None)
         run_msm(**args_dict)
