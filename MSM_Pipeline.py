@@ -840,7 +840,7 @@ if __name__ == "__main__":
     # Is Slurm Queue Open
     sqo = subparser.add_parser("is_slurm_queue_open", help="Check how many open jobs are avaliable for the indicated user")
     sqo.add_argument("--slurm_user", required=True, help="The account name of the Slurm user to check")
-    sqo.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
+    sqo.add_argument("--slurm_job_limit", required=True, help="The users Slurm job limit")
 
     # Run Ciftify
     rc = subparser.add_parser("run_ciftify", help="Run ciftify-recon-all on the indicated directories and palce them in the indicated output")
@@ -853,7 +853,7 @@ if __name__ == "__main__":
     rc.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rc.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rc.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
-    rc.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
+    rc.add_argument("--slurm_job_limit", required=True, help="The users Slurm job limit")
 
     # Get Subject Time Points
     gst = subparser.add_parser("get_subject_time_points", help="Retrieve list of time points based on subejct")
@@ -885,7 +885,7 @@ if __name__ == "__main__":
     rm.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
     rm.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rm.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
-    rm.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
+    rm.add_argument("--slurm_job_limit", required=True, help="The users Slurm job limit")
 
     # Run MSM BL to All
     rmba = subparser.add_parser("run_msm_bl_to_all", help="Run MSM from baseline to all time points, both forward and reverse")
@@ -897,7 +897,7 @@ if __name__ == "__main__":
     rmba.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rmba.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rmba.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
-    rmba.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
+    rmba.add_argument("--slurm_job_limit", required=True, help="The users Slurm job limit")
     rmba.add_argument("--levels",required=True, type=int, help="Levels of MSM to run, see documentation for more information")
     rmba.add_argument("--config", required=True, help="Path to MSM config file to use, see MSM documentation for more information")
     rmba.add_argument("--max_anat", required=True, help="Path to MaxAnat reference sphere, typically ico6sphere")
@@ -912,7 +912,7 @@ if __name__ == "__main__":
     rmst.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rmst.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rmst.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
-    rmst.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
+    rmst.add_argument("--slurm_job_limit", required=True, help="The users Slurm job limit")
     rmst.add_argument("--levels",required=True, type=int, help="Levels of MSM to run, see documentation for more information")
     rmst.add_argument("--config", required=True, help="Path to MSM config file to use, see MSM documentation for more information")
     rmst.add_argument("--max_anat", required=True, help="Path to MaxAnat reference sphere, typically ico6sphere")
