@@ -126,7 +126,8 @@ This command is used to run the `ciftify-recon-all` command on the indicated dir
 * `--slurm_email` The email address you wish for failed job notifications to be sent to
 * `--slurm_job_limit` The user's slurm job limit.
 
-### `get_subject_time_points` A helper function that lists all time points for a given subject in a given dataset. Useful for troubleshooting.
+### `get_subject_time_points` 
+A helper function that lists all time points for a given subject in a given dataset. Useful for troubleshooting.
 #### Arguments
 * `--dataset` The path to the directory containing subject data.
 * `--subject` The subject ID for which timepoints will be retrieved.
@@ -135,21 +136,24 @@ This command is used to run the `ciftify-recon-all` command on the indicated dir
 * `--starting_time` Provide starting time point if it uses a different naming convention.
     
 
-### `generate_post_processing_image` Generates post-processing images based on the directory input.
+### `generate_post_processing_image` 
+Generates post-processing images based on the directory input.
 #### Arguments
 * `--subjecct_directory` The path to the directory in which the created MSM output files should be contained.
 * `--resolution` Desired resolution of created images. Either CPgrid or ANATgrid.
 * `--mode` Identify forward, reverse, or average depending on registration.
 * `--output` Location to which output images will be copied. Images will also be placed in the subject directory.
   
-### `post_process_all` Generates post-processing images for the entirety of the provided dataset.
+### `post_process_all` 
+Generates post-processing images for the entirety of the provided dataset.
 #### Arguments
 * `--dataset` Location of the MSM registrations.
 * `--starting_time` The baseline timepoint of data. This value is used to determine whether forward or reverse registration was used.
 * `--resolution` Identify resolution of created images. Either CPgrid or ANATgrid.
 * `--output` Location to which output images will be copied. Images will also be placed in the subject directory.
 
-### `run_msm` Runs forward and reverse registrations of the indicated subject and timepoint.
+### `run_msm` 
+Runs forward and reverse registrations of the indicated subject and timepoint.
 #### Arguments
 * `--dataset` Path to the directory containing all time points for registration.
 * `--output` Path for the output of MSM files. A seperate folder for each registration will be created at this path.
@@ -166,7 +170,8 @@ This command is used to run the `ciftify-recon-all` command on the indicated dir
 * `--slurm_user` Slurm username for checking queue.
 * `--slurm_job_limit` The user's slurm job limit.
 
-### `run_msm_bl_to_all` Runs MSM registrations, starting at the baseline timepoint, for each other timepoint availible for a given subject. Multiple subjects can be run if they are all included in the specified folder.
+### `run_msm_bl_to_all` 
+Runs MSM registrations, starting at the baseline timepoint, for each other timepoint availible for a given subject. Multiple subjects can be run if they are all included in the specified folder.
 #### Arguments
 * `--dataset` The path to the directory containing all data for registration.
 * `--alphanumeric_timepoints` Identify whether the timepoints are alphanumeric.
@@ -182,7 +187,8 @@ This command is used to run the `ciftify-recon-all` command on the indicated dir
 * `--max_anat` Path to the MaxANATreference sphere (typically ico6sphere).
 * `--max_cp` Path the the MaxCP reference sphere (typically ico5sphere).
 
-### `run_msm_short_time_windows` Runs MSM on all subjects in a folder using sequential timepoints.
+### `run_msm_short_time_windows` 
+Runs MSM on all subjects in a folder using sequential timepoints.
 #### Arguments
 * `--dataset` The path to the directory containing all data for registration.
 * `--alphanumeric_timepoints` Identify whether the timepoints are alphanumeric.
@@ -198,7 +204,8 @@ This command is used to run the `ciftify-recon-all` command on the indicated dir
 * `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere).
 * `--starting time` The starting time point. This is only necessary if baseline registrations should be skipped.
 
-### `generate_avg_maps` Generates an average map for the specified subject and time points.
+### `generate_avg_maps` 
+Generates an average map for the specified subject and time points.
 #### Arguments
 * `--ciftify_dataset` Path to the folder containing ciftify outputs.
 * `--msm_dataset` Path to MSM registrations.
@@ -208,7 +215,8 @@ This command is used to run the `ciftify-recon-all` command on the indicated dir
 * `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere)
 * `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere).
 
-### `generate_avg_maps_all` Generates average maps for all registrations in the specified directory.
+### `generate_avg_maps_all` 
+Generates average maps for all registrations in the specified directory.
 #### Arguments
 * `--ciftify_dataset` Path to the folder containing ciftify outputs.
 * `--msm_dataset` Path to MSM registration.
