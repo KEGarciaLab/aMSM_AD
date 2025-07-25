@@ -9,6 +9,7 @@ from time import sleep
 from string import Template
 from typing import Literal
 from shutil import copy2
+from datetime import datetime
 
 
 # class for logging
@@ -26,7 +27,7 @@ class Tee:
             stream.flush()
 
 
-log_path = path.expanduser('~/Scripts/MyScripts/Output/MSM_Pipeline/full_pipeline_log.txt')
+log_path = path.expanduser(f'~/Scripts/MyScripts/Output/MSM_Pipeline/full_pipeline_log-{datetime.now()}.txt')
 makedirs(path.dirname(log_path), exist_ok=True)
 log_file = open(log_path, 'w+')
 sys.stdout = Tee(sys.__stdout__, log_file)
