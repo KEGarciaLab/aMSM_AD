@@ -55,7 +55,7 @@ def get_ciftify_subject_list(dataset: str, subjects: list, pattern: str):
 
 
 # Function to check number of slurm jobs remaining
-def is_slurm_queue_open(slurm_user: str):
+def is_slurm_queue_open(slurm_user: str, job_limit: int):
     print(f"\nChecking slurm queue for {slurm_user}")
     jobs = check_output(
         ["squeue",
@@ -69,7 +69,7 @@ def is_slurm_queue_open(slurm_user: str):
         f.write(jobs)
     with open(rf"{user_home}/Scripts/MyScripts/Output/MSM_Pipeline/queue.txt", 'r') as f:
         jobs = (sum(1 for line in f)) - 1
-    open_jobs = 500 - jobs
+    open_jobs = job_limit - jobs
     if open_jobs > 0:
         print(f"{open_jobs} jobs currently open")
 
@@ -79,7 +79,7 @@ def is_slurm_queue_open(slurm_user: str):
 # Function for running ciftify on list of subjects
 def run_ciftify(dataset: str, directories: list, delimiter: str,
                 subject_index: int, time_index: int, output_path: str, slurm_account: str,
-                slurm_user: str, slurm_email: str):
+                slurm_user: str, slurm_email: str, slurm_job_limit: int):
     print("\nStarting ciftify runs")
     print('*' * 50)
     user_home = path.expanduser('~')
@@ -112,10 +112,10 @@ def run_ciftify(dataset: str, directories: list, delimiter: str,
         print(
             fr"Script wrote to {temp_output}/Subject_{subject}_{time_point}_recon_all.sh")
 
-        jobs_open = is_slurm_queue_open(slurm_user=slurm_user)
+        jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         while jobs_open <= 0:
             sleep(2 * 3600)
-            jobs_open = is_slurm_queue_open(slurm_user=slurm_user)
+            jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         run(fr"sbatch {temp_output}/Subject_{subject}_{time_point}_recon_all.sh",
             shell=True)
 
@@ -340,7 +340,7 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
 def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             older_timepoint: str, mode: Mode, levels: int, config: str,
             max_anat: str, max_cp: str, slurm_email: str,
-            slurm_account: str, slurm_user: str):
+            slurm_account: str, slurm_user: str, slurm_job_limit: int):
 
     user_home = path.expanduser('~')
     if mode == "forward":
@@ -391,11 +391,11 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
 
-        jobs_open = is_slurm_queue_open(slurm_user)
+        jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         while jobs_open <= 0:
             print("no jobs open waiting 2 hours")
             sleep(2 * 3600)
-            jobs_open = is_slurm_queue_open(slurm_user)
+            jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         print("Jobs open submitting script")
         run(fr"sbatch {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
 
@@ -417,11 +417,11 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         with open(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
 
-        jobs_open = is_slurm_queue_open(slurm_user)
+        jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         while jobs_open <= 0:
             print("no jobs open waiting 2 hours")
             sleep(2 * 3600)
-            jobs_open = is_slurm_queue_open(slurm_user)
+            jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         print("Jobs open submitting script")
         run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
 
@@ -450,11 +450,11 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         with open(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
 
-        jobs_open = is_slurm_queue_open(slurm_user)
+        jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         while jobs_open <= 0:
             print("no jobs open waiting 2 hours")
             sleep(2 * 3600)
-            jobs_open = is_slurm_queue_open(slurm_user)
+            jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         print("Jobs open submitting script")
         run(fr"sbatch {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True)
 
@@ -476,11 +476,11 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         with open(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
 
-        jobs_open = is_slurm_queue_open(slurm_user)
+        jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         while jobs_open <= 0:
             print("no jobs open waiting 2 hours")
             sleep(2 * 3600)
-            jobs_open = is_slurm_queue_open(slurm_user)
+            jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
         print("Jobs open submitting script")
         run(fr"sbatch {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True)
 
@@ -505,7 +505,7 @@ def get_subjects(dataset: str):
 # Function for MSM BL to all
 def run_msm_bl_to_all(dataset: str, alphanumeric_timepoints: bool, time_point_number_start_character: int,
                       output: str, starting_time: str, slurm_account: str, slurm_user: str,
-                      slurm_email: str, levels: int, config: str,
+                      slurm_email: str, slurm_job_limit: int, levels: int, config: str,
                       max_anat: str, max_cp: str):
 
     subjects = get_subjects(dataset)
@@ -522,16 +522,16 @@ def run_msm_bl_to_all(dataset: str, alphanumeric_timepoints: bool, time_point_nu
         for time_point in time_points:
             if time_point != starting_time:
                 run_msm(dataset, output, subject, starting_time, time_point, "forward",
-                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
+                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
                 run_msm(dataset, output, subject, starting_time, time_point, "reverse",
-                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
+                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
 # Function to run MSM on shirt time windows
 def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
                                time_point_number_start_character: int,
                                output: str, slurm_account: str, slurm_user: str,
-                               slurm_email: str, levels: int, config: str,
+                               slurm_email: str, slurm_job_limit: int, levels: int, config: str,
                                max_anat: str, max_cp: str, starting_time=None):
     subjects = get_subjects(dataset)
     print("\nAll subjects found. Beginning MSM")
@@ -546,9 +546,9 @@ def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
             older_time = time_points[i + 1]
             if younger_time != starting_time and older_time != starting_time:
                 run_msm(dataset, output, subject, younger_time, older_time, "forward",
-                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
+                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
                 run_msm(dataset, output, subject, younger_time, older_time, "reverse",
-                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user)
+                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
 # Function to run post processing on all subjects
@@ -840,6 +840,7 @@ if __name__ == "__main__":
     # Is Slurm Queue Open
     sqo = subparser.add_parser("is_slurm_queue_open", help="Check how many open jobs are avaliable for the indicated user")
     sqo.add_argument("--slurm_user", required=True, help="The account name of the Slurm user to check")
+    sqo.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
 
     # Run Ciftify
     rc = subparser.add_parser("run_ciftify", help="Run ciftify-recon-all on the indicated directories and palce them in the indicated output")
@@ -852,6 +853,7 @@ if __name__ == "__main__":
     rc.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rc.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rc.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rc.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
 
     # Get Subject Time Points
     gst = subparser.add_parser("get_subject_time_points", help="Retrieve list of time points based on subejct")
@@ -883,6 +885,7 @@ if __name__ == "__main__":
     rm.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
     rm.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rm.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
+    rm.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
 
     # Run MSM BL to All
     rmba = subparser.add_parser("run_msm_bl_to_all", help="Run MSM from baseline to all time points, both forward and reverse")
@@ -894,6 +897,7 @@ if __name__ == "__main__":
     rmba.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rmba.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rmba.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rmba.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
     rmba.add_argument("--levels",required=True, type=int, help="Levels of MSM to run, see documentation for more information")
     rmba.add_argument("--config", required=True, help="Path to MSM config file to use, see MSM documentation for more information")
     rmba.add_argument("--max_anat", required=True, help="Path to MaxAnat reference sphere, typically ico6sphere")
@@ -908,6 +912,7 @@ if __name__ == "__main__":
     rmst.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rmst.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rmst.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rmst.add_argument("--slurm_job_limit", required=True, help="The users SLurm job limit")
     rmst.add_argument("--levels",required=True, type=int, help="Levels of MSM to run, see documentation for more information")
     rmst.add_argument("--config", required=True, help="Path to MSM config file to use, see MSM documentation for more information")
     rmst.add_argument("--max_anat", required=True, help="Path to MaxAnat reference sphere, typically ico6sphere")
