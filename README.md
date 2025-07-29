@@ -152,7 +152,7 @@ Generates post-processing images for the entirety of the provided dataset.
 * `--resolution` Identify resolution of created images. Either CPgrid or ANATgrid.
 * `--output` Location to which output images will be copied. Images will also be placed in the subject directory.
 
-### `run_msm` 
+### `run_msm` / `run_msm_local`
 Runs forward and reverse registrations of the indicated subject and timepoint.
 #### Arguments
 * `--dataset` Path to the directory containing all time points for registration.
