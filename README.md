@@ -152,7 +152,7 @@ Generates post-processing images for the entirety of the provided dataset.
 * `--resolution` Identify resolution of created images. Either CPgrid or ANATgrid.
 * `--output` Location to which output images will be copied. Images will also be placed in the subject directory.
 
-### `run_msm` / `run_msm_local`
+### `run_msm`
 Runs forward and reverse registrations of the indicated subject and timepoint.
 #### Arguments
 * `--dataset` Path to the directory containing all time points for registration.
@@ -169,6 +169,20 @@ Runs forward and reverse registrations of the indicated subject and timepoint.
 * `--slurm_account` Slurm account ID for submission.
 * `--slurm_user` Slurm username for checking queue.
 * `--slurm_job_limit` The user's slurm job limit.
+
+###  `run_msm_local`
+Runs forward and reverse registrations of the indicated subject and timepoints in a local environment. Reccomened to only use for test cases and small scale use.
+#### Arguments
+* `--dataset` Path to the directory containing all time points for registration.
+* `--output` Path for the output of MSM files. A seperate folder for each registration will be created at this path.
+* `--subject` The subject ID MSM registration.
+* `--younger_timepoint` The younger timepoint for registration.
+* `--Older_timepoint` The older timepoint for registration.
+* `--mode` Identify forward or reverse registration mode.
+* `--levels` Identify the levels of MSM to run. See MSM documentation for more information.
+* `--config` Path to the MSM config file to be used. See MSM documentation for more information.
+* `--max_anat` Path to MaxANAT reference sphere (typically ico6sphere).
+* `--max_cp` Path to MaxCP reference sphere (typically ico5sphere).
 
 ### `run_msm_bl_to_all` 
 Runs MSM registrations, starting at the baseline timepoint, for each other timepoint availible for a given subject. Multiple subjects can be run if they are all included in the specified folder.
