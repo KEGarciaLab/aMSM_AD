@@ -7,6 +7,7 @@ cp MSM_Pipeline.py "$INSTALL_DIR/MSM_Pipeline"
 chmod +x "$INSTALL_DIR/MSM_Pipeline"
 
 cp -r Templates "$INSTALL_DIR/"
+cp -r NeededFiles "$INSTALL_DIR/"
 
 echo "Installed to $INSTALL_DIR"
 

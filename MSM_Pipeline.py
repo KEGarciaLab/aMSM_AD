@@ -997,7 +997,7 @@ if __name__ == "__main__":
     rm.add_argument("--dataset", required=True, help="Path to directory containing all time points for registration")
     rm.add_argument("--output", required=True, help="Path for output of MSM files, a folder for each registration will be created here")
     rm.add_argument("--subject", required=True, help="The subject ID MSM registration")
-    rm.add_argument("--younger-timepoint", required=True, help="The younger time point for registration")
+    rm.add_argument("--younger_timepoint", required=True, help="The younger time point for registration")
     rm.add_argument("--older_timepoint", required=True, help="The older time point for registration")
     rm.add_argument("--mode", choices=["forward", "reverse"], required=True, help="The registration mode, either forward or reverse")
     rm.add_argument("--levels",required=True, type=int, help="Levels of MSM to run, see documentation for more information")
@@ -1011,10 +1011,10 @@ if __name__ == "__main__":
     
     # Run MSM Local
     rml = subparser.add_parser("run_msm_local", help="Runs MSM on a single subject and time point pair locally")
-    rml.add_argument("--datset", required=True, help="Path to directory containing all time points for registration")
+    rml.add_argument("--dataset", required=True, help="Path to directory containing all time points for registration")
     rml.add_argument("--output", required=True, help="Path for output of MSM files, a folder for each registration will be created here")
     rml.add_argument("--subject", required=True, help="The subject ID MSM registration")
-    rml.add_argument("--younger-timepoint", required=True, help="The younger time point for registration")
+    rml.add_argument("--younger_timepoint", required=True, help="The younger time point for registration")
     rml.add_argument("--older_timepoint", required=True, help="The older time point for registration")
     rml.add_argument("--mode", choices=["forward", "reverse"], required=True, help="The registration mode, either forward or reverse")
     rml.add_argument("--levels",required=True, type=int, help="Levels of MSM to run, see documentation for more information")
