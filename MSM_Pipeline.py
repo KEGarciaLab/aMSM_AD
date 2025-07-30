@@ -1115,7 +1115,7 @@ if __name__ == "__main__":
     elif args.command == "run_msm_local":
         args_dict = vars(args)
         args_dict.pop("command", None)
-        run_msm(**args_dict)
+        run_msm_local(**args_dict)
     elif args.command == "run_msm_bl_to_all":
         args_dict = vars(args)
         args_dict.pop("command", None)
