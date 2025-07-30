@@ -533,7 +533,7 @@ def run_msm_local(dataset: str, output: str, subject: str, younger_timepoint: st
             subject=subject, starting_time=younger_timepoint, ending_time=older_timepoint, levels=levels,
             config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
             oc=older_files[4], yas=younger_files[0], oas=older_files[0],
-            f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+            f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp, user_home=user_home)
 
         with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
@@ -553,7 +553,7 @@ def run_msm_local(dataset: str, output: str, subject: str, younger_timepoint: st
             subject=subject, starting_time=younger_timepoint, ending_time=older_timepoint, levels=levels,
             config=config, yss=younger_files[3], oss=older_files[3], yc=younger_files[5],
             oc=older_files[5], yas=younger_files[1], oas=older_files[1],
-            f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
+            f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp, user_home=user_home)
 
         with open(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
@@ -579,7 +579,7 @@ def run_msm_local(dataset: str, output: str, subject: str, younger_timepoint: st
             subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint, levels=levels,
             config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
             oc=older_files[4], yas=younger_files[0], oas=older_files[0],
-            r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+            r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp, user_home=user_home)
 
         with open(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
@@ -599,7 +599,7 @@ def run_msm_local(dataset: str, output: str, subject: str, younger_timepoint: st
             subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint, levels=levels,
             config=config, yss=younger_files[3], oss=older_files[3], yc=younger_files[5],
             oc=older_files[5], yas=younger_files[1], oas=older_files[1],
-            r_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
+            r_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp, user_home=user_home)
 
         with open(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write)
