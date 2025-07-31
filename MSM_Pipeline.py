@@ -363,7 +363,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
     user_home = path.expanduser('~')
     script_dir = path.dirname(path.realpath(__file__))
     if config == None:
-        config = path.join(script_dir, "NeededFiles", "ConfigAnatGrid6")
+        config = path.join(script_dir, "NeededFiles", "configAnatGrid6")
     if max_anat == None:
         max_anat = path.join(script_dir, "NeededFiles", "ico6sphere.LR.reg.surf.gii")
     if max_cp == None:
@@ -471,7 +471,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                     jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
             print("Jobs open submitting script")
             run(fr"sbatch {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
-            # remove(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            remove(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
             
             #right hemisphere
             if slurm_job_limit == None:
@@ -488,14 +488,14 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                     jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
             print("Jobs open submitting script")
             run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
-            #remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
         
          # run lcoal job        
         elif is_local:
             run(fr"bash {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
-            # remove(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            remove(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
             run(fr"bash {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
-            # remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
 
     elif mode == "reverse":
         output = path.join(
