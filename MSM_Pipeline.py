@@ -41,17 +41,25 @@ def get_ciftify_subject_list(dataset: str, subjects: list, pattern: str):
     print('*' * 50)
     print("Finding all files for the following subjects:")
     print(*subjects, sep='\n')
-    subjects_dirs = []
+    subject_dirs = []
 
     for subject in subjects:
         subject_pattern = pattern.replace('#', subject)
         subject_pattern = compile(subject_pattern)
         for entry in listdir(dataset):
             full_path = path.join(dataset, entry)
-            if path.isdir(full_path) and subject_pattern.match(entry) and entry not in subjects_dirs:
-                subjects_dirs.append(entry)
-    print (sorted(subjects_dirs))
-    return sorted(subjects_dirs)
+            if path.isdir(full_path) and subject_pattern.match(entry) and entry not in subject_dirs:
+                subject_dirs.append(entry)
+                
+    user_home = path.expanduser("~")
+    ciftify_scripts_path = path.join(user_home, "Scripts", "MyScripts", "Output", "MSM_Pipeline", "ciftify_scripts")
+    makedirs(ciftify_scripts_path, exist_ok=True)
+    subject_list_file = path.join(ciftify_scripts_path, "ciftify_subjects.txt")
+    with open(subject_list_file, "w") as f:
+        f.writelines([subject_dir + "\n" for subject_dir in subject_dirs])
+    
+    print(f"The following subject directories written to {subject_list_file}:")    
+    print(sorted(subject_dirs))
 
 
 # Function to check number of slurm jobs remaining
@@ -77,17 +85,21 @@ def is_slurm_queue_open(slurm_user: str, job_limit: int=500):
 
 
 # Function for running ciftify on list of subjects
-def run_ciftify(dataset: str, directories: list, delimiter: str,
-                subject_index: int, time_index: int, output_path: str, slurm_account: str,
-                slurm_user: str, slurm_email: str, slurm_job_limit: int):
+def run_ciftify(dataset: str, delimiter: str, subject_index: int, time_index: int,
+                output_path: str, slurm_account: str, slurm_user: str,
+                slurm_email: str, slurm_job_limit: int | None):
+    
     print("\nStarting ciftify runs")
     print('*' * 50)
     user_home = path.expanduser('~')
-    print(user_home)
+    makedirs(temp_output, exist_ok=True)
     temp_output = path.join(user_home, "Scripts", "MyScripts", "Output",
                             "MSM_Pipeline", "ciftify_scripts")
-
-    makedirs(temp_output, exist_ok=True)
+    subject_list_file = path.join(temp_output, "ciftify_subjects.txt")
+    with open(subject_list_file, "r") as f:
+        directories = [line.strip() for line in f if line.strip()]
+    remove(subject_list_file)
+    print(f"Subjects loaded from file {subject_list_file}")
     for directory in directories:
         fields = directory.split(delimiter)
         subject = fields[subject_index]
@@ -112,12 +124,18 @@ def run_ciftify(dataset: str, directories: list, delimiter: str,
         print(
             fr"Script wrote to {temp_output}/Subject_{subject}_{time_point}_recon_all.sh")
 
-        jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
+        if slurm_job_limit != None:
+            jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
+        else:
+            jobs_open = is_slurm_queue_open(slurm_user)
         while jobs_open <= 0:
             sleep(2 * 3600)
-            jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
-        run(fr"sbatch {temp_output}/Subject_{subject}_{time_point}_recon_all.sh",
-            shell=True)
+            if slurm_job_limit != None:
+                jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
+            else:
+                jobs_open = is_slurm_queue_open(slurm_user)
+        run(fr"sbatch {temp_output}/Subject_{subject}_{time_point}_recon_all.sh", shell=True)
+        remove(fr"{temp_output}/Subject_{subject}_{time_point}_recon_all.sh")
 
 
 # Helper function for sorting time points
@@ -944,7 +962,6 @@ if __name__ == "__main__":
     # Run Ciftify
     rc = subparser.add_parser("run_ciftify", help="Run ciftify-recon-all on the indicated directories and palce them in the indicated output")
     rc.add_argument("--dataset", required=True, help="Path to data that needs to be ran through ciftify")
-    rc.add_argument("--directories", nargs='+', required=True, help="List of directories to run space seperated")
     rc.add_argument("--delimiter", required=True, help="Delimiiter used in directory names to seperate fields")
     rc.add_argument("--subject_index", required=True, type=int, help="Index of subject ID based on delimiter")
     rc.add_argument("--time_index", required=True, type=int, help="Index of time point based on delimeter")
@@ -952,7 +969,7 @@ if __name__ == "__main__":
     rc.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rc.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rc.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
-    rc.add_argument("--slurm_job_limit", required=True, help="The users Slurm job limit")
+    rc.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if slurm job limit is not 500")
 
     # Get Subject Time Points
     gst = subparser.add_parser("get_subject_time_points", help="Retrieve list of time points based on subejct")
