@@ -1,0 +1,24 @@
+#!/bin/bash
+
+########## RUN MSM
+msm --levels=${levels} --conf=${config} --inmesh=${yss} --refmesh=${oss} --indata=${yc} --refdata=${oc} --inanat=${yas} --refanat=${oas} --out=${f_out} --verbose
+
+########## SURFACE DISTORTION
+wb_command -surface-resample ${yas} ${yss} ${maxanat} "BARYCENTRIC" ${f_out}LYAS.ANATgrid.surf.gii
+wb_command -set-structure ${f_out}LYAS.ANATgrid.surf.gii CORTEX_LEFT
+wb_command -surface-resample ${yas} ${yss} ${maxcp} "BARYCENTRIC" ${f_out}LYAS.CPgrid.surf.gii
+wb_command -set-structure ${f_out}LYAS.CPgrid.surf.gii CORTEX_LEFT
+
+########## OUTPUT CALCULATIONS
+wb_command -surface-resample ${oas} ${oss} ${f_out}sphere.reg.surf.gii "BARYCENTRIC" ${f_out}anat.true.reg.surf.gii
+wb_command -surface-distortion ${yas} ${f_out}anat.true.reg.surf.gii ${f_out}surfdist.func.gii
+
+######## MAXANAT
+wb_command -surface-sphere-project-unproject ${maxanat} ${yss} ${f_out}sphere.reg.surf.gii ${f_out}sphere.ANATgrid.reg.surf.gii
+wb_command -surface-resample ${oas} ${oss} ${f_out}sphere.ANATgrid.reg.surf.gii "BARYCENTRIC" ${f_out}anat.ANATgrid.reg.surf.gii
+wb_command -surface-distortion ${f_out}LYAS.ANATgrid.surf.gii ${f_out}anat.ANATgrid.reg.surf.gii ${f_out}surfdist.ANATgrid.func.gii
+
+######## MAXCP
+wb_command -surface-sphere-project-unproject ${maxcp} ${yss} ${f_out}sphere.reg.surf.gii ${f_out}sphere.CPgrid.reg.surf.gii
+wb_command -surface-resample ${oas} ${oss} ${f_out}sphere.CPgrid.reg.surf.gii "BARYCENTRIC" ${f_out}anat.CPgrid.reg.surf.gii
+wb_command -surface-distortion ${f_out}LYAS.CPgrid.surf.gii ${f_out}anat.CPgrid.reg.surf.gii ${f_out}surfdist.CPgrid.func.gii
