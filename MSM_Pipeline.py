@@ -957,7 +957,7 @@ if __name__ == "__main__":
     # Is Slurm Queue Open
     sqo = subparser.add_parser("is_slurm_queue_open", help="Check how many open jobs are avaliable for the indicated user")
     sqo.add_argument("--slurm_user", required=True, help="The account name of the Slurm user to check")
-    sqo.add_argument("--slurm_job_limit", required=True, help="The users Slurm job limit")
+    sqo.add_argument("--slurm_job_limit", required=False, type=int, default=500, help="The users Slurm job limit")
 
     # Run Ciftify
     rc = subparser.add_parser("run_ciftify", help="Run ciftify-recon-all on the indicated directories and palce them in the indicated output")
@@ -969,7 +969,7 @@ if __name__ == "__main__":
     rc.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rc.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rc.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
-    rc.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if slurm job limit is not 500")
+    rc.add_argument("--slurm_job_limit", required=False, type=int, help="The users Slurm job limit. Only needed if slurm job limit is not 500")
 
     # Get Subject Time Points
     gst = subparser.add_parser("get_subject_time_points", help="Retrieve list of time points based on subejct")

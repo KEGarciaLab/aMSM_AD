@@ -53,6 +53,19 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+<ul>
+    <li><a href="#is-slurm-queue-open">is_slurm_queue_open</a></li>
+    <li><a href="#get-ciftify-subject-list">get_ciftify_subject_list</a></li>
+    <li><a href="#run-cifitify">run_cifitify</a></li>
+    <li><a href="#get-subject-time-points">get_subject_time_points</a></li>
+    <li><a href="#generate-post-processing-image">generate_post_processing_image</a></li>
+    <li><a href="#post-process-all">post_process_all</a></li>
+    <li><a href="#run-msm">run_msm</a></li>
+    <li><a href="#run-msm-bl-to-all">run_msm_bl_to_all</a></li>
+    <li><a href="#run-msm-short-time-windows">run_msm_short_time_windows</a></li>
+    <li><a href="#generate-avg-maps">generate_avg_maps</a></li>
+    <li><a href="#generate-avg-maps-all">generate_avg_maps_all</a></li>
+</ul>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -64,7 +77,8 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+### About The Project
+---
 
 Processing scripts for aMSM analysis of Alzheimer's Disease data.
 
@@ -72,12 +86,16 @@ Processing scripts for aMSM analysis of Alzheimer's Disease data.
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+### Getting Started
+---
 
 To get started with using these tools for the instructions below to install them.
 
 
 ### Installation
+To use this tool you must have ciftify, conectome workbench, and MSM installed already. Follow install instructions for each tool and their dependencies. ONce those are installed you can download the release .zip file from here, extract it, and run the installer.sh file. This installs the pipeline, all dependencies and the necessary files. You can ensure installation by using `MSM_Pipeline -h` in a bash terminal. IF you do not get the help message for the pipeline, ensure that the files are located in $HOME/bin and that $HOME/bin is added to PATH.
+
+**DEPRECATED**
 
 All scripts used for installation of the various tools can be found in the Installation folder of the repo. They should be ran in the order listed below to avoid errors. It is also recommended that you either reboot your system or reconnect through an ssh after each installation to ensure it was completed properly. Finally, these installation scripts were made assuming this would be ran on one of the IU supercomputing clusters. If you are outside of IU or are not using one of these systems you will need to install MSM, Ciftify, and Conetome Workbench manually, including updating `.bash_profile` in order to add the commands to PATH.
 
@@ -96,27 +114,39 @@ bash InstallationScripts/Workbench-install.sh
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+### Usage
+---
 
 The entire pipeline has been bundled into a single Python script with a command line interface. The easiest way to use this pipeline is to either add the cloned repo to PATH or to copy the script itself `MSM_Pipeline.py` and the `Pipeline_Templates` directory into a location that is already part of PATH such as `user/bin.` Once one of the above steps has been completed, ensure that it was done correctly by using the command `MSM_Pipeline -h`. This will bring up the help text, detailing all avaliable commands. Below, I have detailed the various commands avaliable within the pipeline as well as the arguments needed for each one. Note that every argument is a keyword and not positional. `-h` can be used after any command name to see all arguments needed for any command.
 
+<a name="is-slurm-queue-open"></a>
 ### `is_slurm_queue_open`
+---
 Checks the slurm queue of the specified user and returns the number of open jobs. Also prints the queue to a .txt file. Note that this assumes a job limit of 500. The slurm queue can still be checked manually 
 #### Arguments
+##### Required:
 * `--slurm_user` The username of the user to check the queue for.
 
+##### Optional:
+* `--slurm_job_limit` The users job limit in slurm. Defaults to 500 if not specified
+
+<a name="get-ciftify-subject-list"></a>
 ### `get_ciftify_subject_list`
+---
 This command is used to retrive a list of all folders of subject data that need to converted using `run_ciftify`.
 #### Arguments
+##### Required:
 * `--dataset` The location of the freesurfer data. This should be the root folder containing all the folders of subjects and time points.
 * `--subjects` A space separated list of subject IDs that you want to find the folders names for.
 * `--pattern` A regex of the format of the folder name in regards to the location of the subeject ID, using "#" as a placeholder for the ID. e.g. `.*_S_#_.*` this will search for folders that contain `_S_<subject_id>_` with the subject ID being pulled from the list of subjects provided.
 
+<a name="run-cifitify"></a>
 ### `run_cifitify`
+---
 This command is used to run the `ciftify-recon-all` command on the indicated directories and place the output in the indicated folder. This creates one output directory for each input directory in the indicated location.
 #### Arguments
+##### Required:
 * `--dataset` This is the folder where your directories are located. Note: there are plans to make this automatic and remove the need for this argument
-* `--directories` A space separated list of directories to run. This can be generated using the `get_ciftify_subject_list` command. Note: there are currently plans to make this automatic and remove the need for this argument
 * `--delimiter` The character used to separate fields in the orginal directory name, typically "_"
 * `--subject_index` The location of the subject id based on the delimiter, with the first field being 0
 * `--time_index` The same as above but for the time point of the scan
@@ -124,69 +154,76 @@ This command is used to run the `ciftify-recon-all` command on the indicated dir
 * `--slurm_account` The slurm account ID used for job allocations
 * `--slurm_user` Slurm username for checking queue
 * `--slurm_email` The email address you wish for failed job notifications to be sent to
-* `--slurm_job_limit` The user's slurm job limit.
 
-### `get_subject_time_points` 
+##### Optional:
+* `--slurm_job_limit` The user's slurm job limit. Defaults to 500 if not included
+
+<a name="get-subject-time-points"></a>
+### `get_subject_time_points`
+--- 
 A helper function that lists all time points for a given subject in a given dataset. Useful for troubleshooting.
 #### Arguments
+##### Required:
 * `--dataset` The path to the directory containing subject data.
 * `--subject` The subject ID for which timepoints will be retrieved.
-* `--alphanumeric_timepoints` Identify whether or not the timepoints are alphanumeric.
-* `--time_point_number_start_character` The character where numbers begin in the timepoint; 0 indexed.
-* `--starting_time` Provide starting time point if it uses a different naming convention.
-    
 
-### `generate_post_processing_image` 
+##### Optional:
+* `--alphanumeric_timepoints` Include this option if your timepoints are alphanumeric
+* `--time_point_number_start_character` The character where numbers begin in the timepoint; 0 indexed. Only needed if using `--alphanumeric_timepoints`
+* `--starting_time` Provide starting time point if it uses a different naming convention. Can be left out if baseline uses the same naming convention.
+
+<a name="generate-post-processing-image"></a>
+### `generate_post_processing_image`
+--- 
 Generates post-processing images based on the directory input.
 #### Arguments
-* `--subjecct_directory` The path to the directory in which the created MSM output files should be contained.
+##### Required:
+* `--subject_directory` The path to the directory in which the created MSM output files should be contained.
 * `--resolution` Desired resolution of created images. Either CPgrid or ANATgrid.
 * `--mode` Identify forward, reverse, or average depending on registration.
 * `--output` Location to which output images will be copied. Images will also be placed in the subject directory.
   
-### `post_process_all` 
+<a name="post-process-all"></a>
+### `post_process_all`
+--- 
 Generates post-processing images for the entirety of the provided dataset.
 #### Arguments
+##### Required:
 * `--dataset` Location of the MSM registrations.
 * `--starting_time` The baseline timepoint of data. This value is used to determine whether forward or reverse registration was used.
 * `--resolution` Identify resolution of created images. Either CPgrid or ANATgrid.
 * `--output` Location to which output images will be copied. Images will also be placed in the subject directory.
 
+<a name="run-msm"></a>
 ### `run_msm`
+---
 Runs forward and reverse registrations of the indicated subject and timepoint.
 #### Arguments
+##### Required:
 * `--dataset` Path to the directory containing all time points for registration.
 * `--output` Path for the output of MSM files. A seperate folder for each registration will be created at this path.
 * `--subject` The subject ID MSM registration.
 * `--younger_timepoint` The younger timepoint for registration.
-* `--Older_timepoint` The older timepoint for registration.
+* `--older_timepoint` The older timepoint for registration.
 * `--mode` Identify forward or reverse registration mode.
-* `--levels` Identify the levels of MSM to run. See MSM documentation for more information.
-* `--config` Path to the MSM config file to be used. See MSM documentation for more information.
-* `--max_anat` Path to MaxANAT reference sphere (typically ico6sphere).
-* `--max_cp` Path to MaxCP reference sphere (typically ico5sphere).
-* `--slurm_email` Email to which failed job notifications should be sent.
-* `--slurm_account` Slurm account ID for submission.
-* `--slurm_user` Slurm username for checking queue.
-* `--slurm_job_limit` The user's slurm job limit.
 
-###  `run_msm_local`
-Runs forward and reverse registrations of the indicated subject and timepoints in a local environment. Reccomened to only use for test cases and small scale use.
-#### Arguments
-* `--dataset` Path to the directory containing all time points for registration.
-* `--output` Path for the output of MSM files. A seperate folder for each registration will be created at this path.
-* `--subject` The subject ID MSM registration.
-* `--younger_timepoint` The younger timepoint for registration.
-* `--Older_timepoint` The older timepoint for registration.
-* `--mode` Identify forward or reverse registration mode.
-* `--levels` Identify the levels of MSM to run. See MSM documentation for more information.
-* `--config` Path to the MSM config file to be used. See MSM documentation for more information.
-* `--max_anat` Path to MaxANAT reference sphere (typically ico6sphere).
-* `--max_cp` Path to MaxCP reference sphere (typically ico5sphere).
+##### Optional:
+* `--levels` Identify the levels of MSM to run. See MSM documentation for more information. Defaults to 6
+* `--config` Path to the MSM config file to be used. See MSM documentation for more information. Only used if not using default.
+* `--max_anat` Path to MaxANAT reference sphere (typically ico6sphere). Only used if not using default.
+* `--max_cp` Path to MaxCP reference sphere (typically ico5sphere). Only used if not using default.
+* `--is_local` include this option if tou want to run MSM in a local environment
+* `--slurm_email` Email to which failed job notifications should be sent. Only used for remote runs.
+* `--slurm_account` Slurm account ID for submission. Only used for remote runs.
+* `--slurm_user` Slurm username for checking queue. Only used for remote runs.
+* `--slurm_job_limit` The user's slurm job limit. Only used for remote runs when slurm job limit is not 500.
 
-### `run_msm_bl_to_all` 
+<a name="run-msm-bl-to-all"></a>
+### `run_msm_bl_to_all`
+--- 
 Runs MSM registrations, starting at the baseline timepoint, for each other timepoint availible for a given subject. Multiple subjects can be run if they are all included in the specified folder.
 #### Arguments
+##### Required:
 * `--dataset` The path to the directory containing all data for registration.
 * `--alphanumeric_timepoints` Identify whether the timepoints are alphanumeric.
 * `--time_point_number_start_character` Identify the character where numbers begin in the timepoint; 0 indexed.
@@ -195,15 +232,20 @@ Runs MSM registrations, starting at the baseline timepoint, for each other timep
 * `--slurm_account` The slurm account ID for submission.
 * `--slurm_user` Slurm username used for checking the queue.
 * `--slurm_email` Email address to which failed job notifications should be sent.
-* `--slurm_job_limit` The user's slurm job limit.
-* `--levels` Levels of MSM to run. See MSM documentation for more information.
-* `--config` Path to the MSM config file that will be used. See MSM documentation for more information.
-* `--max_anat` Path to the MaxANATreference sphere (typically ico6sphere).
-* `--max_cp` Path the the MaxCP reference sphere (typically ico5sphere).
 
-### `run_msm_short_time_windows` 
+##### Optional:
+* `--slurm_job_limit` The user's slurm job limit. Defaults to 500.
+* `--levels` Levels of MSM to run. See MSM documentation for more information. Defaults to 6.
+* `--config` Path to the MSM config file that will be used. See MSM documentation for more information. Only needed if not using default.
+* `--max_anat` Path to the MaxANATreference sphere (typically ico6sphere). Only needed if not using default.
+* `--max_cp` Path the the MaxCP reference sphere (typically ico5sphere). Only needed if not using default.
+
+<a name="run-msm-short-time-windows"></a>
+### `run_msm_short_time_windows`
+--- 
 Runs MSM on all subjects in a folder using sequential timepoints.
 #### Arguments
+##### Required:
 * `--dataset` The path to the directory containing all data for registration.
 * `--alphanumeric_timepoints` Identify whether the timepoints are alphanumeric.
 * `--time_point_number_start_character` The character where numbers begin in the timepoint; 0 indexed.
@@ -211,16 +253,21 @@ Runs MSM on all subjects in a folder using sequential timepoints.
 * `--slurm_account` The slurm account ID for submission.
 * `--slurm_user` The slurm username for checking the queue.
 * `--slurm email` The email to which failed job notifications will be sent.
-* `--slurm_job_limit` The user's slurm job limit.
-* `--levels` Levels of MSM that will be run. See MSM documentation for more information.
-* `--config` Path to the MSM config file that will be used. See MSM documentation for more information.
-* `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere).
-* `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere).
-* `--starting time` The starting time point. This is only necessary if baseline registrations should be skipped.
 
-### `generate_avg_maps` 
+##### Optional:
+* `--slurm_job_limit` The user's slurm job limit. Defaults to 500
+* `--levels` Levels of MSM that will be run. See MSM documentation for more information. Defaults to 6
+* `--config` Path to the MSM config file that will be used. See MSM documentation for more information. Only needed if not using default.
+* `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere). Only needed if not using default.
+* `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere). Only needed if not using default.
+* `--starting_time` The starting time point. This is only necessary if baseline registrations should be skipped.
+
+<a name="generate-avg-maps"></a>
+### `generate_avg_maps`
+--- 
 Generates an average map for the specified subject and time points.
 #### Arguments
+##### Required:
 * `--ciftify_dataset` Path to the folder containing ciftify outputs.
 * `--msm_dataset` Path to MSM registrations.
 * `-- subject` The subject ID that will be used to generate average maps.
@@ -229,13 +276,16 @@ Generates an average map for the specified subject and time points.
 * `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere)
 * `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere).
 
-### `generate_avg_maps_all` 
+<a name="generate-avg-maps-all"></a>
+### `generate_avg_maps_all`
+--- 
 Generates average maps for all registrations in the specified directory.
 #### Arguments
+##### Required:
 * `--ciftify_dataset` Path to the folder containing ciftify outputs.
 * `--msm_dataset` Path to MSM registration.
 * `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere).
-* `--max_anat` Path to the MaxANAT reference sphere (typically cio6sphere)
+* `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere)
 * `--starting_time` The baseline time of registrations. This is used to determine which average maps are needed.
 
 **DEPRECATED**
@@ -255,7 +305,8 @@ Following these steps will get you an output of folders with the maps and surfac
 
 
 <!-- CONTACT -->
-## Contact
+### Contact
+---
 
 Project Link: [https://github.com/KEGarciaLab/aMSM_AD](https://github.com/KEGarciaLab/aMSM_AD)
 
@@ -268,7 +319,8 @@ Script Manager: [Sammy Rigdon IV](mailto:srigdon5@?subject=[GitHub]aMSM_AD)
 
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
+### Acknowledgments
+---
 
 * <a href="https://github.com/othneildrew/Best-README-Template"> Read me tepmplate by othneildrew</a>
 
