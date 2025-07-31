@@ -451,7 +451,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             
         with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write_l)
-        with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
+        with open(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write_r)
 
         # submit remote jobs
@@ -470,7 +470,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                     jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
             print("Jobs open submitting script")
             run(fr"sbatch {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
-            remove(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            # remove(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
             
             #right hemisphere
             if slurm_job_limit == None:
@@ -487,7 +487,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                     jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
             print("Jobs open submitting script")
             run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
-            remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            # remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
         
          # run lcoal job        
         elif is_local:
