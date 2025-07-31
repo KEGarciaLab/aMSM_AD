@@ -361,12 +361,13 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             slurm_account: str | None=None, slurm_user: str | None=None, slurm_job_limit: int | None=None):
 
     user_home = path.expanduser('~')
+    script_dir = path.dirname(path.realpath(__file__))
     if config == None:
-        config = path.join(user_home, "bin", "NeededFiles", "ConfigAnatGrid6")
+        config = path.join(script_dir, "NeededFiles", "ConfigAnatGrid6")
     if max_anat == None:
-        max_anat = path.join(user_home, "bin", "NeededFiles", "ico6sphere.LR.reg.surf.gii")
+        max_anat = path.join(script_dir, "NeededFiles", "ico6sphere.LR.reg.surf.gii")
     if max_cp == None:
-        max_cp = path.join(user_home, "bin", "NeededFiles", "ico5sphere.LR.reg.surf.gii")
+        max_cp = path.join(script_dir, "NeededFiles", "ico5sphere.LR.reg.surf.gii")
     
     if mode == "forward":
         temp_output = path.join(user_home, "Scripts", "MyScripts", "Output", "MSM_Pipeline",
@@ -487,7 +488,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                     jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
             print("Jobs open submitting script")
             run(fr"sbatch {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True)
-            # remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            #remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
         
          # run lcoal job        
         elif is_local:
