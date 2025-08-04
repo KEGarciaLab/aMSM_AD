@@ -93,7 +93,7 @@ To get started with using these tools for the instructions below to install them
 
 
 ### Installation
-To use this tool you must have ciftify, conectome workbench, and MSM installed already. Follow install instructions for each tool and their dependencies. ONce those are installed you can download the release .zip file from here, extract it, and run the installer.sh file. This installs the pipeline, all dependencies and the necessary files. You can ensure installation by using `MSM_Pipeline -h` in a bash terminal. IF you do not get the help message for the pipeline, ensure that the files are located in $HOME/bin and that $HOME/bin is added to PATH.
+To use this tool you must have ciftify, conectome workbench, and MSM installed already. Follow install instructions for each tool and their dependencies. Once those are installed you can download the release .zip file from here, extract it, and run the installer.sh file. This installs the pipeline, all dependencies and the necessary files. You can ensure installation by using `MSM_Pipeline -h` in a bash terminal. IF you do not get the help message for the pipeline, ensure that the files are located in $HOME/bin and that $HOME/bin is added to PATH.
 
 **DEPRECATED**
 
@@ -117,7 +117,7 @@ bash InstallationScripts/Workbench-install.sh
 ### Usage
 ---
 
-The entire pipeline has been bundled into a single Python script with a command line interface. The easiest way to use this pipeline is to either add the cloned repo to PATH or to copy the script itself `MSM_Pipeline.py` and the `Pipeline_Templates` directory into a location that is already part of PATH such as `user/bin.` Once one of the above steps has been completed, ensure that it was done correctly by using the command `MSM_Pipeline -h`. This will bring up the help text, detailing all avaliable commands. Below, I have detailed the various commands avaliable within the pipeline as well as the arguments needed for each one. Note that every argument is a keyword and not positional. `-h` can be used after any command name to see all arguments needed for any command.
+The entire pipeline has been bundled into a single Python script with a command line interface. The easiest way to use this pipeline is to follwo the install instructions so that it is added to PATH and can be used as a command. Once completed, I would then reccomend creating a simple shell script to run any command you wish. While all commands can be run from a bash terminal directly, the commands can be very long witha  alot of arguments; using a shell script allows for a more readable version of the command to make troubleshooting easier. Below, I have detailed the various commands avaliable within the pipeline as well as the arguments needed for each one. Note that every argument is a keyword and not positional so you must have the flag, but the order does not matter. `-h` can be used after any command name to see all arguments needed for any command.
 
 <a name="is-slurm-queue-open"></a>
 ### `is_slurm_queue_open`
