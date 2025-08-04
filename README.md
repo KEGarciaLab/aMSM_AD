@@ -93,7 +93,7 @@ To get started with using these tools for the instructions below to install them
 
 
 ### Installation
-To use this tool you must have ciftify, conectome workbench, and MSM installed already. Follow install instructions for each tool and their dependencies. Once those are installed you can download the release .zip file from here, extract it, and run the installer.sh file. This installs the pipeline, all dependencies and the necessary files. You can ensure installation by using `MSM_Pipeline -h` in a bash terminal. IF you do not get the help message for the pipeline, ensure that the files are located in $HOME/bin and that $HOME/bin is added to PATH.
+To use this tool you must have ciftify, conectome workbench, MSM_HOCR, and Python 3.11 installed already. Follow install instructions for each tool and their dependencies. Once those are installed you can download the release .zip file from here, extract it, and run the installer.sh file. This installs the pipeline, all dependencies and the necessary files. You can ensure installation by using `MSM_Pipeline -h` in a bash terminal. IF you do not get the help message for the pipeline, ensure that the files are located in $HOME/bin and that $HOME/bin is added to PATH.
 
 **DEPRECATED**
 
@@ -140,8 +140,8 @@ This command is used to retrive a list of all folders of subject data that need 
 * `--subjects` A space separated list of subject IDs that you want to find the folders names for.
 * `--pattern` A regex of the format of the folder name in regards to the location of the subeject ID, using "#" as a placeholder for the ID. e.g. `.*_S_#_.*` this will search for folders that contain `_S_<subject_id>_` with the subject ID being pulled from the list of subjects provided.
 
-<a name="run-cifitify"></a>
-### `run_cifitify`
+<a name="run-ciftify"></a>
+### `run_ciftify`
 ---
 This command is used to run the `ciftify-recon-all` command on the indicated directories and place the output in the indicated folder. This creates one output directory for each input directory in the indicated location.
 #### Arguments
