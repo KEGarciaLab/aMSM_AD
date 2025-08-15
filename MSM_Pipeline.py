@@ -63,7 +63,7 @@ def get_ciftify_subject_list(dataset: str, subjects: list, pattern: str):
 
 
 # Function to check number of slurm jobs remaining
-def is_slurm_queue_open(slurm_user: str, job_limit: int=500):
+def is_slurm_queue_open(slurm_user: str, slurm_job_limit: int=500):
     print(f"\nChecking slurm queue for {slurm_user}")
     jobs = check_output(
         ["squeue",
@@ -77,7 +77,7 @@ def is_slurm_queue_open(slurm_user: str, job_limit: int=500):
         f.write(jobs)
     with open(rf"{user_home}/Scripts/MyScripts/Output/MSM_Pipeline/queue.txt", 'r') as f:
         jobs = (sum(1 for line in f)) - 1
-    open_jobs = job_limit - jobs
+    open_jobs = slurm_job_limit - jobs
     if open_jobs > 0:
         print(f"{open_jobs} jobs currently open")
 
@@ -180,6 +180,32 @@ def get_subject_time_points(dataset: str, subject: str, alphanumeric_timepoints:
 
 
 # Rescale Developmental surface
+def rescale_surfaces(dataset: str, subject: str, time_point: str):
+    subject_files = get_msm_files(dataset, subject, time_point)
+    left_midthickness_file = subject_files[0]
+    right_midthickness_file = subject_files[1]
+    subject_dir = subject_files[-2]
+    subject_full_name = subject_files[-1]
+    
+    left_shape_file = path.join(subject_dir, f"{subject_full_name}_areas.shape.L.gii")
+    right_shape_file = path.join(subject_dir, f"{subject_full_name}_areas.shape.R.gii")
+    
+    run(f"wb_command -surface-vertex-areas {left_midthickness_file} {left_shape_file}", shell=True)
+    run(f"wb_command -surface-vertex-areas {left_midthickness_file} {right_shape_file}", shell=True)
+    
+    
+    
+"""
+Create shape file
+subtract cortex shape file to get sa (MNINonLinear/fsaverage_LR32k/011_S_0002_BL_20050826_c0035477_T1.R.atlasroi.32k_fs_LR.shape.gii)
+sqrt(10000/sa)
+take rescale value make following affine matrix in .nii file
+R000
+0R00
+00R0
+0001
+surface-apply-affine command
+"""
 
 
 # Helper function for retriving MSM files
@@ -216,7 +242,8 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
 
     # return all files as list
     subject_files = [left_anatomical_surface, right_anatomical_surface,
-                     left_spherical_surface, right_spherical_surface, left_curvature, right_curvature]
+                     left_spherical_surface, right_spherical_surface,
+                     left_curvature, right_curvature, subject_dir, subject_full_name]
     return subject_files
 
 
