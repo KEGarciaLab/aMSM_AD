@@ -685,9 +685,9 @@ def run_msm_bl_to_all(dataset: str, alphanumeric_timepoints: bool, time_point_nu
 
         for time_point in time_points:
             if time_point != starting_time:
-                run_msm(dataset, output, subject, starting_time, time_point, "forward",
+                run_msm(dataset, output, subject, starting_time, time_point, "forward", False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, starting_time, time_point, "reverse",
+                run_msm(dataset, output, subject, starting_time, time_point, "reverse", False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
@@ -710,9 +710,9 @@ def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
             younger_time = time_point
             older_time = time_points[i + 1]
             if younger_time != starting_time and older_time != starting_time:
-                run_msm(dataset, output, subject, younger_time, older_time, "forward",
+                run_msm(dataset, output, subject, younger_time, older_time, "forward", False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, younger_time, older_time, "reverse",
+                run_msm(dataset, output, subject, younger_time, older_time, "reverse", False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
