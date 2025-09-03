@@ -180,18 +180,32 @@ def get_subject_time_points(dataset: str, subject: str, alphanumeric_timepoints:
 
 
 # Rescale Developmental surface
-def rescale_surfaces(dataset: str, subject: str, time_point: str):
+def rescale_surfaces(dataset: str,  subject: str, time_point: str):
+    # Retrieve all necessay files
     subject_files = get_msm_files(dataset, subject, time_point)
     left_midthickness_file = subject_files[0]
     right_midthickness_file = subject_files[1]
-    subject_dir = subject_files[-2]
-    subject_full_name = subject_files[-1]
+    subject_dir = subject_files[6]
+    subject_full_name = subject_files[7]
+    left_cortex = subject_files[8]
+    right_cortex = subject_files[9]
     
-    left_shape_file = path.join(subject_dir, f"{subject_full_name}_areas.shape.L.gii")
-    right_shape_file = path.join(subject_dir, f"{subject_full_name}_areas.shape.R.gii")
+    # output file names
+    left_shape_file = path.join(subject_dir, f"{subject_full_name}.L.areas.shape.gii")
+    right_shape_file = path.join(subject_dir, f"{subject_full_name}.R.areas.shape.gii")
     
+    # crete shape files
     run(f"wb_command -surface-vertex-areas {left_midthickness_file} {left_shape_file}", shell=True)
     run(f"wb_command -surface-vertex-areas {left_midthickness_file} {right_shape_file}", shell=True)
+    
+    #subject cortex shape
+    command_output = run(f"wb_command -metric-stats {left_shape_file} -reduce SUM -roi {left_cortex}", shell=True, capture_output=True, text=True, check=True)
+    left_surface_area = float(command_output.stdout.strip())
+    command_output = run(f"wb_command -metric-stats {right_shape_file} -reduce SUM -roi {right_cortex}", shell=True)
+    rigth_surface_area = float(command_output.stdout.strip())
+    
+    # 
+    
     
     
     
@@ -239,11 +253,17 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
     # get full path for curvature files
     left_curvature = fr"{subject_curvature_dir}/{subject_full_name}_Curvature.L.func.gii"
     right_curvature = fr"{subject_curvature_dir}/{subject_full_name}_Curvature.R.func.gii"
+    
+    # get cortex file names
+    left_cortex= path.join(subject_curvature_dir, f"{subject_full_name}.L.atlasroi.32k_fs_LR.shape.gii")
+    right_cortex= path.join(subject_curvature_dir, f"{subject_full_name}.R.atlasroi.32k_fs_LR.shape.gii")
 
     # return all files as list
     subject_files = [left_anatomical_surface, right_anatomical_surface,
                      left_spherical_surface, right_spherical_surface,
-                     left_curvature, right_curvature, subject_dir, subject_full_name]
+                     left_curvature, right_curvature,
+                     subject_dir, subject_full_name,
+                     left_cortex, right_cortex]
     return subject_files
 
 
@@ -453,7 +473,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                 user_home=user_home, email=slurm_email, account=slurm_account, levels=levels,
                 config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
                 oc=older_files[4], yas=younger_files[0], oas=older_files[0],
-                f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
         # Templates for local run
         elif is_local:
@@ -475,7 +495,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             to_write_r = template_r.substitute(
                 levels=levels, config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
                 oc=older_files[4], yas=younger_files[0], oas=older_files[0],
-                f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
         with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write_l)
