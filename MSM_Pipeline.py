@@ -10,6 +10,7 @@ from string import Template
 from typing import Literal
 from shutil import copy2
 from datetime import datetime
+from math import sqrt
 
 
 # class for logging
@@ -193,6 +194,10 @@ def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     # output file names
     left_shape_file = path.join(subject_dir, f"{subject_full_name}.L.areas.shape.gii")
     right_shape_file = path.join(subject_dir, f"{subject_full_name}.R.areas.shape.gii")
+    left_affine_matrix = path.join(subject_dir, f"{subject_full_name}.L.rescaleaffine.nii")
+    right_affine_matrix = path.join(subject_dir, f"{subject_full_name}.R.rescaleaffine.nii")
+    left_rescaled_surface = path.join(subject_dir, f"{subject_full_name}.L.rescaled.surf.gii")
+    right_rescaled_surface = path.join(subject_dir, f"{subject_full_name}.R.rescaled.surf.gii")
     
     # crete shape files
     run(f"wb_command -surface-vertex-areas {left_midthickness_file} {left_shape_file}", shell=True)
@@ -204,7 +209,26 @@ def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     command_output = run(f"wb_command -metric-stats {right_shape_file} -reduce SUM -roi {right_cortex}", shell=True)
     rigth_surface_area = float(command_output.stdout.strip())
     
-    # 
+    # Rescale value calculations
+    left_rescale_value = sqrt(10000 / left_surface_area)
+    right_rescale_value = sqrt(10000 / rigth_surface_area)
+    
+    # create affine matrix
+    with open(left_affine_matrix, "w+") as f:
+        f.writelines(f"{left_rescale_value} 0 0 0",
+                     f"0 {left_rescale_value} 0 0",
+                     f"0 0 {left_rescale_value} 0",
+                     "0 0 0 1")
+    
+    with open(right_affine_matrix, "w+") as f:
+        f.writelines(f"{right_rescale_value} 0 0 0",
+                     f"0 {right_rescale_value} 0 0",
+                     f"0 0 {right_rescale_value} 0",
+                     "0 0 0 1")
+        
+    # apply affine matrix
+    run(f"wb_command -surface-apply-affine {left_midthickness_file} {left_affine_matrix} {left_rescaled_surface}", shell=True)
+    run(f"wb_command -surface-apply-affine {right_midthickness_file} {right_affine_matrix} {right_rescaled_surface}", shell=True)
     
     
     
