@@ -172,6 +172,15 @@ A helper function that lists all time points for a given subject in a given data
 * `--time_point_number_start_character` The character where numbers begin in the timepoint; 0 indexed. Only needed if using `--alphanumeric_timepoints`
 * `--starting_time` Provide starting time point if it uses a different naming convention. Can be left out if baseline uses the same naming convention.
 
+<a name="rescsale_surfaces"></a>
+### `rescale_surfaces`
+---
+Generates recaled anatomical surfaces for the indicated subject and time point.
+#### Arguments
+##### Required
+* `--dataset` The path to the directory containing subject data
+* `--subject` The subject to be rescaled
+* `--time_point` The time_point to be rescaled
 <a name="generate-post-processing-image"></a>
 ### `generate_post_processing_image`
 --- 
@@ -212,7 +221,8 @@ Runs forward and reverse registrations of the indicated subject and timepoint.
 * `--config` Path to the MSM config file to be used. See MSM documentation for more information. Only used if not using default.
 * `--max_anat` Path to MaxANAT reference sphere (typically ico6sphere). Only used if not using default.
 * `--max_cp` Path to MaxCP reference sphere (typically ico5sphere). Only used if not using default.
-* `--is_local` include this option if tou want to run MSM in a local environment
+* `--use_rescaled` include this option if you want to use rescaled surfaces generated in a previous step
+* `--is_local` include this option if you want to run MSM in a local environment
 * `--slurm_email` Email to which failed job notifications should be sent. Only used for remote runs.
 * `--slurm_account` Slurm account ID for submission. Only used for remote runs.
 * `--slurm_user` Slurm username for checking queue. Only used for remote runs.
@@ -234,6 +244,7 @@ Runs MSM registrations, starting at the baseline timepoint, for each other timep
 * `--slurm_email` Email address to which failed job notifications should be sent.
 
 ##### Optional:
+* `--use_rescaled` include this option if you want to use rescaled surfaces generated in a previous step
 * `--slurm_job_limit` The user's slurm job limit. Defaults to 500.
 * `--levels` Levels of MSM to run. See MSM documentation for more information. Defaults to 6.
 * `--config` Path to the MSM config file that will be used. See MSM documentation for more information. Only needed if not using default.
@@ -255,6 +266,7 @@ Runs MSM on all subjects in a folder using sequential timepoints.
 * `--slurm email` The email to which failed job notifications will be sent.
 
 ##### Optional:
+* `--use_rescaled` include this option if you want to use rescaled surfaces generated in a previous step
 * `--slurm_job_limit` The user's slurm job limit. Defaults to 500
 * `--levels` Levels of MSM that will be run. See MSM documentation for more information. Defaults to 6
 * `--config` Path to the MSM config file that will be used. See MSM documentation for more information. Only needed if not using default.
