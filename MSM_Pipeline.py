@@ -704,7 +704,7 @@ def get_subjects(dataset: str):
 # Function for MSM BL to all
 def run_msm_bl_to_all(dataset: str, alphanumeric_timepoints: bool, time_point_number_start_character: int,
                       output: str, starting_time: str, slurm_account: str, slurm_user: str,
-                      slurm_email: str, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
+                      slurm_email: str, use_rescaled: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
                       max_anat: str | None=None, max_cp: str | None=None):
 
     subjects = get_subjects(dataset)
@@ -720,9 +720,9 @@ def run_msm_bl_to_all(dataset: str, alphanumeric_timepoints: bool, time_point_nu
 
         for time_point in time_points:
             if time_point != starting_time:
-                run_msm(dataset, output, subject, starting_time, time_point, "forward", False,
+                run_msm(dataset, output, subject, starting_time, time_point, "forward", use_rescaled, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, starting_time, time_point, "reverse", False,
+                run_msm(dataset, output, subject, starting_time, time_point, "reverse", use_rescaled, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
