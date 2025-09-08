@@ -229,21 +229,6 @@ def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     # apply affine matrix
     run(f"wb_command -surface-apply-affine {left_midthickness_file} {left_affine_matrix} {left_rescaled_surface}", shell=True)
     run(f"wb_command -surface-apply-affine {right_midthickness_file} {right_affine_matrix} {right_rescaled_surface}", shell=True)
-    
-    
-    
-    
-"""
-Create shape file
-subtract cortex shape file to get sa (MNINonLinear/fsaverage_LR32k/011_S_0002_BL_20050826_c0035477_T1.R.atlasroi.32k_fs_LR.shape.gii)
-sqrt(10000/sa)
-take rescale value make following affine matrix in .nii file
-R000
-0R00
-00R0
-0001
-surface-apply-affine command
-"""
 
 
 # Helper function for retriving MSM files
@@ -281,13 +266,18 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
     # get cortex file names
     left_cortex= path.join(subject_curvature_dir, f"{subject_full_name}.L.atlasroi.32k_fs_LR.shape.gii")
     right_cortex= path.join(subject_curvature_dir, f"{subject_full_name}.R.atlasroi.32k_fs_LR.shape.gii")
+    
+    # get resacled file names
+    left_rescaled_surface = path.join(subject_curvature_dir, f"{subject_full_name}.L.rescaled.surf.gii")
+    right_rescaled_surface = path.join(subject_curvature_dir, f"{subject_full_name}.R.rescaled.surf.gii")
 
     # return all files as list
     subject_files = [left_anatomical_surface, right_anatomical_surface,
                      left_spherical_surface, right_spherical_surface,
                      left_curvature, right_curvature,
                      subject_dir, subject_full_name,
-                     left_cortex, right_cortex]
+                     left_cortex, right_cortex,
+                     left_rescaled_surface, right_rescaled_surface]
     return subject_files
 
 
