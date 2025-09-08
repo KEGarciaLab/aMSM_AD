@@ -417,7 +417,7 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
 
 # Function for running MSM commands
 def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
-            older_timepoint: str, mode: Mode, is_local: bool=False, levels: int=6, config: str | None=None,
+            older_timepoint: str, mode: Mode, use_rescaled: bool=False, is_local: bool=False, levels: int=6, config: str | None=None,
             max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None,
             slurm_account: str | None=None, slurm_user: str | None=None, slurm_job_limit: int | None=None):
 
@@ -445,6 +445,27 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         dataset=dataset, subject=subject, time_point=younger_timepoint)
     older_files = get_msm_files(
         dataset=dataset, subject=subject, time_point=older_timepoint)
+    
+    if use_rescaled:
+        left_younger_anatomical_surface = younger_files[10]
+        right_younger_anatomical_surface = younger_files[11]
+        left_older_anatomical_surface = younger_files[10]
+        right_older_anatomical_surface = younger_files[11]
+    else:
+        left_younger_anatomical_surface = younger_files[0]
+        right_younger_anatomical_surface = younger_files[1]
+        left_older_anatomical_surface = older_files[0]
+        right_older_anatomical_surface = older_files[1]
+        
+    left_younger_spherical_surface = younger_files[2]
+    right_younger_spherical_surface = younger_files[3]
+    left_older_spherical_surface = older_files[2]
+    right_older_spherical_surface = older_files[3]
+    
+    left_younger_curvature = younger_files[4]
+    right_younger_curvature = younger_files[5]
+    left_older_curvature = older_files[4]
+    right_older_curvature = older_files[5]
 
     if not younger_files or not older_files:
         print("no files found skipping this run")
@@ -473,8 +494,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             to_write_l = template_l.substitute(
                 subject=subject, starting_time=younger_timepoint, ending_time=older_timepoint,
                 user_home=user_home, email=slurm_email, account=slurm_account, levels=levels,
-                config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
-                oc=older_files[4], yas=younger_files[0], oas=older_files[0],
+                config=config, yss=left_younger_spherical_surface, oss=left_older_spherical_surface, yc=left_younger_curvature,
+                oc=left_older_curvature, yas=left_younger_anatomical_surface, oas=left_older_anatomical_surface,
                 f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
             # right hemisphere
@@ -485,8 +506,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             to_write_r = template_r.substitute(
                 subject=subject, starting_time=younger_timepoint, ending_time=older_timepoint,
                 user_home=user_home, email=slurm_email, account=slurm_account, levels=levels,
-                config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
-                oc=older_files[4], yas=younger_files[0], oas=older_files[0],
+                config=config, yss=right_younger_spherical_surface, oss=right_older_spherical_surface, yc=right_younger_curvature,
+                oc=right_older_curvature, yas=right_younger_anatomical_surface, oas=right_older_anatomical_surface,
                 f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
         # Templates for local run
@@ -497,8 +518,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                 template_read_l = f.read()
             template_l = Template(template_read_l)
             to_write_l = template_l.substitute(
-                levels=levels, config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
-                oc=older_files[4], yas=younger_files[0], oas=older_files[0],
+                levels=levels, config=config, yss=left_younger_spherical_surface, oss=left_older_spherical_surface, yc=left_younger_curvature,
+                oc=left_older_curvature, yas=left_younger_anatomical_surface, oas=left_older_anatomical_surface,
                 f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
             # right hemisphere
@@ -507,8 +528,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                 template_read_r = f.read()
             template_r = Template(template_read_r)
             to_write_r = template_r.substitute(
-                levels=levels, config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
-                oc=older_files[4], yas=younger_files[0], oas=older_files[0],
+                levels=levels, config=config, yss=right_younger_spherical_surface, oss=right_older_spherical_surface, yc=right_younger_curvature,
+                oc=right_older_curvature, yas=right_younger_anatomical_surface, oas=right_older_anatomical_surface,
                 f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
         with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
@@ -577,8 +598,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             to_write_l = template_l.substitute(
                 subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint,
                 user_home=user_home, email=slurm_email, account=slurm_account, levels=levels,
-                config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
-                oc=older_files[4], yas=younger_files[0], oas=older_files[0],
+                config=config, yss=left_younger_spherical_surface, oss=left_older_spherical_surface, yc=left_younger_curvature,
+                oc=left_older_curvature, yas=left_younger_anatomical_surface, oas=left_older_anatomical_surface,
                 r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
             #right hemisphere
@@ -589,9 +610,9 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             to_write_r = template_r.substitute(
                 subject=subject, starting_time=older_timepoint, ending_time=younger_timepoint,
                 user_home=user_home, email=slurm_email, account=slurm_account, levels=levels,
-                config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
-                oc=older_files[4], yas=younger_files[0], oas=older_files[0],
-                r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                config=config, yss=right_younger_spherical_surface, oss=right_older_spherical_surface, yc=right_younger_curvature,
+                oc=right_older_curvature, yas=right_younger_anatomical_surface, oas=right_older_anatomical_surface,
+                r_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
         # Templates for local jobs
         elif is_local:
@@ -601,8 +622,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                 template_read_l = f.read()
             template_l = Template(template_read_l)
             to_write_l = template_l.substitute(
-                levels=levels, config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
-                oc=older_files[4], yas=younger_files[0], oas=older_files[0],
+                levels=levels, config=config, yss=left_younger_spherical_surface, oss=left_older_spherical_surface, yc=left_younger_curvature,
+                oc=left_older_curvature, yas=left_younger_anatomical_surface, oas=left_older_anatomical_surface,
                 r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
             
             # right_hemisphere
@@ -611,9 +632,9 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                 template_read_r = f.read()
             template_r = Template(template_read_r)
             to_write_r = template_r.substitute(
-                levels=levels, config=config, yss=younger_files[2], oss=older_files[2], yc=younger_files[4],
-                oc=older_files[4], yas=younger_files[0], oas=older_files[0],
-                r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                levels=levels, config=config, yss=right_younger_spherical_surface, oss=right_older_spherical_surface, yc=right_younger_curvature,
+                oc=right_older_curvature, yas=right_younger_anatomical_surface, oas=right_older_anatomical_surface,
+                r_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
         with open(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
             f.write(to_write_l)
         with open(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
