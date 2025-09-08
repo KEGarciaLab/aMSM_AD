@@ -1062,6 +1062,12 @@ if __name__ == "__main__":
     gst.add_argument("--time_point_number_start_character", required=False, type=int, help="The character where numbers begin in the timepoint 0 indexed, only required if using --alphanumeric_timepoints")
     gst.add_argument("--starting_time", required=False, help="Used if the starting time point uses a different naming convnetion")
 
+    # Rescale Surfaces
+    rs = subparser.add_parser("rescale_surfaces", help="Generates rescaled surfaces for the indicated subjeact and timepoint")
+    rs.add_argument("--dataset", required=True, help="Path to directory containing subject data")
+    rs.add_argument("--subject", required=True, help="The subject ID for rescale")
+    rs.add_argument("--time_point", required=True, help="The time point to be rescaled")
+    
     # Generate Post Processing Image
     gppi = subparser.add_parser("generate_post_processing_image", help="Generate post-processing scene and image for one subject")
     gppi.add_argument("--subject_directory", required=True, help="Path to directory containing MSM files for images you wish to create")
@@ -1172,6 +1178,10 @@ if __name__ == "__main__":
         args_dict = vars(args)
         args_dict.pop("command", None)
         get_subject_time_points(**args_dict)
+    elif args.command == "rescale_surfaces":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
+        rescale_surfaces(**args_dict)
     elif args.command == "generate_post_processing_image":
         args_dict = vars(args)
         args_dict.pop("command", None)
