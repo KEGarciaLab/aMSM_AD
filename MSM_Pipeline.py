@@ -281,9 +281,55 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
     return subject_files
 
 
+# Generate pre-MSM qc image
+def generate_qc_image(dataset: str, subject: str, younger_time: str, older_time: str, output: str):
+    # Get files for qc image
+    print("Locating Surfaces")
+    younger_files = get_msm_files(dataset, subject, younger_time)
+    older_files = get_msm_files(dataset, subject, older_time)
+    left_younger_surface = younger_files[0]
+    right_younger_surface = younger_files[1]
+    left_older_surface = older_files[0]
+    right_older_surface = older_files[1]
+    
+    # create spec file
+    print("Creating Spec File")
+    spec_file = path.join(
+        output, f"{subject}_{younger_time}_to_{older_time}.spec")
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_younger_surface}", shell=True)
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_older_surface}", shell=True)
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_RIGHT {right_younger_surface}", shell=True)
+    run(f"wb_command -add-to-spec-file {spec_file} CORTEX_RIGHT {right_older_surface}", shell=True)
+    
+    # create scene file
+    print("Creating Scene File")
+    script_dir = path.dirname(path.realpath(__file__))
+    template_path = path.join(script_dir, "Templates", "pre_msm_qc_template.scene")
+    with open(template_path, "r") as f:
+        template_read = f.read()
+    template = Template(template_read)
+    to_write = template.substitute(
+        left_younger_surface=left_younger_surface,
+        left_older_surface=left_older_surface,
+        right_younger_surface=right_younger_surface,
+        right_older_surface=right_older_surface
+    )
+    scene_file = path.join(
+        output, f"{subject}_{younger_time}_to_{older_time}.scene")
+    with open(scene_file, "w+") as f:
+        f.write(to_write)
+        
+    # generate image
+    print("Generating Image")
+    image_file = path.join(
+        output, f"{subject}_{younger_time}_to_{older_time}.png")
+    run(f"wb_command -show-scene {scene_file} 1 {image_file} 1024 512", shell=True)
+    print("QC image written to output directory")
+    
+ 
 # Generate post processing images
 def generate_post_processing_image(subject_directory: str, resolution: str, mode: Mode, output: str):
-    # extreact info prom path
+    # extreact info from path
     subject_basename = path.basename(subject_directory)
     subject_basename_list = subject_basename.split("_")
     subject = subject_basename_list[0]
@@ -767,7 +813,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         print("Begin Post Processing at {resolution} resolution")
         print("*" * 50)
         print(
-            f"Path: {full_path}\nSubject: {subject}\nTime1: {first_time}\nTime2: {second_time}\nOutput: {subject_output}")
+            f"Path: {full_path}\nSubject: {subject}\nStarting Time: {starting_time}\nTime1: {first_time}\nTime2: {second_time}\n Month1: {first_month}\n Month2: {second_month}\nOutput: {subject_output}")
         if first_time == starting_time:
             print("Mode: Forward")
             generate_post_processing_image(full_path,
