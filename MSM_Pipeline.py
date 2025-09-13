@@ -806,7 +806,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         first_time = fields[1]
         second_time = fields[3]
         first_month = first_time[1:]
-        second_month = second_time[2:]
+        second_month = second_time[1:]
         subject_output = path.join(output, subject)
         makedirs(subject_output, exist_ok=True)
         print("*" * 50)
