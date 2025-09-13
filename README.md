@@ -58,6 +58,7 @@
     <li><a href="#get-ciftify-subject-list">get_ciftify_subject_list</a></li>
     <li><a href="#run-cifitify">run_cifitify</a></li>
     <li><a href="#get-subject-time-points">get_subject_time_points</a></li>
+    <li><a href="#rescale-surfaces">rescale_surfaces</a></li>
     <li><a href="#generate-post-processing-image">generate_post_processing_image</a></li>
     <li><a href="#post-process-all">post_process_all</a></li>
     <li><a href="#run-msm">run_msm</a></li>
@@ -172,7 +173,7 @@ A helper function that lists all time points for a given subject in a given data
 * `--time_point_number_start_character` The character where numbers begin in the timepoint; 0 indexed. Only needed if using `--alphanumeric_timepoints`
 * `--starting_time` Provide starting time point if it uses a different naming convention. Can be left out if baseline uses the same naming convention.
 
-<a name="rescsale_surfaces"></a>
+<a name="rescsale-surfaces"></a>
 ### `rescale_surfaces`
 ---
 Generates recaled anatomical surfaces for the indicated subject and time point.
