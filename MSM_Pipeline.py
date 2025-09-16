@@ -326,8 +326,33 @@ def generate_qc_image(dataset: str, subject: str, younger_time: str, older_time:
         output, f"{subject}_{younger_time}_to_{older_time}.png")
     run(f"wb_command -show-scene {scene_file} 1 {image_file} 1024 512", shell=True)
     print("QC image written to output directory")
+
     
- 
+# Generate all pre-MSM qc images
+def qc_all(dataset: str, output: str,  alphanumeric_timepoints: bool=False, time_point_number_start_character: int | None=None, starting_time=None):
+    print("\nStarting pre-MSM QC image generation")
+    print('*' * 50)
+    subjects = []
+    for directory in listdir(dataset):
+        full_path = path.join(dataset, directory)
+        fields = directory.split("_")
+        subject = fields[1]
+        if subject not in subjects:
+            subjects.append(subject)
+    
+    for subject in subjects:
+        time_points = get_subject_time_points(dataset, subject, alphanumeric_timepoints, time_point_number_start_character, starting_time)
+        if starting_time is not None and starting_time in time_points:
+            time_points.remove(starting_time)
+            time_points = time_points.sort()
+            time_points.insert(0, starting_time)
+        for i in range(len(time_points)-1):
+            younger_time = time_points[i]
+            older_time = time_points[i+1]
+            print(f"\nGenerating QC image for subject {subject} from time point {younger_time} to {older_time}")
+            generate_qc_image(dataset, subject, younger_time, older_time, output)
+        
+    
 # Generate post processing images
 def generate_post_processing_image(subject_directory: str, resolution: str, mode: Mode, output: str):
     # extreact info from path
