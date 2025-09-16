@@ -3,7 +3,7 @@
 import argparse
 import sys
 from os import listdir, path, makedirs, remove
-from re import compile
+from re import compile, sub
 from subprocess import check_output, run
 from time import sleep
 from string import Template
@@ -11,6 +11,7 @@ from typing import Literal
 from shutil import copy2
 from datetime import datetime
 from math import sqrt
+
 
 
 # class for logging
@@ -456,7 +457,7 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
     run(f"wb_command -show-scene {scene_auto_scale} 1 {image_auto_scale} 1024 512", shell=True)
     run(f"wb_command -show-scene {scene_set_scale} 1 {image_set_scale} 1024 512", shell=True)
 
-    print("Copying Imagesd to Output")
+    print("Copying Images to Output")
     copy2(image_auto_scale, output)
     copy2(image_set_scale, output)
 
@@ -805,15 +806,24 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         subject = fields[0]
         first_time = fields[1]
         second_time = fields[3]
+        if first_time.isdigit():
+            first_month = first_time
+        else:
+            first_month = sub("[^0-9]", "", first_time)
+        if second_time.isdigit():
+            second_month = second_time
+        else:
+            second_month = sub("[^0-9]", "", second_time)
+            
         first_month = first_time[1:]
         second_month = second_time[1:]
         subject_output = path.join(output, subject)
         makedirs(subject_output, exist_ok=True)
         print("*" * 50)
-        print("Begin Post Processing at {resolution} resolution")
+        print(f"Begin Post Processing at {resolution} resolution")
         print("*" * 50)
         print(
-            f"Path: {full_path}\nSubject: {subject}\nStarting Time: {starting_time}\nTime1: {first_time}\nTime2: {second_time}\n Month1: {first_month}\n Month2: {second_month}\nOutput: {subject_output}")
+            f"Path: {full_path}\nSubject: {subject}\nStarting Time: {starting_time}\nTime1: {first_time}\nTime2: {second_time}\nMonth1: {first_month}\nMonth2: {second_month}\nOutput: {subject_output}")
         if first_time == starting_time:
             print("Mode: Forward")
             generate_post_processing_image(full_path,
