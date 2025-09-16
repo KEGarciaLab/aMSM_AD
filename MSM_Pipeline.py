@@ -1149,6 +1149,23 @@ if __name__ == "__main__":
     rs.add_argument("--subject", required=True, help="The subject ID for rescale")
     rs.add_argument("--time_point", required=True, help="The time point to be rescaled")
     
+    # Generate qc imagee
+    gqi = subparser.add_parser("generate_qc_image", help="Generate qc scene and image for one subject")
+    gqi.add_argument("--dataset", required=True, help="Path to directory containing MSM files for images you wish to create")
+    gqi.add_argument("--subject", required=True, help="The subject ID for qc image creation")
+    gqi.add_argument("--younger_timepoint", required=True, help="The younger time point for registration")
+    gqi.add_argument("--older_timepoint", required=True, help="The older time point for registration")
+    gqi.add_argument("--output", required=True, help="Location to place generated images")
+    
+    #qc all
+    qa = subparser.add_parser("generate_qc_all", help="Generate qc scene and image for all subjects in the indicated dataset")
+    qa.add_argument("--dataset", required=True, help="Path to directory containing all MSM files for qc image creation")
+    qa.add_argument("--output", required=True, help="Location to place generated images")
+    qa.add_argument("--alphanumeric_timepoints", action="store_true", help="Use if the timepoints are alphanumeric")
+    qa.add_argument("--time_point_number_start_character", required=False, type=int, help="The character where numbers begin in the timepoint 0 indexed, only required if using --alphanumeric_timepoints")
+    qa.add_argument("--starting_time", required=False, help="Used if the starting time point uses a different naming convnetion")
+    
+    
     # Generate Post Processing Image
     gppi = subparser.add_parser("generate_post_processing_image", help="Generate post-processing scene and image for one subject")
     gppi.add_argument("--subject_directory", required=True, help="Path to directory containing MSM files for images you wish to create")
@@ -1263,6 +1280,14 @@ if __name__ == "__main__":
         args_dict = vars(args)
         args_dict.pop("command", None)
         rescale_surfaces(**args_dict)
+    elif args.command == "generate_qc_image":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
+        generate_qc_image(**args_dict)
+    elif args.command == "qc_all":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
+        qc_all(**args_dict)
     elif args.command == "generate_post_processing_image":
         args_dict = vars(args)
         args_dict.pop("command", None)

@@ -59,6 +59,8 @@
     <li><a href="#run-cifitify">run_cifitify</a></li>
     <li><a href="#get-subject-time-points">get_subject_time_points</a></li>
     <li><a href="#rescale-surfaces">rescale_surfaces</a></li>
+    <li><a href="#generate_qc_image">generate_qc_image</a></li>
+    <li><a href="#qc_all">qc_all</a></li>
     <li><a href="#generate-post-processing-image">generate_post_processing_image</a></li>
     <li><a href="#post-process-all">post_process_all</a></li>
     <li><a href="#run-msm">run_msm</a></li>
@@ -178,10 +180,36 @@ A helper function that lists all time points for a given subject in a given data
 ---
 Generates recaled anatomical surfaces for the indicated subject and time point.
 #### Arguments
-##### Required
+##### Required:
 * `--dataset` The path to the directory containing subject data
 * `--subject` The subject to be rescaled
 * `--time_point` The time_point to be rescaled
+
+<a name="generate_qc_image"></a>
+### `generate_qc_image`
+---
+Generates images for qc before running MSM. Must be in the same output format that the pipeline uses for our ciftify function, and requires at least two different time points per subject
+#### Arguments
+##### Required:
+* `--dataset` The path to directory containing both subject time points
+* `--subject` The subject ID for QC
+* `--younger_time` The younger time point for QC
+* `--older_time` The older time point for QC
+* `--output` The folder to place the QC images in
+
+<a name="qc_all"></a>
+### `qc_all`
+---
+Runs the `generate_ac_image` command on all time point pairs in a given directory
+#### Arguments
+##### Required:
+* `--dataset` The path to directory containing both subject time points
+* `--output` The folder to place the QC images in
+##### Optional:
+* `alphanumeric_timepoints` Include this flag if your time points use letters and numbers. Defaults to false
+* `time_point_number_start_character` The character where the numbers begin if using alphanumric time points. 0 indexed, defaults to None
+* `starting_time` Use this option if your baseline time point uses a different naming scheme than the other time points. Defaults to None
+
 <a name="generate-post-processing-image"></a>
 ### `generate_post_processing_image`
 --- 
