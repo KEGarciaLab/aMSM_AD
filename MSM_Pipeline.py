@@ -774,9 +774,9 @@ def get_subjects(dataset: str):
 
 
 # Function for MSM BL to all
-def run_msm_bl_to_all(dataset: str, alphanumeric_timepoints: bool, time_point_number_start_character: int,
-                      output: str, starting_time: str, slurm_account: str, slurm_user: str,
-                      slurm_email: str, use_rescaled: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
+def run_msm_bl_to_all(dataset: str, output: str, starting_time: str, slurm_account: str, slurm_user: str,
+                      slurm_email: str, alphanumeric_timepoints: bool=False, time_point_number_start_character: int | None=None,
+                      use_rescaled: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
                       max_anat: str | None=None, max_cp: str | None=None):
 
     subjects = get_subjects(dataset)
@@ -799,10 +799,9 @@ def run_msm_bl_to_all(dataset: str, alphanumeric_timepoints: bool, time_point_nu
 
 
 # Function to run MSM on shirt time windows
-def run_msm_short_time_windows(dataset: str, alphanumeric_timepoints: bool,
-                               time_point_number_start_character: int,
-                               output: str, slurm_account: str, slurm_user: str,
-                               slurm_email: str, use_rescaled: bool=False, slurm_job_limit: int | None=None, levels: int=6, 
+def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, slurm_user: str,
+                               slurm_email: str, alphanumeric_timepoints: bool = False,
+                               time_point_number_start_character: int | None=None, use_rescaled: bool=False, slurm_job_limit: int | None=None, levels: int=6, 
                                config: str | None=None, max_anat: str | None=None, max_cp: str | None=None,
                                starting_time: str | None=None):
     subjects = get_subjects(dataset)
@@ -1195,13 +1194,13 @@ if __name__ == "__main__":
     # Run MSM BL to All
     rmba = subparser.add_parser("run_msm_bl_to_all", help="Run MSM from baseline to all time points, both forward and reverse")
     rmba.add_argument("--dataset", required=True, help="Path to directory containing all data for registration")
-    rmba.add_argument("--alphanumeric_timepoints", required=True, help="If the time points are alphanumeric")
-    rmba.add_argument("--time_point_number_start_character", required=True, type=int, help="the character where numbers begin in the timepoint 0 indexed")
+    rmba.add_argument("--alphanumeric_timepoints", action="store_true", required=False, help="If the time points are alphanumeric")
     rmba.add_argument("--output", required=True, help="Path for output of MSM files, a folder for each registration will be created here")
-    rmba.add_argument("--starting_time", required=True, help="The time point used as baseline or 'bl' for all registrations")
     rmba.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rmba.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rmba.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rmba.add_argument("--time_point_number_start_character", required=False, type=int, help="the character where numbers begin in the timepoint 0 indexed")
+    rmba.add_argument("--starting_time", required=False, help="The time point used as baseline or 'bl' for all registrations")
     rmba.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
     rmba.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if the slurm job limit is not 500")
     rmba.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information, defaults to 6")
@@ -1212,12 +1211,12 @@ if __name__ == "__main__":
     # Run MSM Short Time Windows
     rmst = subparser.add_parser("run_msm_short_time_windows", help="Run MSM on sequential time points, both forward and reverse")
     rmst.add_argument("--dataset", required=True, help="Path to directory containing all data for registration")
-    rmst.add_argument("--alphanumeric_timepoints", required=True, help="If the time points are alphanumeric")
-    rmst.add_argument("--time_point_number_start_character", required=True, type=int, help="the character where numbers begin in the timepoint 0 indexed")
     rmst.add_argument("--output", required=True, help="Path for output of MSM files, a folder for each registration will be created here")
     rmst.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
     rmst.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
     rmst.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rmst.add_argument("--alphanumeric_timepoints", action="store_true", required=False, help="If the time points are alphanumeric")
+    rmst.add_argument("--time_point_number_start_character", required=False, type=int, help="the character where numbers begin in the timepoint 0 indexed")
     rmst.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
     rmst.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if slurm job limit is not 500")
     rmst.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information, defaults to 6")
