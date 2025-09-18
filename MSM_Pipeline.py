@@ -830,17 +830,9 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         subject = fields[0]
         first_time = fields[1]
         second_time = fields[3]
-        if first_time.isdigit():
-            first_month = first_time
-        else:
-            first_month = sub("[^0-9]", "", first_time)
-        if second_time.isdigit():
-            second_month = second_time
-        else:
-            second_month = sub("[^0-9]", "", second_time)
-            
-        first_month = first_time[1:]
-        second_month = second_time[1:]
+        first_month = int(sub("[^0-9]", "", first_time))
+        second_month = int(sub("[^0-9]", "", second_time))
+       
         subject_output = path.join(output, subject)
         makedirs(subject_output, exist_ok=True)
         print("*" * 50)
@@ -1105,15 +1097,8 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
         subject = fields[0]
         first_time = fields[1]
         second_time = fields[3]
-        
-        if first_time.isdigit():
-            first_month = first_time
-        else:
-            first_month = sub("[^0-9]", "", first_time)
-        if second_time.isdigit():
-            second_month = second_time
-        else:
-            second_month = sub("[^0-9]", "", second_time)
+        first_month = int(sub("[^0-9]", "", first_time))
+        second_month = int(sub("[^0-9]", "", second_time))
         
         print(f"\nSubject: {subject}", f"First time pont and month: {first_time}/{first_month}",
               f"Second time point: {second_time}/{second_month}", sep="\n")
