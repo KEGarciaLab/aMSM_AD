@@ -916,8 +916,16 @@ def post_process_avg(dataset: str, starting_time: str, resolution: str, output: 
 
 
 # Function to generate average maps
-def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, younger_timepoint: str, older_timepoint: str, max_cp: str, max_anat: str):
+def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, younger_timepoint: str, older_timepoint: str, max_cp: str | None=None, max_anat: str | None=None):
     # create output for average maps
+    
+    if max_cp == None:
+        script_dir = path.dirname(path.realpath(__file__))
+        max_cp = path.join(script_dir, "NeededFiles", "ico5sphere.LR.reg.surf.gii")
+    if max_anat == None:
+        script_dir = path.dirname(path.realpath(__file__))
+        max_anat = path.join(script_dir, "NeededFiles", "ico6sphere.LR.reg.surf.gii")
+        
     msm_avg_output = path.join(
         msm_dataset, f"{subject}_{older_timepoint}_to_{younger_timepoint}")
     makedirs(msm_avg_output, exist_ok=True)
@@ -1081,29 +1089,41 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
 
 # Function to run all average maps
-def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str, max_anat: str, starting_time: str):
+def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | None=None, max_anat: str | None=None, starting_time: str | None=None):
     print("\nBEGIN FUNCTION FOR AVG MAPS")
     print('*' * 50)
+    
+    if max_cp == None:
+        script_dir = path.dirname(path.realpath(__file__))
+        max_cp = path.join(script_dir, "NeededFiles", "ico5sphere.LR.reg.surf.gii")
+    if max_anat == None:
+        script_dir = path.dirname(path.realpath(__file__))
+        max_anat = path.join(script_dir, "NeededFiles", "ico6sphere.LR.reg.surf.gii")
+    
     for directory in listdir(msm_dataset):
         fields = directory.split("_")
         subject = fields[0]
         first_time = fields[1]
         second_time = fields[3]
-        first_month = first_time[1:]
-        second_month = second_time[1:]
+        
+        if first_time.isdigit():
+            first_month = first_time
+        else:
+            first_month = sub("[^0-9]", "", first_time)
+        if second_time.isdigit():
+            second_month = second_time
+        else:
+            second_month = sub("[^0-9]", "", second_time)
+        
         print(f"\nSubject: {subject}", f"First time pont and month: {first_time}/{first_month}",
               f"Second time point: {second_time}/{second_month}", sep="\n")
-        if first_time == starting_time:
+        if first_time == starting_time or first_month < second_month:
             continue
-        elif second_time == starting_time:
+        elif second_time == starting_time or second_month < first_month:
             print(
                 f"Beginning average maps for {subject} for times {second_month} to {first_month}")
             generate_avg_maps(ciftify_dataset, msm_dataset,
                               subject, second_time, first_time, max_cp, max_anat)
-        elif second_month < first_month:
-            continue
-        else:
-            continue
 
 
 # Command line interface
