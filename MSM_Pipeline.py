@@ -1101,6 +1101,7 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
             first_month = first_time
         else:
             first_month = int(sub("[^0-9]", "", first_time))
+        
         if second_time.isalpha():
             second_month = second_time
         else:
@@ -1108,9 +1109,15 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
         
         print(f"\nSubject: {subject}", f"First time pont and month: {first_time}/{first_month}",
               f"Second time point: {second_time}/{second_month}", sep="\n")
-        if first_time == starting_time or first_month < second_month:
+        if first_time == starting_time:
             continue
-        elif second_time == starting_time or second_month < first_month:
+        elif second_time == starting_time:
+            print(
+                f"Beginning average maps for {subject} for times {second_month} to {first_month}")
+            generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat)
+        elif first_month < second_month:
+            continue
+        elif second_month < first_month:
             print(
                 f"Beginning average maps for {subject} for times {second_month} to {first_month}")
             generate_avg_maps(ciftify_dataset, msm_dataset,
