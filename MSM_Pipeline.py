@@ -1097,8 +1097,14 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
         subject = fields[0]
         first_time = fields[1]
         second_time = fields[3]
-        first_month = int(sub("[^0-9]", "", first_time))
-        second_month = int(sub("[^0-9]", "", second_time))
+        if first_time.isalpha():
+            first_month = first_time
+        else:
+            first_month = int(sub("[^0-9]", "", first_time))
+        if second_time.isalpha():
+            second_month = second_time
+        else:
+            second_month = int(sub("[^0-9]", "", second_time))
         
         print(f"\nSubject: {subject}", f"First time pont and month: {first_time}/{first_month}",
               f"Second time point: {second_time}/{second_month}", sep="\n")
