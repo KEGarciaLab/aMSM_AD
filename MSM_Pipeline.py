@@ -1266,16 +1266,16 @@ if __name__ == "__main__":
     gam.add_argument("--subject", required=True, help="Subject ID to generate average maps")
     gam.add_argument("--younger_timepoint", required=True, help="The younger time point of the registration")
     gam.add_argument("--older_timepoint", required=True, help="The older time point of the registration")
-    gam.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
-    gam.add_argument("--max_anat", required=True, help="Path to MaxANAT reference sphere, typically ico6sphere")
+    gam.add_argument("--max_cp", required=False, help="Path to MaxCP reference sphere, typically ico5sphere")
+    gam.add_argument("--max_anat", required=False, help="Path to MaxANAT reference sphere, typically ico6sphere")
         
     # Generate All Avg Maps
     raa = subparser.add_parser("generate_avg_maps_all", help="Run average map generation on all subjects")
     raa.add_argument("--ciftify_dataset", required=True, help="Path to data from ciftify run")
     raa.add_argument("--msm_dataset", required=True, help="Path to MSM registrations")
-    raa.add_argument("--max_cp", required=True, help="Path to MaxCP reference sphere, typically ico5sphere")
-    raa.add_argument("--max_anat", required=True, help="Path to MaxANAT reference sphere, typically ico6sphere")
-    raa.add_argument("--starting_time", required=True, help="Basleine of registrations, used to determine which avg maps are needed")
+    raa.add_argument("--max_cp", required=False, help="Path to MaxCP reference sphere, typically ico5sphere")
+    raa.add_argument("--max_anat", required=False, help="Path to MaxANAT reference sphere, typically ico6sphere")
+    raa.add_argument("--starting_time", required=False, help="Basleine of registrations, used to determine which avg maps are needed")
 
     args = parser.parse_args()
     
