@@ -362,6 +362,10 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
     starting_time = subject_basename_list[1]
     ending_time = subject_basename_list[3]
     
+    # get base subject dir for average mode
+    if mode == "average":
+        subject_directory_base = subject_directory.replace("_avg", "")
+        
     # get all files for for post processing
     print("Locating Surfaces")
     if mode == "forward":
@@ -384,9 +388,9 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
             subject_directory, f"{subject}_R_{starting_time}-{ending_time}.ROAS.{resolution}.surf.gii")
     elif mode == "average":
         left_younger_surface = path.join(
-            subject_directory, f"{subject}_L_{starting_time}-{ending_time}.LYAS.{resolution}.surf.gii")
+            subject_directory_base, f"{subject}_L_{starting_time}-{ending_time}.LYAS.{resolution}.surf.gii")
         right_younger_surface = path.join(
-            subject_directory, f"{subject}_R_{starting_time}-{ending_time}.RYAS.{resolution}.surf.gii")
+            subject_directory_base, f"{subject}_R_{starting_time}-{ending_time}.RYAS.{resolution}.surf.gii")
         left_older_avg_surface = path.join(
             subject_directory, f"{subject}_L_{starting_time}-{ending_time}.avgfor.anat.{resolution}.reg.surf.gii")
         right_older_avg_surface = path.join(
@@ -832,6 +836,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         second_time = fields[3]
         first_month = int(sub("[^0-9]", "", first_time))
         second_month = int(sub("[^0-9]", "", second_time))
+        is_avg = True if "avg" in directory else False
        
         subject_output = path.join(output, subject)
         makedirs(subject_output, exist_ok=True)
@@ -839,8 +844,15 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         print(f"Begin Post Processing at {resolution} resolution")
         print("*" * 50)
         print(
-            f"Path: {full_path}\nSubject: {subject}\nStarting Time: {starting_time}\nTime1: {first_time}\nTime2: {second_time}\nMonth1: {first_month}\nMonth2: {second_month}\nOutput: {subject_output}")
-        if first_time == starting_time:
+            f"Path: {full_path}\nSubject: {subject}\nStarting Time: {starting_time}\nTime1: {first_time}\nTime2: {second_time}\nAverage: {is_avg}\nOutput: {subject_output}")
+        if "avg" in directory:
+            print("Mode: Average")
+            generate_post_processing_image(full_path,
+                                           resolution,
+                                           "average",
+                                           subject_output)
+        
+        elif first_time == starting_time:
             print("Mode: Forward")
             generate_post_processing_image(full_path,
                                            resolution,
@@ -867,44 +879,6 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            resolution,
                                            "reverse",
                                            subject_output)
-
-
-# Function to generate post processing for average maps
-def post_process_avg(dataset: str, starting_time: str, resolution: str, output: str):
-    for directory in listdir(dataset):
-        full_path = path.join(dataset, directory)
-        fields = directory.split("_")
-        subject = fields[0]
-        first_time = fields[1]
-        second_time = fields[3]
-        first_month = first_time[1:]
-        second_month = second_time[2:]
-        subject_output = path.join(output, subject)
-        makedirs(subject_output, exist_ok=True)
-        print("*" * 50)
-        print("Begin Post Processing at {resolution} resolution")
-        print("*" * 50)
-        print(
-            f"Path: {full_path}\nSubject: {subject}\nTime1: {first_time}\nTime2: {second_time}\nOutput: {subject_output}")
-        if first_time == starting_time:
-            print("Mode: Average")
-            generate_post_processing_image(full_path,
-                                           resolution,
-                                           "average",
-                                           subject_output)
-
-        elif second_time == starting_time:
-            continue
-
-        elif int(first_month) < int(second_month):
-            print("Mode: Average")
-            generate_post_processing_image(full_path,
-                                           resolution,
-                                           "average",
-                                           subject_output)
-
-        elif int(first_month) > int(second_month):
-           continue
 
 
 # Function to generate average maps
@@ -919,7 +893,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
         max_anat = path.join(script_dir, "NeededFiles", "ico6sphere.LR.reg.surf.gii")
         
     msm_avg_output = path.join(
-        msm_dataset, f"{subject}_{older_timepoint}_to_{younger_timepoint}")
+        msm_dataset, f"{subject}_{younger_timepoint}_to_{older_timepoint}_avg")
     makedirs(msm_avg_output, exist_ok=True)
 
     # create variables for file locations from pre-msm
@@ -1250,13 +1224,6 @@ if __name__ == "__main__":
     ppa.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
     ppa.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
     
-    # Post Process Avg
-    ppavg = subparser.add_parser("post_process_avg")
-    ppavg.add_argument("--dataset", required=True, help="Loaction of MSM registrations")
-    ppavg.add_argument("--starting_time", required=True, help="Basline timepoint of data, used to determine if forward or reverse registration was used")
-    ppavg.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
-    ppavg.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
-
     # Generate Avg Maps
     gam = subparser.add_parser("generate_avg_maps", help="Generate average maps for one subject")
     gam.add_argument("--ciftify_dataset", required=True, help="Path to data from ciftify run")
