@@ -834,8 +834,14 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
         subject = fields[0]
         first_time = fields[1]
         second_time = fields[3]
-        first_month = int(sub("[^0-9]", "", first_time))
-        second_month = int(sub("[^0-9]", "", second_time))
+        if first_time.isalpha():
+            first_month = first_time
+        else:
+            first_month = int(sub("[^0-9]", "", first_time))
+        if second_time.isalpha():
+            second_month = second_time
+        else:
+            second_month = int(sub("[^0-9]", "", second_time))
         is_avg = True if "avg" in directory else False
        
         subject_output = path.join(output, subject)
