@@ -1292,10 +1292,6 @@ if __name__ == "__main__":
         args_dict = vars(args)
         args_dict.pop("command", None)
         post_process_all(**args_dict)
-    elif args.command == "post_process_avg":
-        args_dict = vars(args)
-        args_dict.pop("command", None)
-        post_process_avg(**args_dict)
     elif args.command == "generate_avg_maps":
         args_dict = vars(args)
         args_dict.pop("command", None)
