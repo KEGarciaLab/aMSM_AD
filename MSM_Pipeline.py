@@ -428,7 +428,7 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
     # create scene file for auto scale
     print("Creating Auto Scale Scene")
     script_dir = path.dirname(path.realpath(__file__))
-    if mode == "forward":
+    if mode == "forward" or mode == "average":
         template_path_auto_scale = path.join(
             script_dir, "Templates", "post_processing_template_forward.scene")
         template_path_set_scale = path.join(
@@ -438,6 +438,7 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
             script_dir, "Templates", "post_processing_template_reverse.scene")
         template_path_set_scale = path.join(
             script_dir, "Templates", "post_processing_set_scale_template_forward.scene")
+    
 
     with open(template_path_auto_scale, "r") as f:
         template_read_auto_scale = f.read()
