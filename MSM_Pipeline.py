@@ -391,9 +391,9 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
             subject_directory_base, f"{subject}_L_{starting_time}-{ending_time}.LYAS.{resolution}.surf.gii")
         right_younger_surface = path.join(
             subject_directory_base, f"{subject}_R_{starting_time}-{ending_time}.RYAS.{resolution}.surf.gii")
-        left_older_avg_surface = path.join(
+        left_older_surface = path.join(
             subject_directory, f"{subject}_L_{starting_time}-{ending_time}.avgfor.anat.{resolution}.reg.surf.gii")
-        right_older_avg_surface = path.join(
+        right_older_surface = path.join(
             subject_directory, f"{subject}_R_{starting_time}-{ending_time}.avgfor.anat.{resolution}.reg.surf.gii")
         
     
