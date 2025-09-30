@@ -181,59 +181,8 @@ def get_subject_time_points(dataset: str, subject: str, alphanumeric_timepoints:
     return time_points
 
 
-# Rescale Developmental surface
-def rescale_surfaces(dataset: str,  subject: str, time_point: str):
-    # Retrieve all necessay files
-    subject_files = get_msm_files(dataset, subject, time_point)
-    left_midthickness_file = subject_files[0]
-    right_midthickness_file = subject_files[1]
-    subject_dir = subject_files[6]
-    subject_full_name = subject_files[7]
-    left_cortex = subject_files[8]
-    right_cortex = subject_files[9]
-    
-    # output file names
-    left_shape_file = path.join(subject_dir, f"{subject_full_name}.L.areas.shape.gii")
-    right_shape_file = path.join(subject_dir, f"{subject_full_name}.R.areas.shape.gii")
-    left_affine_matrix = path.join(subject_dir, f"{subject_full_name}.L.rescaleaffine.nii")
-    right_affine_matrix = path.join(subject_dir, f"{subject_full_name}.R.rescaleaffine.nii")
-    left_rescaled_surface = path.join(subject_dir, f"{subject_full_name}.L.rescaled.surf.gii")
-    right_rescaled_surface = path.join(subject_dir, f"{subject_full_name}.R.rescaled.surf.gii")
-    
-    # crete shape files
-    run(f"wb_command -surface-vertex-areas {left_midthickness_file} {left_shape_file}", shell=True)
-    run(f"wb_command -surface-vertex-areas {left_midthickness_file} {right_shape_file}", shell=True)
-    
-    #subject cortex shape
-    command_output = run(f"wb_command -metric-stats {left_shape_file} -reduce SUM -roi {left_cortex}", shell=True, capture_output=True, text=True, check=True)
-    left_surface_area = float(command_output.stdout.strip())
-    command_output = run(f"wb_command -metric-stats {right_shape_file} -reduce SUM -roi {right_cortex}", shell=True)
-    rigth_surface_area = float(command_output.stdout.strip())
-    
-    # Rescale value calculations
-    left_rescale_value = sqrt(10000 / left_surface_area)
-    right_rescale_value = sqrt(10000 / rigth_surface_area)
-    
-    # create affine matrix
-    with open(left_affine_matrix, "w+") as f:
-        f.writelines(f"{left_rescale_value} 0 0 0",
-                     f"0 {left_rescale_value} 0 0",
-                     f"0 0 {left_rescale_value} 0",
-                     "0 0 0 1")
-    
-    with open(right_affine_matrix, "w+") as f:
-        f.writelines(f"{right_rescale_value} 0 0 0",
-                     f"0 {right_rescale_value} 0 0",
-                     f"0 0 {right_rescale_value} 0",
-                     "0 0 0 1")
-        
-    # apply affine matrix
-    run(f"wb_command -surface-apply-affine {left_midthickness_file} {left_affine_matrix} {left_rescaled_surface}", shell=True)
-    run(f"wb_command -surface-apply-affine {right_midthickness_file} {right_affine_matrix} {right_rescaled_surface}", shell=True)
-
-
 # Helper function for retriving MSM files
-def get_msm_files(dataset: str, subject: str, time_point: str):
+def get_files(dataset: str, subject: str, time_point: str):
     # get directory containing data and name prefix
     subject_dir = path.join(dataset, f"Subject_{subject}_{time_point}")
     subdirs = [directory for directory in listdir(subject_dir) if path.isdir(
@@ -286,8 +235,8 @@ def get_msm_files(dataset: str, subject: str, time_point: str):
 def generate_qc_image(dataset: str, subject: str, younger_time: str, older_time: str, output: str):
     # Get files for qc image
     print("Locating Surfaces")
-    younger_files = get_msm_files(dataset, subject, younger_time)
-    older_files = get_msm_files(dataset, subject, older_time)
+    younger_files = get_files(dataset, subject, younger_time)
+    older_files = get_files(dataset, subject, older_time)
     left_younger_surface = younger_files[0]
     right_younger_surface = younger_files[1]
     left_older_surface = older_files[0]
@@ -518,9 +467,9 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
 
     print(
         f"\nRetriving files for time points {younger_timepoint} and {older_timepoint}")
-    younger_files = get_msm_files(
+    younger_files = get_files(
         dataset=dataset, subject=subject, time_point=younger_timepoint)
-    older_files = get_msm_files(
+    older_files = get_files(
         dataset=dataset, subject=subject, time_point=older_timepoint)
     
     if use_rescaled:
@@ -904,8 +853,8 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     makedirs(msm_avg_output, exist_ok=True)
 
     # create variables for file locations from pre-msm
-    younger_files = get_msm_files(ciftify_dataset, subject, younger_timepoint)
-    older_files = get_msm_files(ciftify_dataset, subject, older_timepoint)
+    younger_files = get_files(ciftify_dataset, subject, younger_timepoint)
+    older_files = get_files(ciftify_dataset, subject, older_timepoint)
     left_younger_spherical_surface = younger_files[2]
     left_older_spherical_surface = older_files[2]
     right_younger_spherical_surface = younger_files[3]
@@ -1105,6 +1054,100 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
                               subject, second_time, first_time, max_cp, max_anat)
 
 
+# Rescale Developmental surface
+def rescale_surfaces(dataset: str,  subject: str, time_point: str):
+    # Retrieve all necessay files
+    subject_files = get_files(dataset, subject, time_point)
+    left_midthickness_file = subject_files[0]
+    right_midthickness_file = subject_files[1]
+    subject_dir = subject_files[6]
+    subject_full_name = subject_files[7]
+    left_cortex = subject_files[8]
+    right_cortex = subject_files[9]
+    
+    # output file names
+    left_shape_file = path.join(subject_dir, f"{subject_full_name}.L.areas.shape.gii")
+    right_shape_file = path.join(subject_dir, f"{subject_full_name}.R.areas.shape.gii")
+    left_affine_matrix = path.join(subject_dir, f"{subject_full_name}.L.rescaleaffine.nii")
+    right_affine_matrix = path.join(subject_dir, f"{subject_full_name}.R.rescaleaffine.nii")
+    left_rescaled_surface = path.join(subject_dir, f"{subject_full_name}.L.rescaled.surf.gii")
+    right_rescaled_surface = path.join(subject_dir, f"{subject_full_name}.R.rescaled.surf.gii")
+    
+    # crete shape files
+    run(f"wb_command -surface-vertex-areas {left_midthickness_file} {left_shape_file}", shell=True)
+    run(f"wb_command -surface-vertex-areas {left_midthickness_file} {right_shape_file}", shell=True)
+    
+    #subject cortex shape
+    command_output = run(f"wb_command -metric-stats {left_shape_file} -reduce SUM -roi {left_cortex}", shell=True, capture_output=True, text=True, check=True)
+    left_surface_area = float(command_output.stdout.strip())
+    command_output = run(f"wb_command -metric-stats {right_shape_file} -reduce SUM -roi {right_cortex}", shell=True)
+    rigth_surface_area = float(command_output.stdout.strip())
+    
+    # Rescale value calculations
+    left_rescale_value = sqrt(10000 / left_surface_area)
+    right_rescale_value = sqrt(10000 / rigth_surface_area)
+    
+    # create affine matrix
+    with open(left_affine_matrix, "w+") as f:
+        f.writelines(f"{left_rescale_value} 0 0 0",
+                     f"0 {left_rescale_value} 0 0",
+                     f"0 0 {left_rescale_value} 0",
+                     "0 0 0 1")
+    
+    with open(right_affine_matrix, "w+") as f:
+        f.writelines(f"{right_rescale_value} 0 0 0",
+                     f"0 {right_rescale_value} 0 0",
+                     f"0 0 {right_rescale_value} 0",
+                     "0 0 0 1")
+        
+    # apply affine matrix
+    run(f"wb_command -surface-apply-affine {left_midthickness_file} {left_affine_matrix} {left_rescaled_surface}", shell=True)
+    run(f"wb_command -surface-apply-affine {right_midthickness_file} {right_affine_matrix} {right_rescaled_surface}", shell=True)
+
+
+# function to retrieve files for developmental subject
+def get_files_developmental(dataset: str, subject: str, time_point: str):
+    subject_dir = path.join(dataset, f"Subject_{subject}_{time_point}")
+    # get all necessary files
+    left_anatomical_surface = path.join(subject_dir, "lh.midthickness.surf.gii")
+    right_anatomical_surface = path.join(subject_dir, "rh.midthickness.surf.gii")
+    
+    left_spherical_surface = path.join(subject_dir, "lh.sphere.reg2.surf.gii")
+    right_spherical_surface = path.join(subject_dir, "rh.sphere.reg2.surf.gii")
+    
+    left_curvature = path.join(subject_dir, "lh.curv.gii")
+    right_curvature = path.join(subject_dir, "rh.curv.gii")
+    
+    left_cortex = path.join(subject_dir, "lh.mean.thickness") # TODO Ffigure out what this should be
+    right_cortex = path.join(subject_dir, "rh.mean.thickness") # TODO Ffigure out what this should be
+    
+    left_rescaled_surface = path.join(subject_dir, f"lh.rescaled.surf.gii")
+    right_rescaled_surface = path.join(subject_dir, f"rh.rescaled.surf.gii")
+    
+    # return all files as list
+    subject_files = [left_anatomical_surface, right_anatomical_surface,
+                     left_spherical_surface, right_spherical_surface,
+                     left_curvature, right_curvature,
+                     subject_dir, subject,
+                     left_cortex, right_cortex,
+                     left_rescaled_surface, right_rescaled_surface]
+    return subject_files    
+
+
+# function to convert .curv files to .gii files
+def convert_curvature(dataset: str, subject: str, time_point: str):
+    subject_dir = path.join(dataset, f"Subject_{subject}_{time_point}")
+    left_curv = path.join(subject_dir, f"lh.curv")
+    right_curv = path.join(subject_dir, f"rh.curv")
+    left_output = path.join(subject_dir, f"lh.curv.gii")
+    right_output = path.join(subject_dir, f"rh.curv.gii")
+    left_midthickness = path.join(subject_dir, f"lh.midthickness.surf.gii")
+    right_midthickness = path.join(subject_dir, f"rh.midthickness.surf.gii")
+    
+    run(f"mris_convert {left_curv} {left_midthickness} {left_output}", shell=True)
+    run(f"mris_convert {right_curv} {right_midthickness} {right_output}", shell=True)
+    
+    
 # Command line interface
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run MSM Pipeline Functions", usage="MSM_Pipeline.py [-h] <command> [<args>]")
@@ -1249,6 +1292,12 @@ if __name__ == "__main__":
     raa.add_argument("--max_anat", required=False, help="Path to MaxANAT reference sphere, typically ico6sphere")
     raa.add_argument("--starting_time", required=False, help="Basleine of registrations, used to determine which avg maps are needed")
 
+    # Convert curvature
+    cc = subparser.add_parser("convert_curvature", help="Convert .curv files to .gii files for one subject and time point from a developmental dataset")
+    cc.add_argument("--dataset", required=True, help="Path to directory containing subject data")
+    cc.add_argument("--subject", required=True, help="The subject ID to retrieve files for")
+    cc.add_argument("--time_point", required=True, help="The time point to retrieve files for")
+    
     args = parser.parse_args()
     
     if args.command == "get_ciftify_subject_list":
@@ -1307,3 +1356,7 @@ if __name__ == "__main__":
         args_dict = vars(args)
         args_dict.pop("command", None)
         generate_avg_maps_all(**args_dict)
+    elif args.command == "convert_curvature":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
+        convert_curvature(**args_dict)
