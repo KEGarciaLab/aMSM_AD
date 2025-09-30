@@ -1144,8 +1144,8 @@ def convert_curvature(dataset: str, subject: str, time_point: str):
     left_midthickness = path.join(subject_dir, f"lh.midthickness.surf.gii")
     right_midthickness = path.join(subject_dir, f"rh.midthickness.surf.gii")
     
-    run(f"mris_convert {left_curv} {left_midthickness} {left_output}", shell=True)
-    run(f"mris_convert {right_curv} {right_midthickness} {right_output}", shell=True)
+    run(f"mris_convert -c {left_curv} {left_midthickness} {left_output}", shell=True)
+    run(f"mris_convert -c {right_curv} {right_midthickness} {right_output}", shell=True)
     
     
 # Command line interface
