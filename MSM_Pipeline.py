@@ -1115,16 +1115,16 @@ def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     # create affine matrix
     print("Creating affine matrices")
     with open(left_affine_matrix, "w+") as f:
-        f.writelines(f"{left_rescale_value} 0 0 0",
-                     f"0 {left_rescale_value} 0 0",
-                     f"0 0 {left_rescale_value} 0",
-                     "0 0 0 1")
+        f.writelines([f"{left_rescale_value} 0 0 0\n",
+                     f"0 {left_rescale_value} 0 0\n",
+                     f"0 0 {left_rescale_value} 0\n",
+                     "0 0 0 1"])
     
     with open(right_affine_matrix, "w+") as f:
-        f.writelines(f"{right_rescale_value} 0 0 0",
-                     f"0 {right_rescale_value} 0 0",
-                     f"0 0 {right_rescale_value} 0",
-                     "0 0 0 1")
+        f.writelines([f"{right_rescale_value} 0 0 0\n",
+                     f"0 {right_rescale_value} 0 0\n",
+                     f"0 0 {right_rescale_value} 0\n",
+                     "0 0 0 1"])
         
     # apply affine matrix
     print("Applying affine matrices to surfaces")
