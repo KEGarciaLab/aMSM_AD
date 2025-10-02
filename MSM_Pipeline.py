@@ -451,17 +451,22 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
 
 # Function for running MSM commands
 def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
-            older_timepoint: str, mode: Mode, use_rescaled: bool=False, is_local: bool=False, levels: int=6, config: str | None=None,
+            older_timepoint: str, mode: Mode, use_rescaled: bool=False, is_developmental: bool=False, is_local: bool=False, levels: int=6, config: str | None=None,
             max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None,
             slurm_account: str | None=None, slurm_user: str | None=None, slurm_job_limit: int | None=None):
-
+    print(f"\nStarting MSM run for subject {subject} from time point {younger_timepoint} to {older_timepoint} in {mode} mode")
+    print('*' * 50)
+    
     user_home = path.expanduser('~')
     script_dir = path.dirname(path.realpath(__file__))
     if config == None:
+        print("No config file provided, using default")
         config = path.join(script_dir, "NeededFiles", "configAnatGrid6")
     if max_anat == None:
+        print("No max_anat provided, using default")
         max_anat = path.join(script_dir, "NeededFiles", "ico6sphere.LR.reg.surf.gii")
     if max_cp == None:
+        print("No max_cp provided, using default")
         max_cp = path.join(script_dir, "NeededFiles", "ico5sphere.LR.reg.surf.gii")
     
     if mode == "forward":
@@ -475,17 +480,23 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
 
     print(
         f"\nRetriving files for time points {younger_timepoint} and {older_timepoint}")
-    younger_files = get_files(
-        dataset=dataset, subject=subject, time_point=younger_timepoint)
-    older_files = get_files(
-        dataset=dataset, subject=subject, time_point=older_timepoint)
+    if is_developmental:
+        print("Using developmental naming conventions")
+        younger_timepoint = get_files_developmental(dataset, subject, younger_timepoint)
+        older_timepoint = get_files_developmental(dataset, subject, older_timepoint)
+    else:
+        print("Using standard naming conventions")
+        younger_files = get_files(dataset, subject, younger_timepoint)
+        older_files = get_files(dataset, subject, older_timepoint)
     
     if use_rescaled:
+        print("Using rescaled surfaces for anatomical surfaces")
         left_younger_anatomical_surface = younger_files[10]
         right_younger_anatomical_surface = younger_files[11]
         left_older_anatomical_surface = younger_files[10]
         right_older_anatomical_surface = younger_files[11]
     else:
+        print("Using mid thickness surfaces for anatomical surfaces")
         left_younger_anatomical_surface = younger_files[0]
         right_younger_anatomical_surface = younger_files[1]
         left_older_anatomical_surface = older_files[0]
@@ -505,8 +516,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         print("no files found skipping this run")
         return
 
-    print("Younger time point:", *younger_files, sep='\n')
-    print("Older time point:", *older_files, sep="\n")
+    print("Younger time point files:", *younger_files, sep='\n')
+    print("Older time point files:", *older_files, sep="\n")
 
     if mode == "forward":
         output = path.join(output, fr"{subject}_{younger_timepoint}_to_{older_timepoint}")
@@ -738,7 +749,7 @@ def get_subjects(dataset: str):
 # Function for MSM BL to all
 def run_msm_bl_to_all(dataset: str, output: str, starting_time: str, slurm_account: str, slurm_user: str,
                       slurm_email: str, alphanumeric_timepoints: bool=False, time_point_number_start_character: int | None=None,
-                      use_rescaled: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
+                      use_rescaled: bool=False, is_developmental: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
                       max_anat: str | None=None, max_cp: str | None=None):
 
     subjects = get_subjects(dataset)
@@ -754,17 +765,17 @@ def run_msm_bl_to_all(dataset: str, output: str, starting_time: str, slurm_accou
 
         for time_point in time_points:
             if time_point != starting_time:
-                run_msm(dataset, output, subject, starting_time, time_point, "forward", use_rescaled, False,
+                run_msm(dataset, output, subject, starting_time, time_point, "forward", use_rescaled, is_developmental, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, starting_time, time_point, "reverse", use_rescaled, False,
+                run_msm(dataset, output, subject, starting_time, time_point, "reverse", use_rescaled, is_developmental, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
 # Function to run MSM on shirt time windows
-def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, slurm_user: str,
-                               slurm_email: str, alphanumeric_timepoints: bool = False,
-                               time_point_number_start_character: int | None=None, use_rescaled: bool=False, slurm_job_limit: int | None=None, levels: int=6, 
-                               config: str | None=None, max_anat: str | None=None, max_cp: str | None=None,
+def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, slurm_user: str, slurm_email: str, 
+                               alphanumeric_timepoints: bool = False, time_point_number_start_character: int | None=None,
+                               use_rescaled: bool=False, is_developmental: bool=False, slurm_job_limit: int | None=None,
+                               levels: int=6, config: str | None=None, max_anat: str | None=None, max_cp: str | None=None,
                                starting_time: str | None=None):
     subjects = get_subjects(dataset)
     print("\nAll subjects found. Beginning MSM")
@@ -778,9 +789,9 @@ def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, sl
             younger_time = time_point
             older_time = time_points[i + 1]
             if younger_time != starting_time and older_time != starting_time:
-                run_msm(dataset, output, subject, younger_time, older_time, "forward", use_rescaled, False,
+                run_msm(dataset, output, subject, younger_time, older_time, "forward", use_rescaled, is_developmental, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, younger_time, older_time, "reverse", use_rescaled, False,
+                run_msm(dataset, output, subject, younger_time, older_time, "reverse", use_rescaled, is_developmental, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
@@ -1252,6 +1263,7 @@ if __name__ == "__main__":
     rm.add_argument("--mode", choices=["forward", "reverse"], required=True, help="The registration mode, either forward or reverse")
     rm.add_argument("--is_local", action="store_true", help="Used to make MSM run in a local environment")
     rm.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
+    rm.add_argument("--is_developmental", action="store_true", help="Use to have MSM use developmental naming conventions")
     rm.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information. Defaults to 6")
     rm.add_argument("--config", required=False, help="Path to MSM config file to use, see MSM documentation for more information. Only needed if not using default config")
     rm.add_argument("--max_anat", required=False, help="Path to MaxAnat reference sphere, typically ico6sphere. Only needed if not using default sphere")
@@ -1272,6 +1284,7 @@ if __name__ == "__main__":
     rmba.add_argument("--time_point_number_start_character", required=False, type=int, help="the character where numbers begin in the timepoint 0 indexed")
     rmba.add_argument("--starting_time", required=False, help="The time point used as baseline or 'bl' for all registrations")
     rmba.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
+    rmba.add_argument("--is_developmental", action="store_true", help="Use to have MSM use developmental naming conventions")
     rmba.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if the slurm job limit is not 500")
     rmba.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information, defaults to 6")
     rmba.add_argument("--config", required=False, help="Path to MSM config file to use, see MSM documentation for more information. Only needed if not using default config")
@@ -1288,6 +1301,7 @@ if __name__ == "__main__":
     rmst.add_argument("--alphanumeric_timepoints", action="store_true", required=False, help="If the time points are alphanumeric")
     rmst.add_argument("--time_point_number_start_character", required=False, type=int, help="the character where numbers begin in the timepoint 0 indexed")
     rmst.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
+    rmst.add_argument("--is_developmental", action="store_true", help="Use to have MSM use developmental naming conventions")
     rmst.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if slurm job limit is not 500")
     rmst.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information, defaults to 6")
     rmst.add_argument("--config", required=False, help="Path to MSM config file to use, see MSM documentation for more information. Only needed if not using default config")
