@@ -16,17 +16,25 @@ from math import sqrt
 
 # class for logging
 class Tee:
-    def __init__(self, *streams):
-        self.streams = streams
+    def __init__(self, real_stream, *other_streams):
+        self.real_stream = real_stream
+        self.other_streams = other_streams
 
     def write(self, message):
-        for stream in self.streams:
+        self.real_stream.write(message)
+        self.real_stream.flush()
+        for stream in self.other_streams:
             stream.write(message)
             stream.flush()
 
     def flush(self):
-        for stream in self.streams:
+        self.real_stream.flush()
+        for stream in self.other_streams:
             stream.flush()
+
+    def fileno(self):
+        return self.real_stream.fileno()
+
 
 
 log_path = path.expanduser(f'~/Scripts/MyScripts/Output/MSM_Pipeline/full_pipeline_log-{datetime.now()}.txt')
