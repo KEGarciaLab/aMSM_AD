@@ -853,7 +853,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     makedirs(msm_avg_output, exist_ok=True)
 
     # create variables for file locations from pre-msm
-    younger_files = get_files(ciftify_dataset, subject, younger_timepoint)
+    younger_files = get_files_developmental(ciftify_dataset, subject, younger_timepoint)
     older_files = get_files(ciftify_dataset, subject, older_timepoint)
     left_younger_spherical_surface = younger_files[2]
     left_older_spherical_surface = older_files[2]
@@ -1057,7 +1057,7 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
 # Rescale Developmental surface
 def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     # Retrieve all necessay files
-    subject_files = get_files(dataset, subject, time_point)
+    subject_files = get_files_developmental(dataset, subject, time_point)
     left_midthickness_file = subject_files[0]
     right_midthickness_file = subject_files[1]
     subject_dir = subject_files[6]
