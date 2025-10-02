@@ -1160,8 +1160,8 @@ def get_files_developmental(dataset: str, subject: str, time_point: str):
     left_cortex = path.join(subject_dir, "lh.mean.thickness") # TODO Ffigure out what this should be
     right_cortex = path.join(subject_dir, "rh.mean.thickness") # TODO Ffigure out what this should be
     
-    left_rescaled_surface = path.join(subject_dir, f"lh.rescaled.surf.gii")
-    right_rescaled_surface = path.join(subject_dir, f"rh.rescaled.surf.gii")
+    left_rescaled_surface = path.join(subject_dir, f"{subject}.L.rescaled.surf.gii")
+    right_rescaled_surface = path.join(subject_dir, f"{subject}.R.rescaled.surf.gii")
     
     # return all files as list
     subject_files = [left_anatomical_surface, right_anatomical_surface,
