@@ -1078,9 +1078,9 @@ def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     run(f"wb_command -surface-vertex-areas {left_midthickness_file} {right_shape_file}", shell=True)
     
     #subject cortex shape
-    command_output = run(f"wb_command -metric-stats {left_shape_file} -reduce SUM -roi {left_cortex}", shell=True, capture_output=True, text=True, check=True)
+    command_output = run(f"wb_command -metric-stats {left_shape_file} -reduce SUM") #-roi {left_cortex}", shell=True, capture_output=True, text=True, check=True)
     left_surface_area = float(command_output.stdout.strip())
-    command_output = run(f"wb_command -metric-stats {right_shape_file} -reduce SUM -roi {right_cortex}", shell=True)
+    command_output = run(f"wb_command -metric-stats {right_shape_file} -reduce SUM") #-roi {right_cortex}", shell=True)
     rigth_surface_area = float(command_output.stdout.strip())
     
     # Rescale value calculations
