@@ -482,8 +482,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         f"\nRetriving files for time points {younger_timepoint} and {older_timepoint}")
     if is_developmental:
         print("Using developmental naming conventions")
-        younger_timepoint = get_files_developmental(dataset, subject, younger_timepoint)
-        older_timepoint = get_files_developmental(dataset, subject, older_timepoint)
+        younger_files = get_files_developmental(dataset, subject, younger_timepoint)
+        older_files = get_files_developmental(dataset, subject, older_timepoint)
     else:
         print("Using standard naming conventions")
         younger_files = get_files(dataset, subject, younger_timepoint)
