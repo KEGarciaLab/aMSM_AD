@@ -493,8 +493,8 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         print("Using rescaled surfaces for anatomical surfaces")
         left_younger_anatomical_surface = younger_files[10]
         right_younger_anatomical_surface = younger_files[11]
-        left_older_anatomical_surface = younger_files[10]
-        right_older_anatomical_surface = younger_files[11]
+        left_older_anatomical_surface = older_files[10]
+        right_older_anatomical_surface = older_files[11]
     else:
         print("Using mid thickness surfaces for anatomical surfaces")
         left_younger_anatomical_surface = younger_files[0]
