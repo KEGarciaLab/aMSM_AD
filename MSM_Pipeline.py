@@ -501,11 +501,14 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         right_younger_anatomical_surface = younger_files[1]
         left_older_anatomical_surface = older_files[0]
         right_older_anatomical_surface = older_files[1]
-        
-    left_younger_spherical_surface = younger_files[2]
-    right_younger_spherical_surface = younger_files[3]
-    left_older_spherical_surface = older_files[2]
-    right_older_spherical_surface = older_files[3]
+     
+    if is_developmental:
+        left_younger_spherical_surface, right_younger_spherical_surface, left_older_spherical_surface, right_older_spherical_surface = max_anat
+    else:
+        left_younger_spherical_surface = younger_files[2]
+        right_younger_spherical_surface = younger_files[3]
+        left_older_spherical_surface = older_files[2]
+        right_older_spherical_surface = older_files[3]
     
     left_younger_curvature = younger_files[4]
     right_younger_curvature = younger_files[5]
@@ -1186,7 +1189,20 @@ def convert_curvature(dataset: str, subject: str, time_point: str):
     run(f"mris_convert -c {left_curv} {left_midthickness} {left_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"mris_convert -c {right_curv} {right_midthickness} {right_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     
-    
+
+# function for batch conversion of .curv files to .gii files
+def convert_curvature_all(dataset: str):
+    for subject_folder in listdir(dataset):
+        subject_path = path.join(dataset, subject_folder)
+        if path.isdir(subject_path):
+            fields = subject_folder.split("_")
+            subject = fields[1]
+            time_point = fields[2]
+            print(f"Converting curvature files for subject {subject} at time point {time_point}")
+            convert_curvature(dataset, subject, time_point)
+    print("Curvature conversion complete\n")    
+
+
 # Command line interface
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run MSM Pipeline Functions", usage="MSM_Pipeline.py [-h] <command> [<args>]")
@@ -1238,7 +1254,7 @@ if __name__ == "__main__":
     gqi.add_argument("--output", required=True, help="Location to place generated images")
     
     #qc all
-    qa = subparser.add_parser("generate_qc_all", help="Generate qc scene and image for all subjects in the indicated dataset")
+    qa = subparser.add_parser("qc_all", help="Generate qc scene and image for all subjects in the indicated dataset")
     qa.add_argument("--dataset", required=True, help="Path to directory containing all MSM files for qc image creation")
     qa.add_argument("--output", required=True, help="Location to place generated images")
     qa.add_argument("--alphanumeric_timepoints", action="store_true", help="Use if the timepoints are alphanumeric")
@@ -1340,6 +1356,10 @@ if __name__ == "__main__":
     cc.add_argument("--subject", required=True, help="The subject ID to retrieve files for")
     cc.add_argument("--time_point", required=True, help="The time point to retrieve files for")
     
+    # Convert curvature all
+    cca = subparser.add_parser("convert_curvature_all", help="Convert .curv files to .gii files for all subjects and time points in a developmental dataset")
+    cca.add_argument("--dataset", required=True, help="Path to directory containing all subject data")
+    
     args = parser.parse_args()
     
     if args.command == "get_ciftify_subject_list":
@@ -1402,3 +1422,7 @@ if __name__ == "__main__":
         args_dict = vars(args)
         args_dict.pop("command", None)
         convert_curvature(**args_dict)
+    elif args.command == "convert_curvature_all":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
+        convert_curvature_all(**args_dict)

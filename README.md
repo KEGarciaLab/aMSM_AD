@@ -68,6 +68,8 @@
     <li><a href="#run-msm-short-time-windows">run_msm_short_time_windows</a></li>
     <li><a href="#generate-avg-maps">generate_avg_maps</a></li>
     <li><a href="#generate-avg-maps-all">generate_avg_maps_all</a></li>
+    <li><a href="#convert-curvature">generate_avg_maps_all</a></li>
+    <li><a href="#convert-curvature-all">generate_avg_maps_all</a></li>
 </ul>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -200,15 +202,15 @@ Generates images for qc before running MSM. Must be in the same output format th
 <a name="qc_all"></a>
 ### `qc_all`
 ---
-Runs the `generate_ac_image` command on all time point pairs in a given directory
+Runs the `generate_qc_image` command on all time point pairs in a given directory
 #### Arguments
 ##### Required:
 * `--dataset` The path to directory containing both subject time points
 * `--output` The folder to place the QC images in
 ##### Optional:
-* `alphanumeric_timepoints` Include this flag if your time points use letters and numbers. Defaults to false
-* `time_point_number_start_character` The character where the numbers begin if using alphanumric time points. 0 indexed, defaults to None
-* `starting_time` Use this option if your baseline time point uses a different naming scheme than the other time points. Defaults to None
+* `--alphanumeric_timepoints` Include this flag if your time points use letters and numbers. Defaults to false
+* `--time_point_number_start_character` The character where the numbers begin if using alphanumric time points. 0 indexed, defaults to None
+* `--starting_time` Use this option if your baseline time point uses a different naming scheme than the other time points. Defaults to None
 
 <a name="generate-post-processing-image"></a>
 ### `generate_post_processing_image`
@@ -328,6 +330,25 @@ Generates average maps for all registrations in the specified directory.
 * `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere).
 * `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere)
 * `--starting_time` The baseline time of registrations. This is used to determine which average maps are needed.
+
+<a name="convert-curvature"></a>
+### `convert_curvature`
+---
+Converts curvature files for a given subject and time point into GIFTI format (`.func.gii`). This is required before running MSM, as the curvature values are used during registration.
+#### Arguments
+##### Required:
+* `--dataset` Path to the directory containing subject data.
+* `--subject` The subject ID whose curvature files will be converted.
+* `--time_point` The time point of the scan for which curvature conversion will be performed.
+
+<a name="convert-curvature-all"></a>
+### `convert_curvature_all`
+---
+Converts all curvature files in a given dataset into GIFTI format (`.func.gii`).
+#### Arguments
+##### Required:
+* `--dataset` Path to directory containing all subject data
+
 
 **DEPRECATED**
 
