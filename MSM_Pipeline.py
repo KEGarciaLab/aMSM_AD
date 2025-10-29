@@ -503,10 +503,10 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         right_older_anatomical_surface = older_files[1]
      
     if is_developmental:
-        left_younger_spherical_surface = max_anat
-        right_younger_spherical_surface = max_anat
-        left_older_spherical_surface = max_anat
-        right_older_spherical_surface = max_anat
+        left_younger_spherical_surface = max_cp
+        right_younger_spherical_surface = max_cp
+        left_older_spherical_surface = max_cp
+        right_older_spherical_surface = max_cp
     else:
         left_younger_spherical_surface = younger_files[2]
         right_younger_spherical_surface = younger_files[3]
