@@ -503,10 +503,55 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         right_older_anatomical_surface = older_files[1]
      
     if is_developmental:
-        left_younger_spherical_surface = max_cp
-        right_younger_spherical_surface = max_cp
-        left_older_spherical_surface = max_cp
-        right_older_spherical_surface = max_cp
+        print("Matching icosphere to developmental data")
+        left_younger_midthickness = younger_files[0]
+        right_younger_midthickness = younger_files[1]
+        left_older_midthickness = older_files[0]
+        right_older_midthickness = older_files[1]
+        
+        left_younger_smoothed = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.midthickness.smoothed.surf.gii")
+        right_younger_smoothed = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.midthickness.smoothed.surf.gii")
+        left_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.midthickness.smoothed.surf.gii")
+        right_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.midthickness.smoothed.surf.gii")
+        
+        left_younger_inflated = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.inflated.surf.gii")
+        right_younger_inflated = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.inflated.surf.gii")
+        left_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.inflated.surf.gii")
+        right_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.inflated.surf.gii")
+        
+        left_younger_matched = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.matched.surf.gii")
+        right_younger_matched = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.matched.surf.gii")
+        left_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.matched.surf.gii")
+        right_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.matched.surf.gii")
+        
+        left_younger_spherical_surface = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.sphere.surf.gii")
+        right_younger_spherical_surface = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.sphere.surf.gii")
+        left_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.sphere.surf.gii")
+        right_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.sphere.surf.gii")
+        
+        print("Smoothing midthickness")
+        run(f'wb_command -surface-smoothing {left_younger_midthickness} 1 10000 {left_younger_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-smoothing {right_younger_midthickness} 1 10000 {right_younger_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-smoothing {left_older_midthickness} 1 10000 {left_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-smoothing {right_older_midthickness} 1 10000 {right_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Inflating smoothed surfaces")
+        run(f'wb_command -surface-inflation {left_younger_smoothed} {left_younger_smoothed} 10 1 100 2 {left_younger_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-inflation {right_younger_smoothed} {right_younger_smoothed} 10 1 100 2 {right_younger_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-inflation {left_older_smoothed} {left_older_smoothed} 10 1 100 2 {left_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-inflation {right_older_smoothed} {right_older_smoothed} 10 1 100 2 {right_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Matching inflated to icosphere")
+        run(f'wb_command -surface-match {max_anat} {left_younger_inflated} {left_younger_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-match {max_anat} {right_younger_inflated} {right_younger_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-match {max_anat} {left_older_inflated} {left_older_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-match {max_anat} {right_older_inflated} {right_older_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Centering matched sphere")
+        run(f'wb_command -surface-modify-sphere -recenter {left_younger_matched} 100 {left_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-modify-sphere -recenter {right_younger_matched} 100 {right_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-modify-sphere -recenter {left_older_matched} 100 {left_older_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-modify-sphere -recenter {right_older_matched} 100 {right_older_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)    
     else:
         left_younger_spherical_surface = younger_files[2]
         right_younger_spherical_surface = younger_files[3]
@@ -1182,15 +1227,15 @@ def get_files_developmental(dataset: str, subject: str, time_point: str):
 # function to convert .curv files to .gii files
 def convert_curvature(dataset: str, subject: str, time_point: str):
     subject_dir = path.join(dataset, f"Subject_{subject}_{time_point}")
-    left_curv = path.join(subject_dir, f"lh.curv")
-    right_curv = path.join(subject_dir, f"rh.curv")
-    left_output = path.join(subject_dir, f"lh.curv.gii")
-    right_output = path.join(subject_dir, f"rh.curv.gii")
-    left_midthickness = path.join(subject_dir, f"lh.midthickness.surf.gii")
-    right_midthickness = path.join(subject_dir, f"rh.midthickness.surf.gii")
+    left_curv = path.join(subject_dir, "lh.curv")
+    right_curv = path.join(subject_dir, "rh.curv")
+    left_output = path.join(subject_dir, "lh.curv.gii")
+    right_output = path.join(subject_dir, "rh.curv.gii")
+    left_white_matter = path.join(subject_dir, "lh.white.32k_fs_LR.surf")
+    right_white_matter = path.join(subject_dir, "rh.white.32k_fs_LR.surf")
     
-    run(f"mris_convert -c {left_curv} {left_midthickness} {left_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-    run(f"mris_convert -c {right_curv} {right_midthickness} {right_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"mris_convert -c {left_curv} {left_white_matter} {left_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"mris_convert -c {right_curv} {right_white_matter} {right_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     
 
 # function for batch conversion of .curv files to .gii files
