@@ -96,9 +96,8 @@ def is_slurm_queue_open(slurm_user: str, slurm_job_limit: int=500):
 
 # Function for running ciftify on list of subjects
 def run_ciftify(dataset: str, delimiter: str, subject_index: int, time_index: int,
-                output_path: str, slurm_account: str, slurm_user: str,
-                slurm_email: str, slurm_job_limit: int | None):
-    
+                output_path: str, slurm_account: str | None, slurm_user: str | None,
+                slurm_email: str | None, slurm_job_limit: int | None, is_local: bool=False):
     print("\nStarting ciftify runs")
     print('*' * 50)
     user_home = path.expanduser('~')
@@ -119,32 +118,42 @@ def run_ciftify(dataset: str, delimiter: str, subject_index: int, time_index: in
         makedirs(output_path, exist_ok=True)
         print(
             f"\nCiftify run for subject {subject} at time point {time_point}")
-
         script_dir = path.dirname(path.realpath(__file__))
-        template_path = path.join(script_dir, "Templates", "Ciftify_template.txt")
-        with open(template_path, 'r') as f:
-            template_read = f.read()
-        template = Template(template_read)
-        to_write = template.substitute(subject=subject, time_point=time_point,
-                                       account=slurm_account, email=slurm_email, dataset=dataset,
-                                       output_dir=subject_output_path, dir=directory, user_home=user_home)
+        if is_local:
+            template_path = path.join(script_dir, "Templates", "Ciftify_template_local.txt")
+            with open(template_path, 'r') as f:
+                template_read = f.read()
+            template = Template(template_read)
+            to_write = template.substitute(dataset=dataset, output_dir=subject_output_path, dir=directory, user_home=user_home)
+        else:
+            template_path = path.join(script_dir, "Templates", "Ciftify_template.txt")
+            with open(template_path, 'r') as f:
+                template_read = f.read()
+            template = Template(template_read)
+            to_write = template.substitute(subject=subject, time_point=time_point,
+                                        account=slurm_account, email=slurm_email, dataset=dataset,
+                                        output_dir=subject_output_path, dir=directory, user_home=user_home)
+            
 
         with open(fr"{temp_output}/Subject_{subject}_{time_point}_recon_all.sh", 'w') as f:
             f.write(to_write)
-        print(
-            fr"Script wrote to {temp_output}/Subject_{subject}_{time_point}_recon_all.sh")
+        print(fr"Script wrote to {temp_output}/Subject_{subject}_{time_point}_recon_all.sh")
 
-        if slurm_job_limit != None:
-            jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
+        if is_local:
+            run(fr"bash {temp_output}/Subject_{subject}_{time_point}_recon_all.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
         else:
-            jobs_open = is_slurm_queue_open(slurm_user)
-        while jobs_open <= 0:
-            sleep(2 * 3600)
             if slurm_job_limit != None:
                 jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
             else:
                 jobs_open = is_slurm_queue_open(slurm_user)
-        run(fr"sbatch {temp_output}/Subject_{subject}_{time_point}_recon_all.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            while jobs_open <= 0:
+                sleep(2 * 3600)
+                if slurm_job_limit != None:
+                    jobs_open = is_slurm_queue_open(slurm_user, slurm_job_limit)
+                else:
+                    jobs_open = is_slurm_queue_open(slurm_user)
+            run(fr"sbatch {temp_output}/Subject_{subject}_{time_point}_recon_all.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
         remove(fr"{temp_output}/Subject_{subject}_{time_point}_recon_all.sh")
 
 
@@ -1274,10 +1283,11 @@ if __name__ == "__main__":
     rc.add_argument("--subject_index", required=True, type=int, help="Index of subject ID based on delimiter")
     rc.add_argument("--time_index", required=True, type=int, help="Index of time point based on delimeter")
     rc.add_argument("--output_path", required=True, help="Path to output of the command, must be empty")
-    rc.add_argument("--slurm_account", required=True, help="Slurm account ID for submission")
-    rc.add_argument("--slurm_user", required=True, help="Slurm username for checking queue")
-    rc.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
+    rc.add_argument("--slurm_account", required=False, help="Slurm account ID for submission")
+    rc.add_argument("--slurm_user", required=False, help="Slurm username for checking queue")
+    rc.add_argument("--slurm_email", required=False, help="Email for failed jobs to send to")
     rc.add_argument("--slurm_job_limit", required=False, type=int, help="The users Slurm job limit. Only needed if slurm job limit is not 500")
+    rc.add_argument("--is_local", action="store_true", help="Use to make ciftify run in a local environment")
 
     # Get Subject Time Points
     gst = subparser.add_parser("get_subject_time_points", help="Retrieve list of time points based on subejct")
@@ -1327,7 +1337,7 @@ if __name__ == "__main__":
     rm.add_argument("--mode", choices=["forward", "reverse"], required=True, help="The registration mode, either forward or reverse")
     rm.add_argument("--is_local", action="store_true", help="Used to make MSM run in a local environment")
     rm.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
-    rm.add_argument("--is_developmental", action="store_true", help="Use to have MSM use developmental naming conventions")
+    rm.add_argument("`--is_developmental`", action="store_true", help="Use to have MSM use developmental naming conventions")
     rm.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information. Defaults to 6")
     rm.add_argument("--config", required=False, help="Path to MSM config file to use, see MSM documentation for more information. Only needed if not using default config")
     rm.add_argument("--max_anat", required=False, help="Path to MaxAnat reference sphere, typically ico6sphere. Only needed if not using default sphere")

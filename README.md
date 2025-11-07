@@ -100,7 +100,7 @@ To get started with using these tools for the instructions below to install them
 ### Installation
 To use this tool you must have ciftify, conectome workbench, MSM_HOCR, and Python 3.11 installed already. Follow install instructions for each tool and their dependencies. Once those are installed you can download the release .zip file from here, extract it, and run the installer.sh file. This installs the pipeline, all dependencies and the necessary files. You can ensure installation by using `MSM_Pipeline -h` in a bash terminal. IF you do not get the help message for the pipeline, ensure that the files are located in $HOME/bin and that $HOME/bin is added to PATH.
 
-**DEPRECATED**
+#### DEPRECATED
 
 All scripts used for installation of the various tools can be found in the Installation folder of the repo. They should be ran in the order listed below to avoid errors. It is also recommended that you either reboot your system or reconnect through an ssh after each installation to ensure it was completed properly. Finally, these installation scripts were made assuming this would be ran on one of the IU supercomputing clusters. If you are outside of IU or are not using one of these systems you will need to install MSM, Ciftify, and Conetome Workbench manually, including updating `.bash_profile` in order to add the commands to PATH.
 
@@ -122,7 +122,7 @@ bash InstallationScripts/Workbench-install.sh
 ### Usage
 ---
 
-The entire pipeline has been bundled into a single Python script with a command line interface. The easiest way to use this pipeline is to follwo the install instructions so that it is added to PATH and can be used as a command. Once completed, I would then reccomend creating a simple shell script to run any command you wish. While all commands can be run from a bash terminal directly, the commands can be very long witha  alot of arguments; using a shell script allows for a more readable version of the command to make troubleshooting easier. Below, I have detailed the various commands avaliable within the pipeline as well as the arguments needed for each one. Note that every argument is a keyword and not positional so you must have the flag, but the order does not matter. `-h` can be used after any command name to see all arguments needed for any command.
+The entire pipeline has been bundled into a single Python script with a command line interface. The easiest way to use this pipeline is to follow the install instructions so that it is added to PATH and can be used as a command. Once completed, I would then reccomend creating a simple shell script to run any command you wish. While all commands can be run from a bash terminal directly, the commands can be very long witha  alot of arguments; using a shell script allows for a more readable version of the command to make troubleshooting easier. Below, I have detailed the various commands avaliable within the pipeline as well as the arguments needed for each one. Note that every argument is a keyword and not positional so you must have the flag, but the order does not matter. `-h` can be used after any command name to see all arguments needed for any command.
 
 <a name="is-slurm-queue-open"></a>
 ### `is_slurm_queue_open`
@@ -156,11 +156,12 @@ This command is used to run the `ciftify-recon-all` command on the indicated dir
 * `--subject_index` The location of the subject id based on the delimiter, with the first field being 0
 * `--time_index` The same as above but for the time point of the scan
 * `--output_path` The full path where you want all of the directories created
+
+##### Optional:
+* `--is_local` Use this flag to indicate this will be ran locally. If this is used slurm options are not required
 * `--slurm_account` The slurm account ID used for job allocations
 * `--slurm_user` Slurm username for checking queue
 * `--slurm_email` The email address you wish for failed job notifications to be sent to
-
-##### Optional:
 * `--slurm_job_limit` The user's slurm job limit. Defaults to 500 if not included
 
 <a name="get-subject-time-points"></a>
@@ -258,6 +259,7 @@ Runs forward and reverse registrations of the indicated subject and timepoint.
 * `--slurm_account` Slurm account ID for submission. Only used for remote runs.
 * `--slurm_user` Slurm username for checking queue. Only used for remote runs.
 * `--slurm_job_limit` The user's slurm job limit. Only used for remote runs when slurm job limit is not 500.
+* `--is_developmental` Use this flag to indicate that developmental files need to be used
 
 <a name="run-msm-bl-to-all"></a>
 ### `run_msm_bl_to_all`
@@ -281,6 +283,7 @@ Runs MSM registrations, starting at the baseline timepoint, for each other timep
 * `--config` Path to the MSM config file that will be used. See MSM documentation for more information. Only needed if not using default.
 * `--max_anat` Path to the MaxANATreference sphere (typically ico6sphere). Only needed if not using default.
 * `--max_cp` Path the the MaxCP reference sphere (typically ico5sphere). Only needed if not using default.
+* `--is_developmental` Use this flag to indicate that developmental files need to be used
 
 <a name="run-msm-short-time-windows"></a>
 ### `run_msm_short_time_windows`
@@ -304,6 +307,7 @@ Runs MSM on all subjects in a folder using sequential timepoints.
 * `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere). Only needed if not using default.
 * `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere). Only needed if not using default.
 * `--starting_time` The starting time point. This is only necessary if baseline registrations should be skipped.
+* `--is_developmental` Use this flag to indicate that developmental files need to be used
 
 <a name="generate-avg-maps"></a>
 ### `generate_avg_maps`

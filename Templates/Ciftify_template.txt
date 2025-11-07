@@ -12,4 +12,4 @@
 #SBATCH --mem=16G
 #SBATCH -A $account
 
-ciftify_recon_all --fs-subjects-dir ${dataset} --ciftify-work-dir ${output_dir} --resample-to-T1w32k $dir
+ciftify_recon_all --fs-subjects-dir ${dataset} --ciftify-work-dir ${output_dir} --resample-to-T1w32k ${dir}
