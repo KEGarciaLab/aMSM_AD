@@ -1208,6 +1208,17 @@ def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     print("Rescaling complete\n")
 
 
+# Rescale surfaces for all subjects
+def rescale_surfaces_all(dataset: str):
+    for subject_folder in listdir(dataset):
+        subject_path = path.join(dataset, subject_folder)
+        if path.isdir(subject_path):
+            fields = subject_folder.split("_")
+            subject = fields[1]
+            time_point = fields[2]
+            rescale_surfaces(dataset, subject, time_point)
+            
+            
 # function to retrieve files for developmental subject
 def get_files_developmental(dataset: str, subject: str, time_point: str):
     subject_dir = path.join(dataset, f"Subject_{subject}_{time_point}")
