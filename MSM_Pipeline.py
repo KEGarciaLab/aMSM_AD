@@ -440,16 +440,20 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
     with open(template_set_scale_output, "w+") as f:
         f.write(to_write_set_scale)
 
+    # create post processing folder
+    post_processing_dir = path.join(subject_directory, "post_processing")
+    makedirs(post_processing_dir, exist_ok=True)
+    
     # generate images
     print("Generating Images")
     scene_auto_scale = path.join(
-        subject_directory, "post_processing", f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
+        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
     scene_set_scale = path.join(
-        subject_directory, "post_processing", f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
+        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
     image_auto_scale = path.join(
-        subject_directory, "post_processing", f"{subject}_{starting_time}-{ending_time}_{resolution}.png")
+        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}.png")
     image_set_scale = path.join(
-        subject_directory, "post_processing", f"{subject}_{starting_time}-{ending_time}_{resolution}SET-SCALE.png")
+        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}SET-SCALE.png")
     run(f"wb_command -show-scene {scene_auto_scale} 1 {image_auto_scale} 1024 512", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"wb_command -show-scene {scene_set_scale} 1 {image_set_scale} 1024 512", shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
