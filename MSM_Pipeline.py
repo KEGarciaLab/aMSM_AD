@@ -440,16 +440,20 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
     with open(template_set_scale_output, "w+") as f:
         f.write(to_write_set_scale)
 
+    # create post processing folder
+    post_processing_dir = path.join(subject_directory, "post_processing")
+    makedirs(post_processing_dir, exist_ok=True)
+    
     # generate images
     print("Generating Images")
     scene_auto_scale = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
+        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
     scene_set_scale = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
+        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
     image_auto_scale = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.png")
+        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}.png")
     image_set_scale = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}SET-SCALE.png")
+        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}SET-SCALE.png")
     run(f"wb_command -show-scene {scene_auto_scale} 1 {image_auto_scale} 1024 512", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"wb_command -show-scene {scene_set_scale} 1 {image_set_scale} 1024 512", shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
@@ -460,6 +464,67 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
     print("Copying Images to Output")
     copy2(image_auto_scale, output)
     copy2(image_set_scale, output)
+
+
+# Function to run post processing on all subjects
+def post_process_all(dataset: str, starting_time: str, resolution: str, output: str):
+    for directory in listdir(dataset):
+        full_path = path.join(dataset, directory)
+        fields = directory.split("_")
+        subject = fields[0]
+        first_time = fields[1]
+        second_time = fields[3]
+        if first_time.isalpha():
+            first_month = first_time
+        else:
+            first_month = int(sub("[^0-9]", "", first_time))
+        if second_time.isalpha():
+            second_month = second_time
+        else:
+            second_month = int(sub("[^0-9]", "", second_time))
+        is_avg = True if "avg" in directory else False
+       
+        subject_output = path.join(output, subject)
+        makedirs(subject_output, exist_ok=True)
+        print("*" * 50)
+        print(f"Begin Post Processing at {resolution} resolution")
+        print("*" * 50)
+        print(
+            f"Path: {full_path}\nSubject: {subject}\nStarting Time: {starting_time}\nTime1: {first_time}\nTime2: {second_time}\nAverage: {is_avg}\nOutput: {subject_output}")
+        if "avg" in directory:
+            print("Mode: Average")
+            generate_post_processing_image(full_path,
+                                           resolution,
+                                           "average",
+                                           subject_output)
+        
+        elif first_time == starting_time:
+            print("Mode: Forward")
+            generate_post_processing_image(full_path,
+                                           resolution,
+                                           "forward",
+                                           subject_output)
+
+        elif second_time == starting_time:
+            print("Mode: Reverse")
+            generate_post_processing_image(full_path,
+                                           resolution,
+                                           "reverse",
+                                           subject_output)
+
+        elif int(first_month) < int(second_month):
+            print("Mode: Forward")
+            generate_post_processing_image(full_path,
+                                           resolution,
+                                           "forward",
+                                           subject_output)
+
+        elif int(first_month) > int(second_month):
+            print("Mode: Reverse")
+            generate_post_processing_image(full_path,
+                                           resolution,
+                                           "reverse",
+                                           subject_output)
 
 
 # Function for running MSM commands
@@ -857,67 +922,6 @@ def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, sl
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
                 run_msm(dataset, output, subject, younger_time, older_time, "reverse", use_rescaled, is_developmental, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-
-
-# Function to run post processing on all subjects
-def post_process_all(dataset: str, starting_time: str, resolution: str, output: str):
-    for directory in listdir(dataset):
-        full_path = path.join(dataset, directory)
-        fields = directory.split("_")
-        subject = fields[0]
-        first_time = fields[1]
-        second_time = fields[3]
-        if first_time.isalpha():
-            first_month = first_time
-        else:
-            first_month = int(sub("[^0-9]", "", first_time))
-        if second_time.isalpha():
-            second_month = second_time
-        else:
-            second_month = int(sub("[^0-9]", "", second_time))
-        is_avg = True if "avg" in directory else False
-       
-        subject_output = path.join(output, subject)
-        makedirs(subject_output, exist_ok=True)
-        print("*" * 50)
-        print(f"Begin Post Processing at {resolution} resolution")
-        print("*" * 50)
-        print(
-            f"Path: {full_path}\nSubject: {subject}\nStarting Time: {starting_time}\nTime1: {first_time}\nTime2: {second_time}\nAverage: {is_avg}\nOutput: {subject_output}")
-        if "avg" in directory:
-            print("Mode: Average")
-            generate_post_processing_image(full_path,
-                                           resolution,
-                                           "average",
-                                           subject_output)
-        
-        elif first_time == starting_time:
-            print("Mode: Forward")
-            generate_post_processing_image(full_path,
-                                           resolution,
-                                           "forward",
-                                           subject_output)
-
-        elif second_time == starting_time:
-            print("Mode: Reverse")
-            generate_post_processing_image(full_path,
-                                           resolution,
-                                           "reverse",
-                                           subject_output)
-
-        elif int(first_month) < int(second_month):
-            print("Mode: Forward")
-            generate_post_processing_image(full_path,
-                                           resolution,
-                                           "forward",
-                                           subject_output)
-
-        elif int(first_month) > int(second_month):
-            print("Mode: Reverse")
-            generate_post_processing_image(full_path,
-                                           resolution,
-                                           "reverse",
-                                           subject_output)
 
 
 # Function to generate average maps
