@@ -249,7 +249,7 @@ def get_files(dataset: str, subject: str, time_point: str):
 
 
 # Generate pre-MSM qc image
-def generate_qc_image(dataset: str, subject: str, younger_time: str, older_time: str, output: str):
+def generate_qc_image(dataset: str, subject: str, younger_timepoint: str, older_timepoint: str, output: str):
     # Get files for qc image
     print("Locating Surfaces")
     younger_files = get_files(dataset, subject, younger_time)
