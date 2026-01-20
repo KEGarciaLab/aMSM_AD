@@ -252,8 +252,8 @@ def get_files(dataset: str, subject: str, time_point: str):
 def generate_qc_image(dataset: str, subject: str, younger_timepoint: str, older_timepoint: str, output: str):
     # Get files for qc image
     print("Locating Surfaces")
-    younger_files = get_files(dataset, subject, younger_time)
-    older_files = get_files(dataset, subject, older_time)
+    younger_files = get_files(dataset, subject, younger_timepoint)
+    older_files = get_files(dataset, subject, older_timepoint)
     left_younger_surface = younger_files[0]
     right_younger_surface = younger_files[1]
     left_older_surface = older_files[0]
@@ -262,7 +262,7 @@ def generate_qc_image(dataset: str, subject: str, younger_timepoint: str, older_
     # create spec file
     print("Creating Spec File")
     spec_file = path.join(
-        output, f"{subject}_{younger_time}_to_{older_time}.spec")
+        output, f"{subject}_{younger_timepoint}_to_{older_timepoint}.spec")
     run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_younger_surface}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"wb_command -add-to-spec-file {spec_file} CORTEX_LEFT {left_older_surface}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"wb_command -add-to-spec-file {spec_file} CORTEX_RIGHT {right_younger_surface}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
@@ -282,14 +282,14 @@ def generate_qc_image(dataset: str, subject: str, younger_timepoint: str, older_
         right_older_surface=right_older_surface
     )
     scene_file = path.join(
-        output, f"{subject}_{younger_time}_to_{older_time}.scene")
+        output, f"{subject}_{younger_timepoint}_to_{older_timepoint}.scene")
     with open(scene_file, "w+") as f:
         f.write(to_write)
         
     # generate image
     print("Generating Image")
     image_file = path.join(
-        output, f"{subject}_{younger_time}_to_{older_time}.png")
+        output, f"{subject}_{younger_timepoint}_to_{older_timepoint}.png")
     run(f"wb_command -show-scene {scene_file} 1 {image_file} 1024 512", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     print("QC image written to output directory")
 
