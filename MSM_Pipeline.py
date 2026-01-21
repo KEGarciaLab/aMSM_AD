@@ -43,6 +43,7 @@ log_file = open(log_path, 'w+')
 sys.stdout = Tee(sys.__stdout__, log_file)
 sys.stderr = Tee(sys.__stderr__, log_file)
 Mode = Literal["forward", "reverse", "average"]
+Hemisphere = Literal["L", "R"]
 
 
 # Function for gathering subjects for ciftify
@@ -537,8 +538,8 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
 
 # Function for running MSM commands
 def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
-            older_timepoint: str, mode: Mode, use_rescaled: bool=False, is_developmental: bool=False, is_local: bool=False, levels: int=6, config: str | None=None,
-            max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None,
+            older_timepoint: str, mode: Mode, use_rescaled: bool=False, is_developmental: bool=False, is_local: bool=False, hemisphere: Hemisphere | None=None,
+            levels: int=6, config: str | None=None, max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None,
             slurm_account: str | None=None, slurm_user: str | None=None, slurm_job_limit: int | None=None):
     print(f"\nStarting MSM run for subject {subject} from time point {younger_timepoint} to {older_timepoint} in {mode} mode")
     print('*' * 50)
@@ -554,6 +555,11 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
     if max_cp == None:
         print("No max_cp provided, using default")
         max_cp = path.join(script_dir, "NeededFiles", "ico5sphere.LR.reg.surf.gii")
+        
+    print(f"Mode is set to {mode}, Subject is {subject}, Younger Timepoint is {younger_timepoint}, Older Timepoint is {older_timepoint}")
+    if is_local and hemisphere is None:
+        print("Local mode selected but no hemisphere provided, exiting")
+        return
     
     if mode == "forward":
         temp_output = path.join(user_home, "Scripts", "MyScripts", "Output", "MSM_Pipeline",
@@ -694,30 +700,34 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
             
         # Templates for local run
         elif is_local:
-            # left hemisphere
-            template_path_l = path.join(script_dir, "Templates", "MSM_template_forward_L_local.txt")
-            with open(template_path_l, "r") as f:
-                template_read_l = f.read()
-            template_l = Template(template_read_l)
-            to_write_l = template_l.substitute(
-                levels=levels, config=config, yss=left_younger_spherical_surface, oss=left_older_spherical_surface, yc=left_younger_curvature,
-                oc=left_older_curvature, yas=left_younger_anatomical_surface, oas=left_older_anatomical_surface,
-                f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
-            
+            if hemisphere == "L":
+                # left hemisphere
+                template_path_l = path.join(script_dir, "Templates", "MSM_template_forward_L_local.txt")
+                with open(template_path_l, "r") as f:
+                    template_read_l = f.read()
+                template_l = Template(template_read_l)
+                to_write_l = template_l.substitute(
+                    levels=levels, config=config, yss=left_younger_spherical_surface, oss=left_older_spherical_surface, yc=left_younger_curvature,
+                    oc=left_older_curvature, yas=left_younger_anatomical_surface, oas=left_older_anatomical_surface,
+                    f_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
+                    f.write(to_write_l)
+                    
+            elif hemisphere == "R":
             # right hemisphere
-            template_path_r = path.join(script_dir, "Templates", "MSM_template_forward_R_local.txt")
-            with open(template_path_r, "r") as f:
-                template_read_r = f.read()
-            template_r = Template(template_read_r)
-            to_write_r = template_r.substitute(
-                levels=levels, config=config, yss=right_younger_spherical_surface, oss=right_older_spherical_surface, yc=right_younger_curvature,
-                oc=right_older_curvature, yas=right_younger_anatomical_surface, oas=right_older_anatomical_surface,
-                f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
-            
-        with open(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
-            f.write(to_write_l)
-        with open(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
-            f.write(to_write_r)
+                template_path_r = path.join(script_dir, "Templates", "MSM_template_forward_R_local.txt")
+                with open(template_path_r, "r") as f:
+                    template_read_r = f.read()
+                template_r = Template(template_read_r)
+                to_write_r = template_r.substitute(
+                    levels=levels, config=config, yss=right_younger_spherical_surface, oss=right_older_spherical_surface, yc=right_younger_curvature,
+                    oc=right_older_curvature, yas=right_younger_anatomical_surface, oas=right_older_anatomical_surface,
+                    f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                with open(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
+                    f.write(to_write_r)
+                    
+        
+       
 
         # submit remote jobs
         if not is_local:
@@ -756,10 +766,12 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         
          # run lcoal job        
         elif is_local:
-            run(fr"bash {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-            remove(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
-            run(fr"bash {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-            remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            if hemisphere == "L":
+                run(fr"bash {temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+                remove(fr"{temp_output}/Subject_{subject}_L_{younger_timepoint}-{older_timepoint}_MSM.sh")
+            elif hemisphere == "R":
+                run(fr"bash {temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+                remove(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh")
 
     elif mode == "reverse":
         output = path.join(
@@ -799,28 +811,30 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         # Templates for local jobs
         elif is_local:
             # left_hemisphere
-            template_path_l = path.join(script_dir, "Templates", "MSM_template_reverse_L_local.txt")
-            with open(template_path_l, "r") as f:
-                template_read_l = f.read()
-            template_l = Template(template_read_l)
-            to_write_l = template_l.substitute(
-                levels=levels, config=config, yss=left_younger_spherical_surface, oss=left_older_spherical_surface, yc=left_younger_curvature,
-                oc=left_older_curvature, yas=left_younger_anatomical_surface, oas=left_older_anatomical_surface,
-                r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+            if hemisphere == "L":
+                template_path_l = path.join(script_dir, "Templates", "MSM_template_reverse_L_local.txt")
+                with open(template_path_l, "r") as f:
+                    template_read_l = f.read()
+                template_l = Template(template_read_l)
+                to_write_l = template_l.substitute(
+                    levels=levels, config=config, yss=left_younger_spherical_surface, oss=left_older_spherical_surface, yc=left_younger_curvature,
+                    oc=left_older_curvature, yas=left_younger_anatomical_surface, oas=left_older_anatomical_surface,
+                    r_out=left_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                with open(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
+                    f.write(to_write_l)
             
             # right_hemisphere
-            template_path_r = path.join(script_dir, "Templates", "MSM_template_reverse_R_local.txt")
-            with open(template_path_r, "r") as f:
-                template_read_r = f.read()
-            template_r = Template(template_read_r)
-            to_write_r = template_r.substitute(
-                levels=levels, config=config, yss=right_younger_spherical_surface, oss=right_older_spherical_surface, yc=right_younger_curvature,
-                oc=right_older_curvature, yas=right_younger_anatomical_surface, oas=right_older_anatomical_surface,
-                r_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
-        with open(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
-            f.write(to_write_l)
-        with open(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
-            f.write(to_write_r)
+            elif hemisphere == "R":
+                template_path_r = path.join(script_dir, "Templates", "MSM_template_reverse_R_local.txt")
+                with open(template_path_r, "r") as f:
+                    template_read_r = f.read()
+                template_r = Template(template_read_r)
+                to_write_r = template_r.substitute(
+                    levels=levels, config=config, yss=right_younger_spherical_surface, oss=right_older_spherical_surface, yc=right_younger_curvature,
+                    oc=right_older_curvature, yas=right_younger_anatomical_surface, oas=right_older_anatomical_surface,
+                    r_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
+                with open(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", "w+") as f:
+                    f.write(to_write_r)
          
         # Submit remote jobs
         if not is_local:
@@ -860,10 +874,13 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
 
         # Run local jobs
         if is_local:
-            run(fr"bash {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-            remove(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh")
-            run(fr"bash {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-            remove(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh")
+            if hemisphere == "L":
+                run(fr"bash {temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+                remove(fr"{temp_output}/Subject_{subject}_L_{older_timepoint}-{younger_timepoint}_MSM.sh")
+            
+            elif hemisphere == "R":
+                run(fr"bash {temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+                remove(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh")
             
 
 # helper function for retriving subjects
