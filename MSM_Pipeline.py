@@ -254,8 +254,8 @@ def generate_qc_image(dataset: str, subject: str, younger_timepoint: str, older_
     # Get files for qc image
     print("Locating Surfaces")
     if is_developmnental:
-        younger_files = get_files_developmental(dataset, subject, younger_timepoint)
-        older_files = get_files_developmental(dataset, subject, older_timepoint)
+        younger_files = get_files_mcribs(dataset, subject, younger_timepoint)
+        older_files = get_files_mcribs(dataset, subject, older_timepoint)
     else:
         younger_files = get_files(dataset, subject, younger_timepoint)
         older_files = get_files(dataset, subject, older_timepoint)
@@ -536,11 +536,29 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
                                            subject_output)
 
 
+# helper function for retriving subjects
+def get_subjects(dataset: str):
+    subjects = []
+    print("RETRIVING LIST OF SUBJECTS")
+    print("*" * 50)
+    for directory in listdir(dataset):
+        full_path = path.join(dataset, directory)
+        if path.isdir(full_path):
+            fields = directory.split("_")
+            subject = fields[1]
+            if subject not in subjects:
+                print(f"Found subject number {subject}")
+                subjects.append(subject)
+    subjects.sort()
+    return subjects
+
+
 # Function for running MSM commands
 def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
-            older_timepoint: str, mode: Mode, uses_mcribs: bool=False, is_local: bool=False, hemisphere: Hemisphere | None=None,
-            levels: int=6, config: str | None=None, max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None,
-            slurm_account: str | None=None, slurm_user: str | None=None, slurm_job_limit: int | None=None):
+            older_timepoint: str, mode: Mode, younger_uses_mcribs: bool=False, older_uses_mcribs: bool=False,
+            is_local: bool=False, hemisphere: Hemisphere | None=None, levels: int=6, config: str | None=None, 
+            max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None, slurm_account: str | None=None,
+            slurm_user: str | None=None, slurm_job_limit: int | None=None):
     print(f"\nStarting MSM run for subject {subject} from time point {younger_timepoint} to {older_timepoint} in {mode} mode")
     print('*' * 50)
     
@@ -572,84 +590,99 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
 
     print(
         f"\nRetriving files for time points {younger_timepoint} and {older_timepoint}")
-    if uses_mcribs:
-        print("Using developmental naming conventions")
-        younger_files = get_files_developmental(dataset, subject, younger_timepoint)
-        older_files = get_files_developmental(dataset, subject, older_timepoint)
-    else:
-        print("Using standard naming conventions")
-        younger_files = get_files(dataset, subject, younger_timepoint)
-        older_files = get_files(dataset, subject, older_timepoint)
-    
-    if uses_mcribs:
-        print("Using rescaled surfaces for anatomical surfaces")
+    if younger_uses_mcribs:
+        print("Using mcribs naming conventions for younger timepoint")
+        younger_files = get_files_mcribs(dataset, subject, younger_timepoint)
+        
+        print("Using rescaled surfaces")
         left_younger_anatomical_surface = younger_files[10]
         right_younger_anatomical_surface = younger_files[11]
-        left_older_anatomical_surface = older_files[10]
-        right_older_anatomical_surface = older_files[11]
-    else:
-        print("Using mid thickness surfaces for anatomical surfaces")
-        left_younger_anatomical_surface = younger_files[0]
-        right_younger_anatomical_surface = younger_files[1]
-        left_older_anatomical_surface = older_files[0]
-        right_older_anatomical_surface = older_files[1]
-     
-    if uses_mcribs:
-        print("Matching icosphere to developmental data")
+        
+        print("matching icosphere to mcribs data")
         left_younger_midthickness = younger_files[0]
         right_younger_midthickness = younger_files[1]
-        left_older_midthickness = older_files[0]
-        right_older_midthickness = older_files[1]
         
         left_younger_smoothed = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.midthickness.smoothed.surf.gii")
         right_younger_smoothed = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.midthickness.smoothed.surf.gii")
-        left_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.midthickness.smoothed.surf.gii")
-        right_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.midthickness.smoothed.surf.gii")
         
         left_younger_inflated = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.inflated.surf.gii")
         right_younger_inflated = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.inflated.surf.gii")
-        left_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.inflated.surf.gii")
-        right_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.inflated.surf.gii")
         
         left_younger_matched = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.matched.surf.gii")
         right_younger_matched = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.matched.surf.gii")
-        left_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.matched.surf.gii")
-        right_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.matched.surf.gii")
         
         left_younger_spherical_surface = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.sphere.surf.gii")
         right_younger_spherical_surface = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.sphere.surf.gii")
-        left_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.sphere.surf.gii")
-        right_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.sphere.surf.gii")
         
         print("Smoothing midthickness")
         run(f'wb_command -surface-smoothing {left_younger_midthickness} 1 10000 {left_younger_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-smoothing {right_younger_midthickness} 1 10000 {right_younger_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-smoothing {left_older_midthickness} 1 10000 {left_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-smoothing {right_older_midthickness} 1 10000 {right_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         
         print("Inflating smoothed surfaces")
         run(f'wb_command -surface-inflation {left_younger_smoothed} {left_younger_smoothed} 10 1 100 2 {left_younger_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-inflation {right_younger_smoothed} {right_younger_smoothed} 10 1 100 2 {right_younger_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-inflation {left_older_smoothed} {left_older_smoothed} 10 1 100 2 {left_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-inflation {right_older_smoothed} {right_older_smoothed} 10 1 100 2 {right_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         
         print("Matching inflated to icosphere")
         run(f'wb_command -surface-match {max_anat} {left_younger_inflated} {left_younger_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-match {max_anat} {right_younger_inflated} {right_younger_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Centering matched sphere")
+        run(f'wb_command -surface-modify-sphere -recenter {left_younger_matched} 100 {left_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-modify-sphere -recenter {right_younger_matched} 100 {right_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)   
+    else:
+        print("Using standard naming conventions for younger timepoint")
+        younger_files = get_files(dataset, subject, younger_timepoint)
+        left_younger_anatomical_surface = younger_files[0]
+        right_younger_anatomical_surface = younger_files[1]
+        left_younger_spherical_surface = younger_files[2]
+        right_younger_spherical_surface = younger_files[3]
+        
+    if older_uses_mcribs:
+        print("Using mcribs naming conventions for older timepoint")
+        older_files = get_files_mcribs(dataset, subject, older_timepoint)
+        
+        left_older_anatomical_surface = older_files[10]
+        right_older_anatomical_surface = older_files[11]
+        
+        print("Matching icosphere to mcribs data")
+        left_older_midthickness = older_files[0]
+        right_older_midthickness = older_files[1]
+        
+        left_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.midthickness.smoothed.surf.gii")
+        right_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.midthickness.smoothed.surf.gii")
+        
+        left_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.inflated.surf.gii")
+        right_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.inflated.surf.gii")
+        
+        left_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.matched.surf.gii")
+        right_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.matched.surf.gii")
+        
+        left_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.sphere.surf.gii")
+        right_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.sphere.surf.gii")
+        
+        print("Smoothing midthickness")
+        run(f'wb_command -surface-smoothing {left_older_midthickness} 1 10000 {left_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-smoothing {right_older_midthickness} 1 10000 {right_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Inflating smoothed surfaces")
+        run(f'wb_command -surface-inflation {left_older_smoothed} {left_older_smoothed} 10 1 100 2 {left_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-inflation {right_older_smoothed} {right_older_smoothed} 10 1 100 2 {right_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Matching inflated to icosphere")
         run(f'wb_command -surface-match {max_anat} {left_older_inflated} {left_older_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-match {max_anat} {right_older_inflated} {right_older_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         
         print("Centering matched sphere")
-        run(f'wb_command -surface-modify-sphere -recenter {left_younger_matched} 100 {left_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-modify-sphere -recenter {right_younger_matched} 100 {right_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-modify-sphere -recenter {left_older_matched} 100 {left_older_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-modify-sphere -recenter {right_older_matched} 100 {right_older_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)    
+        run(f'wb_command -surface-modify-sphere -recenter {right_older_matched} 100 {right_older_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
     else:
-        left_younger_spherical_surface = younger_files[2]
-        right_younger_spherical_surface = younger_files[3]
+        print("Using standard naming conventions for older timepoint")
+        older_files = get_files(dataset, subject, older_timepoint)
+        left_older_anatomical_surface = older_files[0]
+        right_older_anatomical_surface = older_files[1]
         left_older_spherical_surface = older_files[2]
         right_older_spherical_surface = older_files[3]
-    
+
     left_younger_curvature = younger_files[4]
     right_younger_curvature = younger_files[5]
     left_older_curvature = older_files[4]
@@ -725,9 +758,6 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                     f_out=right_file_prefix, maxanat=max_anat, maxcp=max_cp)
                 with open(fr"{temp_output}/Subject_{subject}_R_{younger_timepoint}-{older_timepoint}_MSM.sh", "w+") as f:
                     f.write(to_write_r)
-                    
-        
-       
 
         # submit remote jobs
         if not is_local:
@@ -883,27 +913,10 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
                 remove(fr"{temp_output}/Subject_{subject}_R_{older_timepoint}-{younger_timepoint}_MSM.sh")
             
 
-# helper function for retriving subjects
-def get_subjects(dataset: str):
-    subjects = []
-    print("RETRIVING LIST OF SUBJECTS")
-    print("*" * 50)
-    for directory in listdir(dataset):
-        full_path = path.join(dataset, directory)
-        if path.isdir(full_path):
-            fields = directory.split("_")
-            subject = fields[1]
-            if subject not in subjects:
-                print(f"Found subject number {subject}")
-                subjects.append(subject)
-    subjects.sort()
-    return subjects
-
-
 # Function for MSM BL to all
 def run_msm_bl_to_all(dataset: str, output: str, starting_time: str, slurm_account: str, slurm_user: str,
                       slurm_email: str, alphanumeric_timepoints: bool=False, time_point_number_start_character: int | None=None,
-                      uses_mcribs: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
+                      younger_uses_mcribs: bool=False, older_uses_mcribs: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
                       max_anat: str | None=None, max_cp: str | None=None):
 
     subjects = get_subjects(dataset)
@@ -919,16 +932,16 @@ def run_msm_bl_to_all(dataset: str, output: str, starting_time: str, slurm_accou
 
         for time_point in time_points:
             if time_point != starting_time:
-                run_msm(dataset, output, subject, starting_time, time_point, "forward", uses_mcribs, False,
-                        levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, starting_time, time_point, "reverse", uses_mcribs, False,
+                run_msm(dataset, output, subject, starting_time, time_point, "forward", younger_uses_mcribs, older_uses_mcribs, 
+                        False, levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
+                run_msm(dataset, output, subject, starting_time, time_point, "reverse", younger_uses_mcribs, older_uses_mcribs, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
 # Function to run MSM on shirt time windows
 def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, slurm_user: str, slurm_email: str, 
                                alphanumeric_timepoints: bool = False, time_point_number_start_character: int | None=None,
-                               uses_mcribs: bool=False, slurm_job_limit: int | None=None, levels: int=6,
+                               younger_uses_mcribs: bool=False, older_uses_mcribs: bool=False, slurm_job_limit: int | None=None, levels: int=6,
                                config: str | None=None, max_anat: str | None=None, max_cp: str | None=None,
                                starting_time: str | None=None):
     subjects = get_subjects(dataset)
@@ -943,9 +956,9 @@ def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, sl
             younger_time = time_point
             older_time = time_points[i + 1]
             if younger_time != starting_time and older_time != starting_time:
-                run_msm(dataset, output, subject, younger_time, older_time, "forward", uses_mcribs, False,
+                run_msm(dataset, output, subject, younger_time, older_time, "forward", younger_uses_mcribs, older_uses_mcribs, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, younger_time, older_time, "reverse", uses_mcribs, False,
+                run_msm(dataset, output, subject, younger_time, older_time, "reverse", younger_uses_mcribs, older_uses_mcribs, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
@@ -1166,13 +1179,13 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
                               subject, second_time, first_time, max_cp, max_anat)
 
 
-# Rescale Developmental surface
+# Rescale mcribs surface
 def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     print(f"\nBEGIN RESCALING SURFACES FOR SUBJECT {subject} AT TIMEPOINT {time_point}")
     print('*' * 50)
     # Retrieve all necessay files
     print("Retriving subject files")
-    subject_files = get_files_developmental(dataset, subject, time_point)
+    subject_files = get_files_mcribs(dataset, subject, time_point)
     left_midthickness_file = subject_files[0]
     right_midthickness_file = subject_files[1]
     subject_dir = subject_files[6]
@@ -1248,8 +1261,8 @@ def rescale_surfaces_all(dataset: str):
             rescale_surfaces(dataset, subject, time_point)
             
             
-# function to retrieve files for developmental subject
-def get_files_developmental(dataset: str, subject: str, time_point: str):
+# function to retrieve files for mcribs subject
+def get_files_mcribs(dataset: str, subject: str, time_point: str):
     subject_dir = path.join(dataset, f"Subject_{subject}_{time_point}")
     # get all necessary files
     left_anatomical_surface = path.join(subject_dir, "lh.midthickness.surf.gii")
@@ -1354,7 +1367,7 @@ if __name__ == "__main__":
     gqi.add_argument("--younger_timepoint", required=True, help="The younger time point for registration")
     gqi.add_argument("--older_timepoint", required=True, help="The older time point for registration")
     gqi.add_argument("--output", required=True, help="Location to place generated images")
-    gqi.add_argument("--uses_mcribs", action="store_true", help="Use if the dataset is developmental")
+    gqi.add_argument("--uses_mcribs", action="store_true", help="Use if the dataset is mcribs")
     
     #qc all
     qa = subparser.add_parser("qc_all", help="Generate qc scene and image for all subjects in the indicated dataset")
@@ -1363,7 +1376,7 @@ if __name__ == "__main__":
     qa.add_argument("--alphanumeric_timepoints", action="store_true", help="Use if the timepoints are alphanumeric")
     qa.add_argument("--time_point_number_start_character", required=False, type=int, help="The character where numbers begin in the timepoint 0 indexed, only required if using --alphanumeric_timepoints")
     qa.add_argument("--starting_time", required=False, help="Used if the starting time point uses a different naming convnetion")
-    qa.add_argument("--uses_mcribs", action="store_true", help="Use if the dataset is developmental")
+    qa.add_argument("--uses_mcribs", action="store_true", help="Use if the dataset is mcribs")
     
     
     
@@ -1383,7 +1396,8 @@ if __name__ == "__main__":
     rm.add_argument("--older_timepoint", required=True, help="The older time point for registration")
     rm.add_argument("--mode", choices=["forward", "reverse"], required=True, help="The registration mode, either forward or reverse")
     rm.add_argument("--is_local", action="store_true", help="Used to make MSM run in a local environment")
-    rm.add_argument("--uses_mcribs", action="store_true", help="Use to have MSM use developmental naming conventions")
+    rm.add_argument("--younger_uses_mcribs", action="store_true", help="Use to have MSM use mcribs naming conventions for younger timepoint")
+    rm.add_argument("--older_uses_mcribs", action="store_true", help="Use to have MSM use mcribs naming conventions for older timepoint")
     rm.add_argument("--hemisphere", choices=["L", "R"], required=False, help="Specifiy hemisphere to run when using is_local. L or R only")
     rm.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information. Defaults to 6")
     rm.add_argument("--config", required=False, help="Path to MSM config file to use, see MSM documentation for more information. Only needed if not using default config")
@@ -1404,7 +1418,8 @@ if __name__ == "__main__":
     rmba.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
     rmba.add_argument("--time_point_number_start_character", required=False, type=int, help="the character where numbers begin in the timepoint 0 indexed")
     rmba.add_argument("--starting_time", required=False, help="The time point used as baseline or 'bl' for all registrations")
-    rmba.add_argument("--uses_mcribs", action="store_true", help="Use to have MSM use developmental naming conventions")
+    rmba.add_argument("--younger_uses_mcribs", action="store_true", help="Use to have MSM use mcribs naming conventions for younger timepoint")
+    rmba.add_argument("--older_uses_mcribs", action="store_true", help="Use to have MSM use mcribs naming conventions for older timepoint")
     rmba.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if the slurm job limit is not 500")
     rmba.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information, defaults to 6")
     rmba.add_argument("--config", required=False, help="Path to MSM config file to use, see MSM documentation for more information. Only needed if not using default config")
@@ -1420,7 +1435,8 @@ if __name__ == "__main__":
     rmst.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
     rmst.add_argument("--alphanumeric_timepoints", action="store_true", required=False, help="If the time points are alphanumeric")
     rmst.add_argument("--time_point_number_start_character", required=False, type=int, help="the character where numbers begin in the timepoint 0 indexed")
-    rmst.add_argument("--uses_mcribs", action="store_true", help="Use to have MSM use developmental naming conventions")
+    rmst.add_argument("--younger_uses_mcribs", action="store_true", help="Use to have MSM use mcribs naming conventions for younger timepoint")
+    rmst.add_argument("--older_uses_mcribs", action="store_true", help="Use to have MSM use mcribs naming conventions for older timepoint")
     rmst.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if slurm job limit is not 500")
     rmst.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information, defaults to 6")
     rmst.add_argument("--config", required=False, help="Path to MSM config file to use, see MSM documentation for more information. Only needed if not using default config")
@@ -1454,13 +1470,13 @@ if __name__ == "__main__":
     raa.add_argument("--starting_time", required=False, help="Basleine of registrations, used to determine which avg maps are needed")
 
     # Convert curvature
-    cc = subparser.add_parser("convert_curvature", help="Convert .curv files to .gii files for one subject and time point from a developmental dataset")
+    cc = subparser.add_parser("convert_curvature", help="Convert .curv files to .gii files for one subject and time point from a mcribs dataset")
     cc.add_argument("--dataset", required=True, help="Path to directory containing subject data")
     cc.add_argument("--subject", required=True, help="The subject ID to retrieve files for")
     cc.add_argument("--time_point", required=True, help="The time point to retrieve files for")
     
     # Convert curvature all
-    cca = subparser.add_parser("convert_curvature_all", help="Convert .curv files to .gii files for all subjects and time points in a developmental dataset")
+    cca = subparser.add_parser("convert_curvature_all", help="Convert .curv files to .gii files for all subjects and time points in a mcribs dataset")
     cca.add_argument("--dataset", required=True, help="Path to directory containing all subject data")
     
     args = parser.parse_args()
