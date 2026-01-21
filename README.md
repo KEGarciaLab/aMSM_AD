@@ -200,6 +200,9 @@ Generates images for qc before running MSM. Must be in the same output format th
 * `--older_time` The older time point for QC
 * `--output` The folder to place the QC images in
 
+#### Optional:
+*`--is_developmental` Use if the dataset is developmental.
+
 <a name="qc_all"></a>
 ### `qc_all`
 ---
@@ -208,10 +211,12 @@ Runs the `generate_qc_image` command on all time point pairs in a given director
 ##### Required:
 * `--dataset` The path to directory containing both subject time points
 * `--output` The folder to place the QC images in
+
 ##### Optional:
 * `--alphanumeric_timepoints` Include this flag if your time points use letters and numbers. Defaults to false
 * `--time_point_number_start_character` The character where the numbers begin if using alphanumric time points. 0 indexed, defaults to None
 * `--starting_time` Use this option if your baseline time point uses a different naming scheme than the other time points. Defaults to None
+* *`--is_developmental` Use if the dataset is developmental.
 
 <a name="generate-post-processing-image"></a>
 ### `generate_post_processing_image`
