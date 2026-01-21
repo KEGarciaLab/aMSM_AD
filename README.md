@@ -54,8 +54,10 @@
     </li>
     <li><a href="#usage">Usage</a></li>
 <ul>
-    <li><a href="#is-slurm-queue-open">is_slurm_queue_open</a></li>
+    <li><a href="#usage-guideline"></a> Usage Guidelines</li>
+    <li><a href="#naming-conventions">A note on naming conventions</a></li>
     <li><a href="#get-ciftify-subject-list">get_ciftify_subject_list</a></li>
+    <li><a href="#is-slurm-queue-open">is_slurm_queue_open</a></li>
     <li><a href="#run-cifitify">run_cifitify</a></li>
     <li><a href="#get-subject-time-points">get_subject_time_points</a></li>
     <li><a href="#rescale-surfaces">rescale_surfaces</a></li>
@@ -68,8 +70,8 @@
     <li><a href="#run-msm-short-time-windows">run_msm_short_time_windows</a></li>
     <li><a href="#generate-avg-maps">generate_avg_maps</a></li>
     <li><a href="#generate-avg-maps-all">generate_avg_maps_all</a></li>
-    <li><a href="#convert-curvature">generate_avg_maps_all</a></li>
-    <li><a href="#convert-curvature-all">generate_avg_maps_all</a></li>
+    <li><a href="#convert-curvature">convert_curvature</a></li>
+    <li><a href="#convert-curvature-all">convert_curvature_all</a></li>
 </ul>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -124,6 +126,16 @@ bash InstallationScripts/Workbench-install.sh
 
 The entire pipeline has been bundled into a single Python script with a command line interface. The easiest way to use this pipeline is to follow the install instructions so that it is added to PATH and can be used as a command. Once completed, I would then reccomend creating a simple shell script to run any command you wish. While all commands can be run from a bash terminal directly, the commands can be very long witha  alot of arguments; using a shell script allows for a more readable version of the command to make troubleshooting easier. Below, I have detailed the various commands avaliable within the pipeline as well as the arguments needed for each one. Note that every argument is a keyword and not positional so you must have the flag, but the order does not matter. `-h` can be used after any command name to see all arguments needed for any command.
 
+<a name="usage-guidelines"></a>
+### Usage Guidelines
+---
+This pipeline has three modes of operation depending on if the data has used Freesurfer or M-CRIB-S. If the data has used freesurfer your general usage is running ciftify, optinal qc image generation, msm forward and reverse, generate average maps, and finally optional post processing. If the data is from M-CRIB-S the general flow is to convert curvature files, rescale surfaces, optional qc, msm forward and reverse, and finally optional post processing. For subjects were M-CRIB-S was used for one time point and Freesurfer was used on the other the general usage is run ciftify on freesurfer data, convert curvature for M-CRIB-S data, rescale M-CRIB-S data, optional qc, run msm forwards and reverse, and finally optional post processing. Note that currently average map generation for M-CRIB-S files is in development.
+
+<a name='naming-conventions'></a>
+### A note on naming conventions
+---
+This pipeline was orginally designed to start with freesurfer output and go through ciftify then msm. Due to this everything exceot the diftify related commands have specific naming convention requirements. If you are starting from data that has already been ran through ciftify or data from M-CRIB-S you must have the data in a folder following the convention of `subject_<subjetc-id>_<timepoint>`. Once this has been done all tools are ready to be used
+
 <a name="is-slurm-queue-open"></a>
 ### `is_slurm_queue_open`
 ---
@@ -148,7 +160,7 @@ This command is used to retrive a list of all folders of subject data that need 
 <a name="run-ciftify"></a>
 ### `run_ciftify`
 ---
-This command is used to run the `ciftify-recon-all` command on the indicated directories and place the output in the indicated folder. This creates one output directory for each input directory in the indicated location.
+This command is used to run the `ciftify-recon-all` command on the indicated directories and place the output in the indicated folder. This creates one output directory for each input directory in the indicated output location.
 #### Arguments
 ##### Required:
 * `--dataset` This is the folder where your directories are located. Note: there are plans to make this automatic and remove the need for this argument
@@ -181,7 +193,7 @@ A helper function that lists all time points for a given subject in a given data
 <a name="rescsale-surfaces"></a>
 ### `rescale_surfaces`
 ---
-Generates recaled anatomical surfaces for the indicated subject and time point.
+Generates recaled anatomical surfaces for the indicated subject and time point. This is required for M-CRIB-S data.
 #### Arguments
 ##### Required:
 * `--dataset` The path to the directory containing subject data
@@ -201,7 +213,7 @@ Generates images for qc before running MSM. Must be in the same output format th
 * `--output` The folder to place the QC images in
 
 #### Optional:
-*`--is_developmental` Use if the dataset is developmental.
+*`--uses_mcribsl` Use if the dataset is from M-CRlB-S.
 
 <a name="qc_all"></a>
 ### `qc_all`
@@ -216,7 +228,7 @@ Runs the `generate_qc_image` command on all time point pairs in a given director
 * `--alphanumeric_timepoints` Include this flag if your time points use letters and numbers. Defaults to false
 * `--time_point_number_start_character` The character where the numbers begin if using alphanumric time points. 0 indexed, defaults to None
 * `--starting_time` Use this option if your baseline time point uses a different naming scheme than the other time points. Defaults to None
-* *`--is_developmental` Use if the dataset is developmental.
+* *`--uses_mcribs` Use if the dataset is M-CRIB-S.
 
 <a name="generate-post-processing-image"></a>
 ### `generate_post_processing_image`
@@ -257,15 +269,15 @@ Runs forward and reverse registrations of the indicated subject and timepoint.
 * `--levels` Identify the levels of MSM to run. See MSM documentation for more information. Defaults to 6
 * `--config` Path to the MSM config file to be used. See MSM documentation for more information. Only used if not using default.
 * `--max_anat` Path to MaxANAT reference sphere (typically ico6sphere). Only used if not using default.
-* `--max_cp` Path to MaxCP reference sphere (typically ico5sphere). Only used if not using default.
-* `--use_rescaled` include this option if you want to use rescaled surfaces generated in a previous step
+* `--max_cp` Path to MaxCP reference sphere (typically ico5sphere). Only used if not using default
 * `--is_local` include this option if you want to run MSM in a local environment
-* `--is_local` specify the hemisphere you wish to run msm on when using is_local. Must be L or R and must be included when using is_local
+* `--hemisphere` specify the hemisphere you wish to run msm on when using is_local. Must be L or R and must be included when using is_local
 * `--slurm_email` Email to which failed job notifications should be sent. Only used for remote runs.
 * `--slurm_account` Slurm account ID for submission. Only used for remote runs.
 * `--slurm_user` Slurm username for checking queue. Only used for remote runs.
 * `--slurm_job_limit` The user's slurm job limit. Only used for remote runs when slurm job limit is not 500.
-* `--is_developmental` Use this flag to indicate that developmental files need to be used
+* `--younger_uses_mcribs` Use this flag to indicate that M-CRIB-S files need to be used for the younger timepoint
+* `--older_uses_mcribs` USe this flag to indicate that M-CRIB-S files need to be used for the older timepoint
 
 <a name="run-msm-bl-to-all"></a>
 ### `run_msm_bl_to_all`
@@ -283,13 +295,13 @@ Runs MSM registrations, starting at the baseline timepoint, for each other timep
 * `--slurm_email` Email address to which failed job notifications should be sent.
 
 ##### Optional:
-* `--use_rescaled` include this option if you want to use rescaled surfaces generated in a previous step
 * `--slurm_job_limit` The user's slurm job limit. Defaults to 500.
 * `--levels` Levels of MSM to run. See MSM documentation for more information. Defaults to 6.
 * `--config` Path to the MSM config file that will be used. See MSM documentation for more information. Only needed if not using default.
 * `--max_anat` Path to the MaxANATreference sphere (typically ico6sphere). Only needed if not using default.
 * `--max_cp` Path the the MaxCP reference sphere (typically ico5sphere). Only needed if not using default.
-* `--is_developmental` Use this flag to indicate that developmental files need to be used
+* `--younger_uses_mcribs` Use this flag to indicate that M-CRIB-S files need to be used for the younger timepoint
+* `--older_uses_mcribs` Use this flag to indicate that M-CRIB-S files need to be used for the older timepoint
 
 <a name="run-msm-short-time-windows"></a>
 ### `run_msm_short_time_windows`
@@ -306,14 +318,14 @@ Runs MSM on all subjects in a folder using sequential timepoints.
 * `--slurm email` The email to which failed job notifications will be sent.
 
 ##### Optional:
-* `--use_rescaled` include this option if you want to use rescaled surfaces generated in a previous step
 * `--slurm_job_limit` The user's slurm job limit. Defaults to 500
 * `--levels` Levels of MSM that will be run. See MSM documentation for more information. Defaults to 6
 * `--config` Path to the MSM config file that will be used. See MSM documentation for more information. Only needed if not using default.
 * `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere). Only needed if not using default.
 * `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere). Only needed if not using default.
 * `--starting_time` The starting time point. This is only necessary if baseline registrations should be skipped.
-* `--is_developmental` Use this flag to indicate that developmental files need to be used
+* `--younger_uses_mcribs` Use this flag to indicate that M-CRIB-S files need to be used for the younger timepoint
+* `--older_uses_mcribs` Use this flag to indicate that M-CRIB-S files need to be used for the older timepoint
 
 <a name="generate-avg-maps"></a>
 ### `generate_avg_maps`
