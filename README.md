@@ -260,6 +260,7 @@ Runs forward and reverse registrations of the indicated subject and timepoint.
 * `--max_cp` Path to MaxCP reference sphere (typically ico5sphere). Only used if not using default.
 * `--use_rescaled` include this option if you want to use rescaled surfaces generated in a previous step
 * `--is_local` include this option if you want to run MSM in a local environment
+* `--is_local` specify the hemisphere you wish to run msm on when using is_local. Must be L or R and must be included when using is_local
 * `--slurm_email` Email to which failed job notifications should be sent. Only used for remote runs.
 * `--slurm_account` Slurm account ID for submission. Only used for remote runs.
 * `--slurm_user` Slurm username for checking queue. Only used for remote runs.
