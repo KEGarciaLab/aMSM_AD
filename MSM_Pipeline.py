@@ -1385,6 +1385,7 @@ if __name__ == "__main__":
     rm.add_argument("--is_local", action="store_true", help="Used to make MSM run in a local environment")
     rm.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
     rm.add_argument("--is_developmental", action="store_true", help="Use to have MSM use developmental naming conventions")
+    rm.add_argument("--hemisphere", choices=["L", "R"], required=False, help="Specifiy hemisphere to run when using is_local. L or R only")
     rm.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information. Defaults to 6")
     rm.add_argument("--config", required=False, help="Path to MSM config file to use, see MSM documentation for more information. Only needed if not using default config")
     rm.add_argument("--max_anat", required=False, help="Path to MaxAnat reference sphere, typically ico6sphere. Only needed if not using default sphere")
