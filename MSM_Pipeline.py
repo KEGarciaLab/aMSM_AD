@@ -538,9 +538,10 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
 
 # Function for running MSM commands
 def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
-            older_timepoint: str, mode: Mode, uses_mcribs: bool=False, is_local: bool=False, hemisphere: Hemisphere | None=None,
-            levels: int=6, config: str | None=None, max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None,
-            slurm_account: str | None=None, slurm_user: str | None=None, slurm_job_limit: int | None=None):
+            older_timepoint: str, mode: Mode, younger_uses_mcribs: bool=False, older_uses_mcribs: bool=False,
+            is_local: bool=False, hemisphere: Hemisphere | None=None, levels: int=6, config: str | None=None, 
+            max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None, slurm_account: str | None=None,
+            slurm_user: str | None=None, slurm_job_limit: int | None=None):
     print(f"\nStarting MSM run for subject {subject} from time point {younger_timepoint} to {older_timepoint} in {mode} mode")
     print('*' * 50)
     
@@ -572,84 +573,99 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
 
     print(
         f"\nRetriving files for time points {younger_timepoint} and {older_timepoint}")
-    if uses_mcribs:
-        print("Using developmental naming conventions")
+    if younger_uses_mcribs:
+        print("Using developmental naming conventions for younger timepoint")
         younger_files = get_files_developmental(dataset, subject, younger_timepoint)
-        older_files = get_files_developmental(dataset, subject, older_timepoint)
-    else:
-        print("Using standard naming conventions")
-        younger_files = get_files(dataset, subject, younger_timepoint)
-        older_files = get_files(dataset, subject, older_timepoint)
-    
-    if uses_mcribs:
-        print("Using rescaled surfaces for anatomical surfaces")
+        
+        print("Using rescaled surfaces")
         left_younger_anatomical_surface = younger_files[10]
         right_younger_anatomical_surface = younger_files[11]
-        left_older_anatomical_surface = older_files[10]
-        right_older_anatomical_surface = older_files[11]
-    else:
-        print("Using mid thickness surfaces for anatomical surfaces")
-        left_younger_anatomical_surface = younger_files[0]
-        right_younger_anatomical_surface = younger_files[1]
-        left_older_anatomical_surface = older_files[0]
-        right_older_anatomical_surface = older_files[1]
-     
-    if uses_mcribs:
-        print("Matching icosphere to developmental data")
+        
+        print("matching icosphere to developmental data")
         left_younger_midthickness = younger_files[0]
         right_younger_midthickness = younger_files[1]
-        left_older_midthickness = older_files[0]
-        right_older_midthickness = older_files[1]
         
         left_younger_smoothed = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.midthickness.smoothed.surf.gii")
         right_younger_smoothed = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.midthickness.smoothed.surf.gii")
-        left_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.midthickness.smoothed.surf.gii")
-        right_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.midthickness.smoothed.surf.gii")
         
         left_younger_inflated = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.inflated.surf.gii")
         right_younger_inflated = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.inflated.surf.gii")
-        left_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.inflated.surf.gii")
-        right_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.inflated.surf.gii")
         
         left_younger_matched = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.matched.surf.gii")
         right_younger_matched = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.matched.surf.gii")
-        left_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.matched.surf.gii")
-        right_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.matched.surf.gii")
         
         left_younger_spherical_surface = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "lh.sphere.surf.gii")
         right_younger_spherical_surface = path.join(dataset, f"Subject_{subject}_{younger_timepoint}", "rh.sphere.surf.gii")
-        left_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.sphere.surf.gii")
-        right_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.sphere.surf.gii")
         
         print("Smoothing midthickness")
         run(f'wb_command -surface-smoothing {left_younger_midthickness} 1 10000 {left_younger_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-smoothing {right_younger_midthickness} 1 10000 {right_younger_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-smoothing {left_older_midthickness} 1 10000 {left_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-smoothing {right_older_midthickness} 1 10000 {right_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         
         print("Inflating smoothed surfaces")
         run(f'wb_command -surface-inflation {left_younger_smoothed} {left_younger_smoothed} 10 1 100 2 {left_younger_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-inflation {right_younger_smoothed} {right_younger_smoothed} 10 1 100 2 {right_younger_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-inflation {left_older_smoothed} {left_older_smoothed} 10 1 100 2 {left_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-inflation {right_older_smoothed} {right_older_smoothed} 10 1 100 2 {right_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         
         print("Matching inflated to icosphere")
         run(f'wb_command -surface-match {max_anat} {left_younger_inflated} {left_younger_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-match {max_anat} {right_younger_inflated} {right_younger_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Centering matched sphere")
+        run(f'wb_command -surface-modify-sphere -recenter {left_younger_matched} 100 {left_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-modify-sphere -recenter {right_younger_matched} 100 {right_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)   
+    else:
+        print("Using standard naming conventions for younger timepoint")
+        younger_files = get_files(dataset, subject, younger_timepoint)
+        left_younger_anatomical_surface = younger_files[0]
+        right_younger_anatomical_surface = younger_files[1]
+        left_younger_spherical_surface = younger_files[2]
+        right_younger_spherical_surface = younger_files[3]
+        
+    if older_uses_mcribs:
+        print("Using developmental naming conventions for older timepoint")
+        older_files = get_files_developmental(dataset, subject, older_timepoint)
+        
+        left_older_anatomical_surface = older_files[10]
+        right_older_anatomical_surface = older_files[11]
+        
+        print("Matching icosphere to developmental data")
+        left_older_midthickness = older_files[0]
+        right_older_midthickness = older_files[1]
+        
+        left_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.midthickness.smoothed.surf.gii")
+        right_older_smoothed = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.midthickness.smoothed.surf.gii")
+        
+        left_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.inflated.surf.gii")
+        right_older_inflated = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.inflated.surf.gii")
+        
+        left_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.matched.surf.gii")
+        right_older_matched = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.matched.surf.gii")
+        
+        left_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "lh.sphere.surf.gii")
+        right_older_spherical_surface = path.join(dataset, f"Subject_{subject}_{older_timepoint}", "rh.sphere.surf.gii")
+        
+        print("Smoothing midthickness")
+        run(f'wb_command -surface-smoothing {left_older_midthickness} 1 10000 {left_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-smoothing {right_older_midthickness} 1 10000 {right_older_smoothed}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Inflating smoothed surfaces")
+        run(f'wb_command -surface-inflation {left_older_smoothed} {left_older_smoothed} 10 1 100 2 {left_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        run(f'wb_command -surface-inflation {right_older_smoothed} {right_older_smoothed} 10 1 100 2 {right_older_inflated}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
+        
+        print("Matching inflated to icosphere")
         run(f'wb_command -surface-match {max_anat} {left_older_inflated} {left_older_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-match {max_anat} {right_older_inflated} {right_older_matched}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         
         print("Centering matched sphere")
-        run(f'wb_command -surface-modify-sphere -recenter {left_younger_matched} 100 {left_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-modify-sphere -recenter {right_younger_matched} 100 {right_younger_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
         run(f'wb_command -surface-modify-sphere -recenter {left_older_matched} 100 {left_older_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
-        run(f'wb_command -surface-modify-sphere -recenter {right_older_matched} 100 {right_older_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)    
+        run(f'wb_command -surface-modify-sphere -recenter {right_older_matched} 100 {right_older_spherical_surface}', shell=True, stdout=sys.stdout, stderr=sys.stderr)
     else:
-        left_younger_spherical_surface = younger_files[2]
-        right_younger_spherical_surface = younger_files[3]
+        print("Using standard naming conventions for older timepoint")
+        older_files = get_files(dataset, subject, older_timepoint)
+        left_older_anatomical_surface = older_files[0]
+        right_older_anatomical_surface = older_files[1]
         left_older_spherical_surface = older_files[2]
         right_older_spherical_surface = older_files[3]
-    
+
     left_younger_curvature = younger_files[4]
     right_younger_curvature = younger_files[5]
     left_older_curvature = older_files[4]
