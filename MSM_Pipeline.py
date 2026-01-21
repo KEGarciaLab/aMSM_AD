@@ -249,11 +249,16 @@ def get_files(dataset: str, subject: str, time_point: str):
 
 
 # Generate pre-MSM qc image
-def generate_qc_image(dataset: str, subject: str, younger_timepoint: str, older_timepoint: str, output: str):
+def generate_qc_image(dataset: str, subject: str, younger_timepoint: str, older_timepoint: str, output: str, is_developmnental: bool=False):
     # Get files for qc image
     print("Locating Surfaces")
-    younger_files = get_files(dataset, subject, younger_timepoint)
-    older_files = get_files(dataset, subject, older_timepoint)
+    if is_developmnental:
+        younger_files = get_files_developmental(dataset, subject, younger_timepoint)
+        older_files = get_files_developmental(dataset, subject, older_timepoint)
+    else:
+        younger_files = get_files(dataset, subject, younger_timepoint)
+        older_files = get_files(dataset, subject, older_timepoint)
+    
     left_younger_surface = younger_files[0]
     right_younger_surface = younger_files[1]
     left_older_surface = older_files[0]
@@ -295,7 +300,7 @@ def generate_qc_image(dataset: str, subject: str, younger_timepoint: str, older_
 
     
 # Generate all pre-MSM qc images
-def qc_all(dataset: str, output: str,  alphanumeric_timepoints: bool=False, time_point_number_start_character: int | None=None, starting_time=None):
+def qc_all(dataset: str, output: str,  alphanumeric_timepoints: bool=False, time_point_number_start_character: int | None=None, starting_time=None, is_developmental: bool=False):
     print("\nStarting pre-MSM QC image generation")
     print('*' * 50)
     subjects = []
@@ -316,7 +321,10 @@ def qc_all(dataset: str, output: str,  alphanumeric_timepoints: bool=False, time
             younger_time = time_points[i]
             older_time = time_points[i+1]
             print(f"\nGenerating QC image for subject {subject} from time point {younger_time} to {older_time}")
-            generate_qc_image(dataset, subject, younger_time, older_time, output)
+            if is_developmental:
+                generate_qc_image(dataset, subject, younger_time, older_time, output, is_developmnental=True)
+            else:
+                generate_qc_image(dataset, subject, younger_time, older_time, output)
         
     
 # Generate post processing images
@@ -1329,6 +1337,7 @@ if __name__ == "__main__":
     gqi.add_argument("--younger_timepoint", required=True, help="The younger time point for registration")
     gqi.add_argument("--older_timepoint", required=True, help="The older time point for registration")
     gqi.add_argument("--output", required=True, help="Location to place generated images")
+    gqi.add_argument("--is_developmental", action="store_true", help="Use if the dataset is developmental")
     
     #qc all
     qa = subparser.add_parser("qc_all", help="Generate qc scene and image for all subjects in the indicated dataset")
@@ -1337,6 +1346,8 @@ if __name__ == "__main__":
     qa.add_argument("--alphanumeric_timepoints", action="store_true", help="Use if the timepoints are alphanumeric")
     qa.add_argument("--time_point_number_start_character", required=False, type=int, help="The character where numbers begin in the timepoint 0 indexed, only required if using --alphanumeric_timepoints")
     qa.add_argument("--starting_time", required=False, help="Used if the starting time point uses a different naming convnetion")
+    qa.add_argument("--is_developmental", action="store_true", help="Use if the dataset is developmental")
+    
     
     
     # Generate Post Processing Image
