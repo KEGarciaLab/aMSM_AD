@@ -102,9 +102,9 @@ def run_ciftify(dataset: str, delimiter: str, subject_index: int, time_index: in
     print("\nStarting ciftify runs")
     print('*' * 50)
     user_home = path.expanduser('~')
-    makedirs(temp_output, exist_ok=True)
     temp_output = path.join(user_home, "Scripts", "MyScripts", "Output",
                             "MSM_Pipeline", "ciftify_scripts")
+    makedirs(temp_output, exist_ok=True)
     subject_list_file = path.join(temp_output, "ciftify_subjects.txt")
     with open(subject_list_file, "r") as f:
         directories = [line.strip() for line in f if line.strip()]
@@ -116,7 +116,7 @@ def run_ciftify(dataset: str, delimiter: str, subject_index: int, time_index: in
         time_point = fields[time_index]
         subject_output_path = path.join(
             output_path, f"Subject_{subject}_{time_point}")
-        makedirs(output_path, exist_ok=True)
+        makedirs(subject_output_path, exist_ok=True)
         print(
             f"\nCiftify run for subject {subject} at time point {time_point}")
         script_dir = path.dirname(path.realpath(__file__))
