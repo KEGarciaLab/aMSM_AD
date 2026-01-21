@@ -1378,8 +1378,6 @@ if __name__ == "__main__":
     qa.add_argument("--starting_time", required=False, help="Used if the starting time point uses a different naming convnetion")
     qa.add_argument("--uses_mcribs", action="store_true", help="Use if the dataset is mcribs")
     
-    
-    
     # Generate Post Processing Image
     gppi = subparser.add_parser("generate_post_processing_image", help="Generate post-processing scene and image for one subject")
     gppi.add_argument("--subject_directory", required=True, help="Path to directory containing MSM files for images you wish to create")
@@ -1387,6 +1385,13 @@ if __name__ == "__main__":
     gppi.add_argument("--mode", choices=["forward", "reverse", "average"], required=True, help="Either forward or reverse dependant on registration")
     gppi.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
 
+    # Post Process All
+    ppa = subparser.add_parser("post_process_all", help="Generatee Post Processing images for all MSM registrations")
+    ppa.add_argument("--dataset", required=True, help="Loaction of MSM registrations")
+    ppa.add_argument("--starting_time", required=True, help="Basline timepoint of data, used to determine if forward or reverse registration was used")
+    ppa.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
+    ppa.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
+    
     # Run MSM
     rm = subparser.add_parser("run_msm", help="Run MSM on the indicated subject and time points in the indicated direction")
     rm.add_argument("--dataset", required=True, help="Path to directory containing all time points for registration")
@@ -1443,13 +1448,6 @@ if __name__ == "__main__":
     rmst.add_argument("--max_anat", required=False, help="Path to MaxAnat reference sphere, typically ico6sphere. Only needed if not using default sphere")
     rmst.add_argument("--max_cp", required=False, help="Path to MaxCP reference sphere, typically ico5sphere. Only needed if not using default sphere")
     rmst.add_argument("--starting_time", required=False, help="The starting time point. Only used if you want to skip baseline registrations")
-
-    # Post Process All
-    ppa = subparser.add_parser("post_process_all", help="Generatee Post Processing images for all MSM registrations")
-    ppa.add_argument("--dataset", required=True, help="Loaction of MSM registrations")
-    ppa.add_argument("--starting_time", required=True, help="Basline timepoint of data, used to determine if forward or reverse registration was used")
-    ppa.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for image creation, either CPgrid or ANATgrid")
-    ppa.add_argument("--output", required=True, help="Location to copy the images to, will always place them in the subject directory as well")
     
     # Generate Avg Maps
     gam = subparser.add_parser("generate_avg_maps", help="Generate average maps for one subject")
