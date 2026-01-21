@@ -538,7 +538,7 @@ def post_process_all(dataset: str, starting_time: str, resolution: str, output: 
 
 # Function for running MSM commands
 def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
-            older_timepoint: str, mode: Mode, use_rescaled: bool=False, uses_mcribs: bool=False, is_local: bool=False, hemisphere: Hemisphere | None=None,
+            older_timepoint: str, mode: Mode, uses_mcribs: bool=False, is_local: bool=False, hemisphere: Hemisphere | None=None,
             levels: int=6, config: str | None=None, max_anat: str | None=None, max_cp: str | None=None, slurm_email: str | None=None,
             slurm_account: str | None=None, slurm_user: str | None=None, slurm_job_limit: int | None=None):
     print(f"\nStarting MSM run for subject {subject} from time point {younger_timepoint} to {older_timepoint} in {mode} mode")
@@ -581,7 +581,7 @@ def run_msm(dataset: str, output: str, subject: str, younger_timepoint: str,
         younger_files = get_files(dataset, subject, younger_timepoint)
         older_files = get_files(dataset, subject, older_timepoint)
     
-    if use_rescaled:
+    if uses_mcribs:
         print("Using rescaled surfaces for anatomical surfaces")
         left_younger_anatomical_surface = younger_files[10]
         right_younger_anatomical_surface = younger_files[11]
@@ -903,7 +903,7 @@ def get_subjects(dataset: str):
 # Function for MSM BL to all
 def run_msm_bl_to_all(dataset: str, output: str, starting_time: str, slurm_account: str, slurm_user: str,
                       slurm_email: str, alphanumeric_timepoints: bool=False, time_point_number_start_character: int | None=None,
-                      use_rescaled: bool=False, uses_mcribs: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
+                      uses_mcribs: bool=False, slurm_job_limit: int | None=None, levels: int=6, config: str | None=None,
                       max_anat: str | None=None, max_cp: str | None=None):
 
     subjects = get_subjects(dataset)
@@ -919,17 +919,17 @@ def run_msm_bl_to_all(dataset: str, output: str, starting_time: str, slurm_accou
 
         for time_point in time_points:
             if time_point != starting_time:
-                run_msm(dataset, output, subject, starting_time, time_point, "forward", use_rescaled, uses_mcribs, False,
+                run_msm(dataset, output, subject, starting_time, time_point, "forward", uses_mcribs, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, starting_time, time_point, "reverse", use_rescaled, uses_mcribs, False,
+                run_msm(dataset, output, subject, starting_time, time_point, "reverse", uses_mcribs, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
 # Function to run MSM on shirt time windows
 def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, slurm_user: str, slurm_email: str, 
                                alphanumeric_timepoints: bool = False, time_point_number_start_character: int | None=None,
-                               use_rescaled: bool=False, uses_mcribs: bool=False, slurm_job_limit: int | None=None,
-                               levels: int=6, config: str | None=None, max_anat: str | None=None, max_cp: str | None=None,
+                               uses_mcribs: bool=False, slurm_job_limit: int | None=None, levels: int=6,
+                               config: str | None=None, max_anat: str | None=None, max_cp: str | None=None,
                                starting_time: str | None=None):
     subjects = get_subjects(dataset)
     print("\nAll subjects found. Beginning MSM")
@@ -943,9 +943,9 @@ def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, sl
             younger_time = time_point
             older_time = time_points[i + 1]
             if younger_time != starting_time and older_time != starting_time:
-                run_msm(dataset, output, subject, younger_time, older_time, "forward", use_rescaled, uses_mcribs, False,
+                run_msm(dataset, output, subject, younger_time, older_time, "forward", uses_mcribs, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
-                run_msm(dataset, output, subject, younger_time, older_time, "reverse", use_rescaled, uses_mcribs, False,
+                run_msm(dataset, output, subject, younger_time, older_time, "reverse", uses_mcribs, False,
                         levels, config, max_anat, max_cp, slurm_email, slurm_account, slurm_user, slurm_job_limit)
 
 
@@ -1383,7 +1383,6 @@ if __name__ == "__main__":
     rm.add_argument("--older_timepoint", required=True, help="The older time point for registration")
     rm.add_argument("--mode", choices=["forward", "reverse"], required=True, help="The registration mode, either forward or reverse")
     rm.add_argument("--is_local", action="store_true", help="Used to make MSM run in a local environment")
-    rm.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
     rm.add_argument("--uses_mcribs", action="store_true", help="Use to have MSM use developmental naming conventions")
     rm.add_argument("--hemisphere", choices=["L", "R"], required=False, help="Specifiy hemisphere to run when using is_local. L or R only")
     rm.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information. Defaults to 6")
@@ -1405,7 +1404,6 @@ if __name__ == "__main__":
     rmba.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
     rmba.add_argument("--time_point_number_start_character", required=False, type=int, help="the character where numbers begin in the timepoint 0 indexed")
     rmba.add_argument("--starting_time", required=False, help="The time point used as baseline or 'bl' for all registrations")
-    rmba.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
     rmba.add_argument("--uses_mcribs", action="store_true", help="Use to have MSM use developmental naming conventions")
     rmba.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if the slurm job limit is not 500")
     rmba.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information, defaults to 6")
@@ -1422,7 +1420,6 @@ if __name__ == "__main__":
     rmst.add_argument("--slurm_email", required=True, help="Email for failed jobs to send to")
     rmst.add_argument("--alphanumeric_timepoints", action="store_true", required=False, help="If the time points are alphanumeric")
     rmst.add_argument("--time_point_number_start_character", required=False, type=int, help="the character where numbers begin in the timepoint 0 indexed")
-    rmst.add_argument("--use_rescaled", action="store_true", help="Use to have MSM use rescaled surfaces")
     rmst.add_argument("--uses_mcribs", action="store_true", help="Use to have MSM use developmental naming conventions")
     rmst.add_argument("--slurm_job_limit", required=False, help="The users Slurm job limit. Only needed if slurm job limit is not 500")
     rmst.add_argument("--levels",required=False, type=int, default=6, help="Levels of MSM to run, see documentation for more information, defaults to 6")
