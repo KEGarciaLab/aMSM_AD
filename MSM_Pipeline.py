@@ -426,8 +426,12 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
         right_older_surface=right_older_surface,
         right_surface_map=right_surface_map
     )
-    template_auto_scale_output = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
+    if mode == "average":
+        template_auto_scale_output = path.join(
+            subject_directory, f"{subject}_{starting_time}-{ending_time}_avg_{resolution}.scene")
+    else:
+        template_auto_scale_output = path.join(
+            subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
     with open(template_auto_scale_output, "w+") as f:
         f.write(to_write_auto_scale)
 
@@ -444,8 +448,12 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
         right_older_surface=right_older_surface,
         right_surface_map=right_surface_map
     )
-    template_set_scale_output = path.join(
-        subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
+    if mode == "average":
+        template_set_scale_output = path.join(
+            subject_directory, f"{subject}_{starting_time}-{ending_time}_avg_{resolution}_SET-SCALE.scene")
+    else:
+        template_set_scale_output = path.join(
+            subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
     with open(template_set_scale_output, "w+") as f:
         f.write(to_write_set_scale)
 
@@ -455,14 +463,25 @@ def generate_post_processing_image(subject_directory: str, resolution: str, mode
     
     # generate images
     print("Generating Images")
-    scene_auto_scale = path.join(
-        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
-    scene_set_scale = path.join(
-        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
-    image_auto_scale = path.join(
-        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}.png")
-    image_set_scale = path.join(
-        post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}SET-SCALE.png")
+    if mode=="average":
+        scene_auto_scale = path.join(
+            subject_directory, f"{subject}_{starting_time}-{ending_time}_avg_{resolution}.scene")
+        scene_set_scale = path.join(
+            subject_directory, f"{subject}_{starting_time}-{ending_time}_avg_{resolution}_SET-SCALE.scene")
+        image_auto_scale = path.join(
+            post_processing_dir, f"{subject}_{starting_time}-{ending_time}_avg_{resolution}.png")
+        image_set_scale = path.join(
+            post_processing_dir, f"{subject}_{starting_time}-{ending_time}_avg_{resolution}SET-SCALE.png")
+    else:    
+        scene_auto_scale = path.join(
+            subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}.scene")
+        scene_set_scale = path.join(
+            subject_directory, f"{subject}_{starting_time}-{ending_time}_{resolution}_SET-SCALE.scene")
+        image_auto_scale = path.join(
+            post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}.png")
+        image_set_scale = path.join(
+            post_processing_dir, f"{subject}_{starting_time}-{ending_time}_{resolution}SET-SCALE.png")
+        
     run(f"wb_command -show-scene {scene_auto_scale} 1 {image_auto_scale} 1024 512", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"wb_command -show-scene {scene_set_scale} 1 {image_set_scale} 1024 512", shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
