@@ -134,7 +134,7 @@ This pipeline has three modes of operation depending on if the data has used Fre
 <a name='naming-conventions'></a>
 ### A note on naming conventions
 ---
-This pipeline was orginally designed to start with freesurfer output and go through ciftify then msm. Due to this everything exceot the diftify related commands have specific naming convention requirements. If you are starting from data that has already been ran through ciftify or data from M-CRIB-S you must have the data in a folder following the convention of `subject_<subjetc-id>_<timepoint>`. Once this has been done all tools are ready to be used
+This pipeline was orginally designed to start with freesurfer output and go through ciftify then msm. Due to this everything except the ciftify related commands have specific naming convention requirements. If you are starting from data that has already been ran through ciftify or data from M-CRIB-S you must have the data in a folder following the convention of `subject_<subjetc-id>_<timepoint>`. Once this has been done all tools are ready to be used
 
 <a name="is-slurm-queue-open"></a>
 ### `is_slurm_queue_open`
