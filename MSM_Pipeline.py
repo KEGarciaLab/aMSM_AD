@@ -1243,14 +1243,14 @@ def rescale_surfaces(dataset: str,  subject: str, time_point: str):
     
     run(f"wb_command -metric-stats {right_shape_file} -reduce SUM", shell=True, stdout=sys.stdout, stderr=sys.stderr) #-roi {right_cortex}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     command_output = run(f"wb_command -metric-stats {right_shape_file} -reduce SUM", shell=True, capture_output=True, text=True, check=True)
-    rigth_surface_area = float(command_output.stdout.strip())
+    right_surface_area = float(command_output.stdout.strip())
     print(f"Left Surface Area: {left_surface_area}")
-    print(f"Right Surface Area: {rigth_surface_area}")
+    print(f"Right Surface Area: {right_surface_area}")
     
     # Rescale value calculations
     print("Calculating rescale values")
     left_rescale_value = sqrt(10000 / left_surface_area)
-    right_rescale_value = sqrt(10000 / rigth_surface_area)
+    right_rescale_value = sqrt(10000 / right_surface_area)
     print(f"Left Rescale Value: {left_rescale_value}")
     print(f"Right Rescale Value: {right_rescale_value}")
     
