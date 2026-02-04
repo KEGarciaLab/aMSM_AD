@@ -1487,6 +1487,8 @@ if __name__ == "__main__":
     gam.add_argument("--older_timepoint", required=True, help="The older time point of the registration")
     gam.add_argument("--max_cp", required=False, help="Path to MaxCP reference sphere, typically ico5sphere")
     gam.add_argument("--max_anat", required=False, help="Path to MaxANAT reference sphere, typically ico6sphere")
+    gam.add_argument("--younger_uses_mcribs", action="store_true", help="Use if the younger time point is from an mcribs dataset")
+    gam.add_argument("--older_uses_mcribs", action="store_true", help="Use if the older time point is from an mcribs dataset")
         
     # Generate All Avg Maps
     raa = subparser.add_parser("generate_avg_maps_all", help="Run average map generation on all subjects")
@@ -1495,6 +1497,7 @@ if __name__ == "__main__":
     raa.add_argument("--max_cp", required=False, help="Path to MaxCP reference sphere, typically ico5sphere")
     raa.add_argument("--max_anat", required=False, help="Path to MaxANAT reference sphere, typically ico6sphere")
     raa.add_argument("--starting_time", required=False, help="Basleine of registrations, used to determine which avg maps are needed")
+    raa.add_argument("--uses_mcribs", action="store_true", help="Use if the dataset is from mcribs. Note that both time points are assumed to use mcribs when this flag is used. Mcribs to freesurfer average maps can not be batch generated.")
 
     # Convert curvature
     cc = subparser.add_parser("convert_curvature", help="Convert .curv files to .gii files for one subject and time point from a mcribs dataset")
