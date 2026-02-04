@@ -1160,7 +1160,7 @@ def generate_avg_maps(pre_msm_data: str, msm_data: str, subject: str, younger_ti
 
 
 # Function to run all average maps
-def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | None=None, max_anat: str | None=None, starting_time: str | None=None):
+def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | None=None, max_anat: str | None=None, starting_time: str | None=None, uses_mcribs: bool=False):
     print("\nBEGIN FUNCTION FOR AVG MAPS")
     print('*' * 50)
     
@@ -1191,16 +1191,21 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
         if first_time == starting_time:
             continue
         elif second_time == starting_time:
-            print(
-                f"Beginning average maps for {subject} for times {second_month} to {first_month}")
-            generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat)
+            if uses_mcribs:
+                print(f"Beginning average maps for {subject} for times {second_month} to {first_month} using mcribs")
+                generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat, True, True)
+            else:
+                print(f"Beginning average maps for {subject} for times {second_month} to {first_month}")
+                generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat)
         elif first_month < second_month:
             continue
         elif second_month < first_month:
-            print(
-                f"Beginning average maps for {subject} for times {second_month} to {first_month}")
-            generate_avg_maps(ciftify_dataset, msm_dataset,
-                              subject, second_time, first_time, max_cp, max_anat)
+            if uses_mcribs:
+                print(f"Beginning average maps for {subject} for times {second_month} to {first_month} using mcribs")
+                generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat, True, True)
+            else:
+                print(f"Beginning average maps for {subject} for times {second_month} to {first_month}")
+                generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat)
 
 
 # Rescale mcribs surface
