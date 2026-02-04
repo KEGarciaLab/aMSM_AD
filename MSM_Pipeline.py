@@ -221,7 +221,7 @@ def get_files(dataset: str, subject: str, time_point: str):
     left_spherical_surface = path.join(
         subject_thickness_dir, f"{subject_full_name}.L.sphere.32k_fs_LR.surf.gii")
     right_spherical_surface = path.join(
-        subject_thickness_dir, f"{subject_full_name}.L.sphere.32k_fs_LR.surf.gii")
+        subject_thickness_dir, f"{subject_full_name}.R.sphere.32k_fs_LR.surf.gii")
 
     # run seperate commands for curvatures
     run(fr"wb_command -cifti-separate {subject_curvature_dir}/{subject_full_name}.thickness.32k_fs_LR.dscalar.nii COLUMN -metric CORTEX_LEFT {subject_curvature_dir}/{subject_full_name}_Thickness.L.func.gii -metric CORTEX_RIGHT {subject_curvature_dir}/{subject_full_name}_Thickness.R.func.gii", shell=True, stdout=sys.stdout, stderr=sys.stderr)
