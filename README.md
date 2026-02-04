@@ -213,7 +213,7 @@ Generates images for qc before running MSM. Must be in the same output format th
 * `--output` The folder to place the QC images in
 
 #### Optional:
-*`--uses_mcribsl` Use if the dataset is from M-CRlB-S.
+*`--uses_mcribs` Use if the dataset is from M-CRlB-S.
 
 <a name="qc_all"></a>
 ### `qc_all`
@@ -338,8 +338,12 @@ Generates an average map for the specified subject and time points.
 * `-- subject` The subject ID that will be used to generate average maps.
 * `--younger_timepoint` The younger timepoint of the registration.
 * `--older_timepoint` The older timepoint of the registration.
-* `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere)
-* `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere).
+
+#### Optional:
+* `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere) if not using provided icosphere files.
+* `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere) if not using provided icosphere files.
+* `--younger_uses_mcribs` Used to indicate that the younger time point uses M-CRIB-S data
+* `--older_uses_mcribs` Used to indicate that the older time point uses M-CRIB-S data
 
 <a name="generate-avg-maps-all"></a>
 ### `generate_avg_maps_all`
@@ -349,9 +353,12 @@ Generates average maps for all registrations in the specified directory.
 ##### Required:
 * `--ciftify_dataset` Path to the folder containing ciftify outputs.
 * `--msm_dataset` Path to MSM registration.
-* `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere).
-* `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere)
+
+#### Optional:
+* `--max_cp` Path to the MaxCP reference sphere (typically ico5sphere) if not using provided icosphere files.
+* `--max_anat` Path to the MaxANAT reference sphere (typically ico6sphere) if not using provided icosphere files.
 * `--starting_time` The baseline time of registrations. This is used to determine which average maps are needed.
+* `--uses_mcribs` Used to indicate that the dataset as a whole uses M-CRIB-S. Note that this is only avaliable for datasets which wholly use M-CRIB-S. M-CRIB-S to Freesurfer everage maps muct be generated using the singular function above.
 
 <a name="convert-curvature"></a>
 ### `convert_curvature`
