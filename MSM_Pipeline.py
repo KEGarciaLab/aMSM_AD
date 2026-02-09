@@ -982,9 +982,8 @@ def run_msm_short_time_windows(dataset: str, output: str, slurm_account: str, sl
 
 
 # Function to generate average maps
-def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, younger_timepoint: str, older_timepoint: str, max_cp: str | None=None, max_anat: str | None=None):
+def generate_avg_maps(pre_msm_data: str, msm_data: str, subject: str, younger_timepoint: str, older_timepoint: str, max_cp: str | None=None, max_anat: str | None=None, younger_uses_mcribs: bool=False, older_uses_mcbribs: bool=False):
     # create output for average maps
-    
     if max_cp == None:
         script_dir = path.dirname(path.realpath(__file__))
         max_cp = path.join(script_dir, "NeededFiles", "ico5sphere.LR.reg.surf.gii")
@@ -993,12 +992,20 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
         max_anat = path.join(script_dir, "NeededFiles", "ico6sphere.LR.reg.surf.gii")
         
     msm_avg_output = path.join(
-        msm_dataset, f"{subject}_{younger_timepoint}_to_{older_timepoint}_avg")
+        msm_data, f"{subject}_{younger_timepoint}_to_{older_timepoint}_avg")
     makedirs(msm_avg_output, exist_ok=True)
 
     # create variables for file locations from pre-msm
-    younger_files = get_files(ciftify_dataset, subject, younger_timepoint)
-    older_files = get_files(ciftify_dataset, subject, older_timepoint)
+    if younger_uses_mcribs:
+        younger_files = get_files_mcribs(pre_msm_data, subject, younger_timepoint)
+    else:
+        younger_files = get_files(pre_msm_data, subject, younger_timepoint)
+    
+    if older_uses_mcbribs:
+        older_files = get_files_mcribs(pre_msm_data, subject, older_timepoint)
+    else:
+        older_files = get_files(pre_msm_data, subject, older_timepoint)
+        
     left_younger_spherical_surface = younger_files[2]
     left_older_spherical_surface = older_files[2]
     right_younger_spherical_surface = younger_files[3]
@@ -1006,7 +1013,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
     # files for msm resverse registration
     msm_reverse_folder = path.join(
-        msm_dataset, f"{subject}_{older_timepoint}_to_{younger_timepoint}")
+        msm_data, f"{subject}_{older_timepoint}_to_{younger_timepoint}")
     left_older_anatomical_surface_cpgrid = path.join(
         msm_reverse_folder, f"{subject}_L_{older_timepoint}-{younger_timepoint}.LOAS.CPgrid.surf.gii")
     left_older_anatomical_surface_anatgrid = path.join(
@@ -1038,7 +1045,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
     # files for msm forward registration
     msm_forward_folder = path.join(
-        msm_dataset, f"{subject}_{younger_timepoint}_to_{older_timepoint}")
+        msm_data, f"{subject}_{younger_timepoint}_to_{older_timepoint}")
     left_base_sphere_forward = path.join(
         msm_forward_folder, f"{subject}_L_{younger_timepoint}-{older_timepoint}.sphere.reg.surf.gii")
     left_cpgrid_sphere_forward = path.join(
@@ -1098,10 +1105,8 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
     print("Begin generating revfor spheres")
     run(f"wb_command -surface-sphere-project-unproject {left_older_spherical_surface} {left_base_sphere_reverse} {left_younger_spherical_surface} {left_revfor_base_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"wb_command -surface-sphere-project-unproject {right_older_spherical_surface} {right_base_sphere_reverse} {right_younger_spherical_surface} {right_revfor_base_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-    run(
-        f"wb_command -surface-sphere-project-unproject {max_cp} {left_cpgrid_sphere_reverse} {max_cp} {left_revfor_cpgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-    run(
-        f"wb_command -surface-sphere-project-unproject {max_cp} {right_cpgrid_sphere_reverse} {max_cp} {right_revfor_cpgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-sphere-project-unproject {max_cp} {left_cpgrid_sphere_reverse} {max_cp} {left_revfor_cpgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-sphere-project-unproject {max_cp} {right_cpgrid_sphere_reverse} {max_cp} {right_revfor_cpgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"wb_command -surface-sphere-project-unproject {max_anat} {left_anatgrid_sphere_reverse} {max_anat} {left_revfor_anatgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
     run(f"wb_command -surface-sphere-project-unproject {max_anat} {right_anatgrid_sphere_reverse} {max_anat} {right_revfor_anatgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
@@ -1114,18 +1119,12 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
     # Generate AvgFor Shpheres
     print("Begin generating avgfor spheres")
-    run(
-        f"wb_command -surface-modify-sphere -recenter {left_avgfor_base_sphere} 100 {left_avgfor_base_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-    run(
-        f"wb_command -surface-modify-sphere -recenter {right_avgfor_base_sphere} 100 {right_avgfor_base_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-    run(
-        f"wb_command -surface-modify-sphere -recenter {left_avgfor_cpgrid_sphere} 100 {left_avgfor_cpgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-    run(
-        f"wb_command -surface-modify-sphere -recenter {right_avgfor_cpgrid_sphere} 100 {right_avgfor_cpgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-    run(
-        f"wb_command -surface-modify-sphere -recenter {left_avgfor_anatgrid_sphere} 100 {left_avgfor_anatgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
-    run(
-        f"wb_command -surface-modify-sphere -recenter {right_avgfor_anatgrid_sphere} 100 {right_avgfor_anatgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-modify-sphere -recenter {left_avgfor_base_sphere} 100 {left_avgfor_base_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-modify-sphere -recenter {right_avgfor_base_sphere} 100 {right_avgfor_base_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-modify-sphere -recenter {left_avgfor_cpgrid_sphere} 100 {left_avgfor_cpgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-modify-sphere -recenter {right_avgfor_cpgrid_sphere} 100 {right_avgfor_cpgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-modify-sphere -recenter {left_avgfor_anatgrid_sphere} 100 {left_avgfor_anatgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-modify-sphere -recenter {right_avgfor_anatgrid_sphere} 100 {right_avgfor_anatgrid_sphere}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
     # Generate RevFor Anatomical Surfaces
     print("Begin generating revfor surfaces")
@@ -1161,7 +1160,7 @@ def generate_avg_maps(ciftify_dataset: str, msm_dataset: str, subject: str, youn
 
 
 # Function to run all average maps
-def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | None=None, max_anat: str | None=None, starting_time: str | None=None):
+def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | None=None, max_anat: str | None=None, starting_time: str | None=None, uses_mcribs: bool=False):
     print("\nBEGIN FUNCTION FOR AVG MAPS")
     print('*' * 50)
     
@@ -1192,16 +1191,21 @@ def generate_avg_maps_all(ciftify_dataset: str, msm_dataset: str, max_cp: str | 
         if first_time == starting_time:
             continue
         elif second_time == starting_time:
-            print(
-                f"Beginning average maps for {subject} for times {second_month} to {first_month}")
-            generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat)
+            if uses_mcribs:
+                print(f"Beginning average maps for {subject} for times {second_month} to {first_month} using mcribs")
+                generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat, True, True)
+            else:
+                print(f"Beginning average maps for {subject} for times {second_month} to {first_month}")
+                generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat)
         elif first_month < second_month:
             continue
         elif second_month < first_month:
-            print(
-                f"Beginning average maps for {subject} for times {second_month} to {first_month}")
-            generate_avg_maps(ciftify_dataset, msm_dataset,
-                              subject, second_time, first_time, max_cp, max_anat)
+            if uses_mcribs:
+                print(f"Beginning average maps for {subject} for times {second_month} to {first_month} using mcribs")
+                generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat, True, True)
+            else:
+                print(f"Beginning average maps for {subject} for times {second_month} to {first_month}")
+                generate_avg_maps(ciftify_dataset, msm_dataset, subject, second_time, first_time, max_cp, max_anat)
 
 
 # Rescale mcribs surface
@@ -1483,6 +1487,8 @@ if __name__ == "__main__":
     gam.add_argument("--older_timepoint", required=True, help="The older time point of the registration")
     gam.add_argument("--max_cp", required=False, help="Path to MaxCP reference sphere, typically ico5sphere")
     gam.add_argument("--max_anat", required=False, help="Path to MaxANAT reference sphere, typically ico6sphere")
+    gam.add_argument("--younger_uses_mcribs", action="store_true", help="Use if the younger time point is from an mcribs dataset")
+    gam.add_argument("--older_uses_mcribs", action="store_true", help="Use if the older time point is from an mcribs dataset")
         
     # Generate All Avg Maps
     raa = subparser.add_parser("generate_avg_maps_all", help="Run average map generation on all subjects")
@@ -1491,6 +1497,7 @@ if __name__ == "__main__":
     raa.add_argument("--max_cp", required=False, help="Path to MaxCP reference sphere, typically ico5sphere")
     raa.add_argument("--max_anat", required=False, help="Path to MaxANAT reference sphere, typically ico6sphere")
     raa.add_argument("--starting_time", required=False, help="Basleine of registrations, used to determine which avg maps are needed")
+    raa.add_argument("--uses_mcribs", action="store_true", help="Use if the dataset is from mcribs. Note that both time points are assumed to use mcribs when this flag is used. Mcribs to freesurfer average maps can not be batch generated.")
 
     # Convert curvature
     cc = subparser.add_parser("convert_curvature", help="Convert .curv files to .gii files for one subject and time point from a mcribs dataset")
