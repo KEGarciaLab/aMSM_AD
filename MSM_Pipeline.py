@@ -1342,6 +1342,194 @@ def convert_curvature_all(dataset: str):
     print("Curvature conversion complete\n")    
 
 
+# Function for concatenating registrations
+def concatenate_registration(msm_dataset: str, pre_msm_dataset: str, subject: str, concat_start_time: str, concat_end_time: str, resolution: str,
+                             output: str, max_anat: str | None = None, max_cp: str | None = None, alphanumeric_timepoints: bool=False,
+                             time_point_number_start_character: int | None=None, starting_time=None):
+    print(f"Beginning concatenation for subject {subject} from {concat_start_time} to {concat_end_time}")
+    # Gather default files
+    script_dir = path.dirname(path.realpath(__file__))
+    if max_anat == None:
+        print("No max_anat provided, using default")
+        max_anat = path.join(script_dir, "NeededFiles", "ico6sphere.LR.reg.surf.gii")
+    if max_cp == None:
+        print("No max_cp provided, using default")
+        max_cp = path.join(script_dir, "NeededFiles", "ico5sphere.LR.reg.surf.gii")
+    
+    # Get all intermediate timepoints
+    print(f"Finding intermediate time points")
+    all_subject_timepoints = get_subject_time_points(pre_msm_dataset, subject, alphanumeric_timepoints, time_point_number_start_character, starting_time)
+    starting_time_index = all_subject_timepoints.index(concat_start_time)
+    if len(all_subject_timepoints) <= 2:
+        print(f"Time points for subject only include start and end times, cannot concatenate")
+        return
+    intermediate_timepoints = all_subject_timepoints[starting_time_index + 1:]
+    print(f"Found intermediate time points: {intermediate_timepoints}")
+    
+    # first concat run
+    # Define directories
+    forward_start_to_intermediate = path.join(msm_dataset, f"Subject_{subject}_{concat_start_time}_to_{intermediate_timepoints[0]}")
+    avg_start_to_intermediate = path.join(msm_dataset, f"Subject_{subject}_{concat_start_time}_to_{intermediate_timepoints[0]}_avg")
+    
+    if len(intermediate_timepoints) > 1:
+        print("Found multiple intermediate time points. Chain concatenation required.")
+        # Used if there are multiple intermediate time points
+        forward_intermediate_to_end = path.join(msm_dataset, f"Subject_{subject}_{intermediate_timepoints[0]}_to_{intermediate_timepoints[1]}")
+        avg_intermediate_to_end = path.join(msm_dataset, f"Subject_{subject}_{intermediate_timepoints[0]}_to_{intermediate_timepoints[1]}_avg")
+        concat_output_dir = path.join(output, f"Subject_{subject}_{concat_start_time}_to_{intermediate_timepoints[1]}_concat")
+        left_concat_output = path.join(concat_output_dir, f"{subject}_L_{concat_start_time}-{intermediate_timepoints[1]}.concat.sphere.{resolution}.reg.surf.gii")
+        right_concat_output = path.join(concat_output_dir, f"{subject}_R_{concat_start_time}-{intermediate_timepoints[1]}.concat.sphere.{resolution}.reg.surf.gii")
+        left_as_time_end = path.join(forward_intermediate_to_end, f"{subject}_L_{intermediate_timepoints[0]}-{intermediate_timepoints[1]}.LOAS.{resolution}.surf.gii")
+        right_as_time_end = path.join(forward_intermediate_to_end, f"{subject}_R_{intermediate_timepoints[0]}-{intermediate_timepoints[1]}.LOAS.{resolution}.surf.gii")
+        left_anat_output = path.join(concat_output_dir, f"{subject}_L_{concat_start_time}-{intermediate_timepoints[1]}.concat.anat.{resolution}.reg.surf.gii")
+        right_anat_output = path.join(concat_output_dir, f"{subject}_R_{concat_start_time}-{intermediate_timepoints[1]}.concat.anat.{resolution}.reg.surf.gii")
+        left_surfdist_output = path.join(concat_output_dir, f"{subject}_L_{concat_start_time}-{intermediate_timepoints[1]}.concat.surfdist.{resolution}.func.gii")
+        right_surfdist_output = path.join(concat_output_dir, f"{subject}_R_{concat_start_time}-{intermediate_timepoints[1]}.concat.surfdist.{resolution}.func.gii")
+        left_sphere_unproject_from = path.join(avg_intermediate_to_end, f"{subject}_L_{intermediate_timepoints[0]}_{intermediate_timepoints[1]}.avgfor.sphere.{resolution}.reg.surf.gii")
+        right_sphere_unproject_from = path.join(avg_intermediate_to_end, f"{subject}_R_{intermediate_timepoints[0]}_{intermediate_timepoints[1]}.avgfor.sphere.{resolution}.reg.surf.gii")
+    else:
+        print("Only one intermediate time point found. Single concatenation run.")
+        # used if there is only one intermediate time point
+        forward_intermediate_to_end = path.join(msm_dataset, f"Subject_{subject}_{intermediate_timepoints[0]}_to_{concat_end_time}")
+        avg_intermediate_to_end = path.join(msm_dataset, f"Subject_{subject}_{intermediate_timepoints[0]}_to_{concat_end_time}_avg")
+        concat_output_dir = path.join(output, f"Subject_{subject}_{concat_start_time}_to_{concat_end_time}_concat")
+        left_concat_output = path.join(concat_output_dir, f"{subject}_L_{concat_start_time}-{concat_end_time}.concat.sphere.{resolution}.reg.surf.gii")
+        right_concat_output = path.join(concat_output_dir, f"{subject}_R_{concat_start_time}-{concat_end_time}.concat.sphere.{resolution}.reg.surf.gii")
+        left_as_time_end = path.join(forward_intermediate_to_end, f"{subject}_L_{intermediate_timepoints[0]}-{concat_end_time}.LOAS.{resolution}.surf.gii")
+        right_as_time_end = path.join(forward_intermediate_to_end, f"{subject}_R_{intermediate_timepoints[0]}-{concat_end_time}.LOAS.{resolution}.surf.gii")
+        left_anat_output = path.join(concat_output_dir, f"{subject}_L_{concat_start_time}-{concat_end_time}.concat.anat.{resolution}.reg.surf.gii")
+        right_anat_output = path.join(concat_output_dir, f"{subject}_R_{concat_start_time}-{concat_end_time}.concat.anat.{resolution}.reg.surf.gii")
+        left_surfdist_output = path.join(concat_output_dir, f"{subject}_L_{concat_start_time}-{concat_end_time}.concat.surfdist.{resolution}.func.gii")
+        right_surfdist_output = path.join(concat_output_dir, f"{subject}_R_{concat_start_time}-{concat_end_time}.concat.surfdist.{resolution}.func.gii")
+        left_sphere_unproject_from = path.join(avg_intermediate_to_end, f"{subject}_L_{intermediate_timepoints[0]}_{concat_end_time}.avgfor.sphere.{resolution}.reg.surf.gii")
+        right_sphere_unproject_from = path.join(avg_intermediate_to_end, f"{subject}_R_{intermediate_timepoints[0]}_{concat_end_time}.avgfor.sphere.{resolution}.reg.surf.gii")
+    
+    left_sphere_in = path.join(avg_start_to_intermediate, f"{subject}_L_{concat_start_time}_{intermediate_timepoints[0]}.avgfor.sphere.{resolution}.reg.surf.gii")
+    right_sphere_in = path.join(avg_start_to_intermediate, f"{subject}_R_{concat_start_time}_{intermediate_timepoints[0]}.avgfor.sphere.{resolution}.reg.surf.gii")
+    left_surface_reference = path.join(forward_start_to_intermediate, f"{subject}_L_{concat_start_time}_{intermediate_timepoints[0]}.LYAS.{resolution}.surf.gii")
+    right_surface_reference = path.join(forward_start_to_intermediate, f"{subject}_R_{concat_start_time}_{intermediate_timepoints[0]}.RYAS.{resolution}.surf.gii")
+    
+    if resolution == "CPgrid":
+        sphere_project_to = max_cp
+        spherical_surface = max_cp
+    if resolution == "ANATgrid":
+        sphere_project_to = max_anat
+        spherical_surface = max_anat
+    
+    print(
+        "Directories defined as\n"
+        f"\tforward_start_to_intermediate: {forward_start_to_intermediate}\n"
+        f"\tavg_start_to_intermediate: {avg_start_to_intermediate}\n"
+        f"\tforward_intermediate_to_end: {forward_intermediate_to_end}\n"
+        f"\tavg_intermediate_to_end: {avg_intermediate_to_end}\n"
+        "\n"
+        "Inputs\n"
+        f"\tleft_sphere_in: {left_sphere_in}\n"
+        f"\tright_sphere_in: {right_sphere_in}\n"
+        f"\tsphere_project_to: {sphere_project_to}\n"
+        f"\tleft_sphere_unproject_from: {left_sphere_unproject_from}\n"
+        f"\tright_sphere_unproject_from: {right_sphere_unproject_from}\n"
+        f"\tleft_as_time_end: {left_as_time_end}\n"
+        f"\tright_as_time_end: {right_as_time_end}\n"
+        f"\tspherical_surface: {spherical_surface}\n"
+        f"\tleft_surface_reference: {left_surface_reference}\n"
+        f"\tright_surface_reference: {right_surface_reference}\n"
+        "\n"
+        "Outputs\n"
+        f"\tleft_concat_output: {left_concat_output}\n"
+        f"\tright_concat_output: {right_concat_output}\n"
+        f"\tleft_anat_output: {left_anat_output}\n"
+        f"\tright_anat_output: {right_anat_output}\n"
+        f"\tleft_surfdist_output: {left_surfdist_output}\n"
+        f"\tright_surfdist_output: {right_surfdist_output}"
+    )  
+        
+    # Run first set of commands
+    print("Running commands")
+    run(f"wb_command -surface-sphere-project-unproject {left_sphere_in} {sphere_project_to} {left_sphere_unproject_from} {left_concat_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-sphere-project-unproject {right_sphere_in} {sphere_project_to} {right_sphere_unproject_from} {right_concat_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    
+    run(f"wb_command -surface-resample {left_as_time_end} {spherical_surface} {left_concat_output} 'BARYCENTRIC' {left_anat_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-resample {right_as_time_end} {spherical_surface} {right_concat_output} 'BARYCENTRIC' {right_anat_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    
+    run(f"wb_command -surface-distortion {left_surface_reference} {left_anat_output} {left_surfdist_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    run(f"wb_command -surface-distortion {right_surface_reference} {right_anat_output} {right_surfdist_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+    print("Finished inital concatenation")
+    
+    if len(intermediate_timepoints) > 1:
+        print("Chain concatenation starting")
+        total_loops = len(intermediate_timepoints) - 2
+        print(f"Total chains needed: {total_loops}")
+        for i in range(1, len(intermediate_timepoints) - 1):
+            print(f"Beginning chain concatenation {i}/{total_loops}")
+            start_time = concat_start_time
+            intermediate_time = intermediate_timepoints[i]
+            end_time = intermediate_timepoints[i + 1]
+            
+            forward_start_to_intermediate = path.join(msm_dataset, f"Subject_{subject}_{start_time}_to_{intermediate_time}_concat")
+            avg_start_to_intermediate = path.join(msm_dataset, f"Subject_{subject}_{start_time}_to_{intermediate_timepoints[0]}_avg")
+            forward_intermediate_to_end = path.join(msm_dataset, f"Subject_{subject}_{intermediate_time}_to_{end_time}")
+            avg_intermediate_to_end = path.join(msm_dataset, f"Subject_{subject}_{intermediate_time}_to_{end_time}_avg")
+            
+            concat_output_dir = path.join(output, f"Subject_{subject}_{start_time}_to_{end_time}_concat")
+            left_concat_output = path.join(concat_output_dir, f"{subject}_L_{start_time}-{end_time}.concat.sphere.{resolution}.reg.surf.gii")
+            right_concat_output = path.join(concat_output_dir, f"{subject}_R_{start_time}-{end_time}.concat.sphere.{resolution}.reg.surf.gii")
+            left_anat_output = path.join(concat_output_dir, f"{subject}_L_{start_time}-{end_time}.concat.anat.{resolution}.reg.surf.gii")
+            right_anat_output = path.join(concat_output_dir, f"{subject}_R_{start_time}-{end_time}.concat.anat.{resolution}.reg.surf.gii")
+            left_surfdist_output = path.join(concat_output_dir, f"{subject}_L_{start_time}-{end_time}.concat.surfdist.{resolution}.func.gii")
+            right_surfdist_output = path.join(concat_output_dir, f"{subject}_R_{start_time}-{end_time}.concat.surfdist.{resolution}.func.gii")
+            
+            left_sphere_in = path.join(concat_output_dir, f"{subject}_L_{start_time}-{intermediate_time}.concat.sphere.{resolution}.reg.surf.gii")
+            right_sphere_in = path.join(concat_output_dir, f"{subject}_R_{start_time}-{intermediate_time}.concat.sphere.{resolution}.reg.surf.gii")
+            left_surface_reference = path.join(concat_output_dir, f"{subject}_L_{start_time}-{intermediate_time}.concat.anat.{resolution}.reg.surf.gii")
+            right_surface_reference = path.join(concat_output_dir, f"{subject}_R_{start_time}-{intermediate_time}.concat.anat.{resolution}.reg.surf.gii")
+            
+            left_as_time_end = path.join(forward_intermediate_to_end, f"{subject}_L_{intermediate_time}-{end_time}.LOAS.{resolution}.surf.gii")
+            right_as_time_end = path.join(forward_intermediate_to_end, f"{subject}_R_{intermediate_time}-{end_time}.LOAS.{resolution}.surf.gii")
+            left_sphere_unproject_from = path.join(avg_intermediate_to_end, f"{subject}_L_{intermediate_time}_{end_time}.avgfor.sphere.{resolution}.reg.surf.gii")
+            right_sphere_unproject_from = path.join(avg_intermediate_to_end, f"{subject}_R_{intermediate_time}_{end_time}.avgfor.sphere.{resolution}.reg.surf.gii")
+
+            print(
+                "Directories defined as\n"
+                f"\tforward_start_to_intermediate: {forward_start_to_intermediate}\n"
+                f"\tavg_start_to_intermediate: {avg_start_to_intermediate}\n"
+                f"\tforward_intermediate_to_end: {forward_intermediate_to_end}\n"
+                f"\tavg_intermediate_to_end: {avg_intermediate_to_end}\n"
+                "\n"
+                "Inputs\n"
+                f"\tleft_sphere_in: {left_sphere_in}\n"
+                f"\tright_sphere_in: {right_sphere_in}\n"
+                f"\tsphere_project_to: {sphere_project_to}\n"
+                f"\tleft_sphere_unproject_from: {left_sphere_unproject_from}\n"
+                f"\tright_sphere_unproject_from: {right_sphere_unproject_from}\n"
+                f"\tleft_as_time_end: {left_as_time_end}\n"
+                f"\tright_as_time_end: {right_as_time_end}\n"
+                f"\tspherical_surface: {spherical_surface}\n"
+                f"\tleft_surface_reference: {left_surface_reference}\n"
+                f"\tright_surface_reference: {right_surface_reference}\n"
+                "\n"
+                "Outputs\n"
+                f"\tleft_concat_output: {left_concat_output}\n"
+                f"\tright_concat_output: {right_concat_output}\n"
+                f"\tleft_anat_output: {left_anat_output}\n"
+                f"\tright_anat_output: {right_anat_output}\n"
+                f"\tleft_surfdist_output: {left_surfdist_output}\n"
+                f"\tright_surfdist_output: {right_surfdist_output}"
+            )
+            
+            print("Running commands")
+            run(f"wb_command -surface-sphere-project-unproject {left_sphere_in} {sphere_project_to} {left_sphere_unproject_from} {left_concat_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            run(f"wb_command -surface-sphere-project-unproject {right_sphere_in} {sphere_project_to} {right_sphere_unproject_from} {right_concat_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            
+            run(f"wb_command -surface-resample {left_as_time_end} {spherical_surface} {left_concat_output} 'BARYCENTRIC' {left_anat_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            run(f"wb_command -surface-resample {right_as_time_end} {spherical_surface} {right_concat_output} 'BARYCENTRIC' {right_anat_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            
+            run(f"wb_command -surface-distortion {left_surface_reference} {left_anat_output} {left_surfdist_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            run(f"wb_command -surface-distortion {right_surface_reference} {right_anat_output} {right_surfdist_output}", shell=True, stdout=sys.stdout, stderr=sys.stderr)
+            print(f"Finished chain concatenation {i}/{total_loops}")
+    
+    print(f"Finished concatenation of subject {subject} form {concat_start_time} to {concat_end_time}")
+
 # Command line interface
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run MSM Pipeline Functions", usage="MSM_Pipeline.py [-h] <command> [<args>]")
