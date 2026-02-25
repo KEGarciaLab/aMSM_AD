@@ -1343,7 +1343,7 @@ def convert_curvature_all(dataset: str):
 
 
 # Function for concatenating registrations
-def concatenate_registration(msm_dataset: str, pre_msm_dataset: str, subject: str, concat_start_time: str, concat_end_time: str, resolution: str,
+def concatenate_registrations(msm_dataset: str, pre_msm_dataset: str, subject: str, concat_start_time: str, concat_end_time: str, resolution: str,
                              output: str, max_anat: str | None = None, max_cp: str | None = None, alphanumeric_timepoints: bool=False,
                              time_point_number_start_character: int | None=None, starting_time=None):
     print(f"Beginning concatenation for subject {subject} from {concat_start_time} to {concat_end_time}")
@@ -1689,6 +1689,21 @@ if __name__ == "__main__":
     # Convert curvature all
     cca = subparser.add_parser("convert_curvature_all", help="Convert .curv files to .gii files for all subjects and time points in a mcribs dataset")
     cca.add_argument("--dataset", required=True, help="Path to directory containing all subject data")
+    
+    # Concat Registrations
+    cr = subparser.add_parser("concat_registrations", help="Concatenate MSM registrations together, used to help eliminate noise in registrations across longer time points")
+    cr.add_argument("--msm_dataset", required=True, help="Path to directory containing MSM registrations; folder should contain directories for each each time point needed")
+    cr.add_argument("--pre_msm_dataset", required=True, help="Path to to either the ciftify output or M-CRIB-S data")
+    cr.add_argument("--subject", required=True, help="Subject ID to concatenate registrations for")
+    cr.add_argument("--concat_start_time", required=True, help="The starting time point for the concatenation, most likely the same as the starting time point of the first registration in the chain")
+    cr.add_argument("--concat_end_time", required=True, help="The ending time point for the concatenation, most likely the same as the ending time point of the last registration in the chain")
+    cr.add_argument("--resolution", choices=["CPgrid", "ANATgrid"], required=True, help="Resolution of registration for concatenation, either CPgrid or ANATgrid")
+    cr.add_argument("--output", required=True, help="Path for output of concatenated registrations, a folder for each concatenation will be created here")
+    cr.add_argument("--max_anat", required=False, help="Path to MaxAnat reference sphere, typically ico6sphere. Only needed if not using default sphere")
+    cr.add_argument("--max_cp", required=False, help="Path to MaxCP reference sphere, typically ico5sphere. Only needed if not using default sphere")
+    cr.add_argument("--alphanumeric_timepoints", action="store_true", help="Use if the time points are alphanumeric, will sort time points based on the numbers in the time point name, so make sure those are consistent across time points")
+    cr.add_argument("--time_point_number_start_character", required=False, type=int, help="The character where numbers begin in the timepoint 0 indexed, only required if using --alphanumeric_timepoints")
+    cr.add_argument("--starting_time", required=False, help="Used if the starting time point uses a different naming convnetion")
     
     args = parser.parse_args()
     
