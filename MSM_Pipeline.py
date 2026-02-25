@@ -1691,7 +1691,7 @@ if __name__ == "__main__":
     cca.add_argument("--dataset", required=True, help="Path to directory containing all subject data")
     
     # Concat Registrations
-    cr = subparser.add_parser("concat_registrations", help="Concatenate MSM registrations together, used to help eliminate noise in registrations across longer time points")
+    cr = subparser.add_parser("concatenate_registrations", help="Concatenate MSM registrations together, used to help eliminate noise in registrations across longer time points")
     cr.add_argument("--msm_dataset", required=True, help="Path to directory containing MSM registrations; folder should contain directories for each each time point needed")
     cr.add_argument("--pre_msm_dataset", required=True, help="Path to to either the ciftify output or M-CRIB-S data")
     cr.add_argument("--subject", required=True, help="Subject ID to concatenate registrations for")
@@ -1771,3 +1771,7 @@ if __name__ == "__main__":
         args_dict = vars(args)
         args_dict.pop("command", None)
         convert_curvature_all(**args_dict)
+    elif args.command == "concatenate_registrations":
+        args_dict = vars(args)
+        args_dict.pop("command", None)
+        concatenate_registrations(**args_dict)
