@@ -72,6 +72,7 @@
     <li><a href="#generate-avg-maps-all">generate_avg_maps_all</a></li>
     <li><a href="#convert-curvature">convert_curvature</a></li>
     <li><a href="#convert-curvature-all">convert_curvature_all</a></li>
+    <li><a href="#concatenate_registrations">concatenate_registrations</a></li>
 </ul>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -377,6 +378,29 @@ Converts all curvature files in a given dataset into GIFTI format (`.func.gii`).
 #### Arguments
 ##### Required:
 * `--dataset` Path to directory containing all subject data
+
+<a name="concatenate-surfaces"></a>
+### `concatenate_registrations`
+---  
+Concatenates MSM registrations across multiple time points to reduce noise in longer registration chains.
+
+#### Arguments
+##### Required:
+* `--msm_dataset` Path to directory containing MSM registrations; folder should contain directories for each time point needed.
+* `--pre_msm_dataset` Path to either the ciftify output or M-CRIB-S data.
+* `--subject` Subject ID to concatenate registrations for.
+* `--concat_start_time` Starting time point for the concatenation (typically the first registration in the chain).
+* `--concat_end_time` Ending time point for the concatenation (typically the last registration in the chain).
+* `--resolution` Resolution of registration for concatenation. Choices: `CPgrid` or `ANATgrid`.
+* `--output` Path for output of concatenated registrations. A folder for each concatenation will be created here.
+
+##### Optional:
+* `--max_anat` Path to MaxAnat reference sphere (typically ico6sphere). Only needed if not using default.
+* `--max_cp` Path to MaxCP reference sphere (typically ico5sphere). Only needed if not using default.
+* `--alphanumeric_timepoints` Use if the time points are alphanumeric. Time points will be sorted based on the numeric portion of the name (ensure consistency).
+* `--time_point_number_start_character` The character index (0-based) where numbers begin in the time point name. Required if using `--alphanumeric_timepoints`.
+* `--starting_time` Used if the starting time point uses a different naming convention.
+
 
 
 **DEPRECATED**
