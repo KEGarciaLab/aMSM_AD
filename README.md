@@ -23,10 +23,10 @@
 [![Stars][stars-shield]][stars-url]
 
 
-<h3 align="center">aMSM_AD</h3>
+<h3 align="center">aMSM_Pipeline</h3>
 
   <p align="center">
-    Processing scripts for aMSM analysis of Alzheimer's Disease data
+    Processing scripts for aMSM analysis.
     <br />
     <a href="https://github.com/KEGarciaLab/aMSM_AD"><strong>Explore the docs »</strong></a>
     <br />
